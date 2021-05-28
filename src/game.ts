@@ -1,3 +1,4 @@
+import 'phaser';
 import { MainScene } from './scenes/mainScene';
 
 const config: GameConfig = {

@@ -1,7 +1,3 @@
-import 'phaser';
-
-import phaserPng from '../assets/phaser.png';
-
 export class MainScene extends Phaser.Scene {
 	private image!: Phaser.GameObjects.Image;
 
@@ -10,7 +6,7 @@ export class MainScene extends Phaser.Scene {
 	}
 
 	public preload() {
-		this.load.image('phaser', phaserPng);
+		this.load.image('phaser', 'images/phaser.png');
 	}
 
 	public create() {
