@@ -6,7 +6,7 @@ export class MainScene extends Phaser.Scene {
 	}
 
 	public preload() {
-		this.load.image('phaser', 'images/phaser.png');
+		this.load.image('phaser', 'assets/images/phaser.png');
 	}
 
 	public create() {
