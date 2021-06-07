@@ -68,7 +68,7 @@ const nodes: Asset[] = prependPath("assets/ecoweb/nodes/128/", [
 ]);
 
 const backgrounds: Asset[] = prependPath("assets/ecoweb/backgrounds/", [
-	{ key: "planet_still",	path: "planet.png" },
+	{ key: "planet_still",	path: "planet.jpg" },
 ]);
 
 const images: Asset[] = nodes.concat(backgrounds);
