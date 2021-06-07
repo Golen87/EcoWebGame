@@ -1,7 +1,11 @@
 import { prependPath } from "../utils";
 
+interface Asset {
+	key: string;
+	path: string;
+}
 
-const nodeImages = prependPath("assets/images/serengeti/128/", [
+const nodes: Asset[] = prependPath("assets/serengeti/nodes/128/", [
 	// Animals
 	{ key: "ACIJUB",	path: "ACIJUB.png" },
 	{ key: "AEPMEL",	path: "AEPMEL.png" },
@@ -35,7 +39,6 @@ const nodeImages = prependPath("assets/images/serengeti/128/", [
 	{ key: "SYNCAF",	path: "SYNCAF.png" },
 	{ key: "TAUORY",	path: "TAUORY.png" },
 	{ key: "TRASCR",	path: "TRASCR.png" },
-
 	// Plants
 	{ key: "ACASEN",	path: "ACASEN.png" },
 	{ key: "ACASEY",	path: "ACASEY.png" },
@@ -93,14 +96,45 @@ const nodeImages = prependPath("assets/images/serengeti/128/", [
 	{ key: "TYPCAP",	path: "TYPCAP.png" },
 	{ key: "XIMCAF",	path: "XIMCAF.png" },
 	{ key: "ZIZ",		path: "ZIZ.png" },
-
 	// Icons
-	{ key: "icon-annualFlower",	path: "PlaceHolder-Plant.png" },
-	{ key: "icon-grass",		path: "PlaceHolder-Plant.png" },
-	{ key: "icon-herb",			path: "PlaceHolder-Plant.png" },
-	{ key: "icon-shrub",		path: "PlaceHolder-Plant.png" },
-	{ key: "icon-tree",			path: "PlaceHolder-Plant.png" },
+	// { key: "icon-annualFlower",	path: "PlaceHolder-Plant.png" },
+	// { key: "icon-grass",		path: "PlaceHolder-Plant.png" },
+	// { key: "icon-herb",			path: "PlaceHolder-Plant.png" },
+	// { key: "icon-shrub",		path: "PlaceHolder-Plant.png" },
+	// { key: "icon-tree",			path: "PlaceHolder-Plant.png" },
 ]);
 
+const backgrounds: Asset[] = prependPath("assets/serengeti/backgrounds/", [
+	{ key: "bg_serengeti",	path: "serengeti-blur.png" },
+	{ key: "bg_grass",		path: "grass.png" },
+]);
 
-export { nodeImages };
+const icons: Asset[] = prependPath("assets/serengeti/icons/", [
+	{ key: "icon-foodWeb",			path: "icon-food-web.png" },
+	{ key: "icon-ecoWeb",			path: "icon-eco-web.png" },
+	{ key: "icon-ecoChallenge",		path: "icon-eco-challenge.png" },
+	{ key: "icon-ecoMission",		path: "icon-eco-mission.png" },
+	{ key: "icon-backToBeginning",	path: "icon-back-to-beginning.png" },
+	{ key: "icon-backward",			path: "icon-backward.png" },
+	{ key: "icon-forward",			path: "icon-forward.png" },
+	{ key: "icon-play",				path: "icon-play.png" },
+	{ key: "icon-soil",				path: "icon-soil.png" },
+	{ key: "icon-sun",				path: "icon-sun.png" },
+	{ key: "icon-rain",				path: "icon-rain.png" },
+	{ key: "icon-info",				path: "icon-info.png" },
+	{ key: "icon-reset",			path: "icon-reset.png" },
+	{ key: "icon-bookmark-saved",	path: "icon-bookmark-saved.png" },
+	{ key: "icon-annualFlower",		path: "icon-annual-flower.png" },
+	{ key: "icon-grass",			path: "icon-grass.png" },
+	{ key: "icon-herb",				path: "icon-herb.png" },
+	{ key: "icon-shrub",			path: "icon-shrub.png" },
+	{ key: "icon-tree",				path: "icon-tree.png" },
+	{ key: "icon-menu-flag-se",		path: "icon-menu-flag-se.png" },
+	{ key: "icon-menu-flag-en",		path: "icon-menu-flag-en.png" },
+]);
+
+const images: Asset[] = nodes.concat(backgrounds, icons);
+
+const videos: Asset[] = [];
+
+export { nodes, images, videos };
