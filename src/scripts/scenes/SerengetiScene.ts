@@ -86,6 +86,8 @@ export class SerengetiScene extends BaseScene {
 	}
 
 	create(): void {
+		this.fade(false, 200, 0x000000);
+
 		let serengetiData = database.getScenario("c9ca9a35-869d-4b18-a62d-d43dd7a02939");
 		if (serengetiData) {
 			simulator.loadScenario(serengetiData);

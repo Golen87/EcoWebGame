@@ -3,9 +3,24 @@ export class BaseScene extends Phaser.Scene {
 		super(config);
 	}
 
+	// Start a camera fade effect to a specific color
+	fade(fadeOut: boolean, time: number, hexColor: number) {
+		let c = Phaser.Display.Color.ColorToRGBA(hexColor);
+		this.cameras.main.fadeEffect.start(fadeOut, time, c.r, c.g, c.b);
+	}
+
+	// Start a white camera flash effect
+	flash(time: number) {
+		this.cameras.main.flashEffect.start(time);
+	}
+
+	// Creates a timer event
+	addEvent(delay: number, callback: () => void, callbackScope: any=this): Phaser.Time.TimerEvent {
+		return this.time.addEvent({delay, callback, callbackScope});
+	}
 
 	// Creates Phaser text object
-	createText(x=0, y=0, size=20, color="#FFF", text=""): Phaser.GameObjects.Text {
+	createText(x: number=0, y: number=0, size: number=20, color: string="#FFF", text: string=""): Phaser.GameObjects.Text {
 		return this.add.text(x, y, text, {
 			fontFamily: "Mukta",
 			fontSize: Math.max(size, 1) + "px",

@@ -50,9 +50,9 @@ export class PreloadScene extends BaseScene {
 	}
 
 	create() {
-		this.scene.start("SerengetiScene");
-	}
-
-	update(time, delta) {
+		this.fade(true, 200, 0x000000);
+		this.addEvent(250, () => {
+			this.scene.start("SerengetiScene");
+		});
 	}
 }
