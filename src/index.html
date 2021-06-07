@@ -4,7 +4,15 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self';">
+	<meta http-equiv="Content-Security-Policy" content="
+		default-src 'none';
+		script-src 'self' 'unsafe-eval';
+		connect-src 'self';
+		img-src 'self' data: blob:;
+		style-src 'self' fonts.googleapis.com;
+		font-src 'self' fonts.gstatic.com;
+		media-src 'self';
+	">
 
 	<link rel="apple-touch-icon" sizes="180x180" href="../static/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="../static/favicon-32x32.png">
@@ -15,8 +23,22 @@
 
 	<title>EcoWeb</title>
 	<link rel="stylesheet" href="style.css">
+
+	<!-- Fonts -->
+	<!-- <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@600&display=swap" rel="stylesheet"> -->
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@600&display=swap" rel="stylesheet">
+	<!-- <style> -->
+		<!-- @import url('https://fonts.googleapis.com/css2?family=Mukta:wght@600&display=swap'); -->
+	<!-- </style> -->
 </head>
 <body>
+	<!-- Font preloading for Phaser -->
+	<!-- <div style="font-family:'Mukta', sans-serif; position:absolute; left:-1000px; visibility:hidden;">.</div> -->
+	<!-- <p style="font-family:verdana">This is a paragraph.</p> -->
+	<!-- <p style="font-family:'Courier New'">This is another paragraph.</p> -->
+	<p class="fontPreloader">hello world</p>
+
 	<!-- <script src="game.ts"></script> -->
 </body>
 </html>
