@@ -1,7 +1,8 @@
 * { margin: 0; padding: 0;}
 
 html, body {
-	height:100%;
+	width: 100%;
+	height: 100%;
 }
 
 body {
@@ -9,11 +10,21 @@ body {
 	padding: 0;
 	background: #111;
 	color: #eee;
-	font: caption;
+	/*font: caption;*/
 }
 
 canvas {
-	width: 100%;
-	height: 100%;
-	object-fit: contain;
+	display: block;
+	margin: auto;
+	/*width: 100%;*/
+	/*height: 100%;*/
+	/*object-fit: contain;*/
+}
+
+
+.fontPreloader {
+	font-family: 'Mukta', sans-serif;
+	position: absolute;
+	left: -1000px;
+	visibility: hidden;
 }
