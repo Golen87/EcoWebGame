@@ -5,16 +5,22 @@
   "main": "build/main.js",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
+    "download-phaser-typedef": "download --out typings https://raw.githubusercontent.com/photonstorm/phaser/master/types/phaser.d.ts",
+
     "superclean": "rimraf .cache node_modules build dist",
     "clean": "rimraf build dist public",
-    "download-phaser-typedef": "download --out typings https://raw.githubusercontent.com/photonstorm/phaser3-docs/master/typescript/phaser.d.ts",
+
     "build": "rimraf build && parcel build src/electron.ts src/index.html --public-url ./ -d build --out-file=main --target=electron",
     "watch": "rimraf build && parcel watch src/electron.ts src/index.html --public-url ./ -d build --out-file=main --target=electron",
     "app": "cross-env ELECTRON_DEBUG=true electron build/main.js",
     "debug": "cross-env ELECTRON_DEBUG=true electron --remote-debugging-port=9223 build/main.js",
-    "dist": "yarn build && electron-builder",
-    "webserve": "webpack serve --config webpack/webpack.dev.js",
-    "webdist": "rimraf public && webpack --config webpack/webpack.prod.js"
+
+    "mac": "yarn build && electron-builder --mac",
+    "windows": "yarn build && electron-builder --windows",
+    "linux": "yarn build && electron-builder --linux",
+
+    "serve": "webpack serve --config webpack/webpack.dev.js",
+    "public": "rimraf public && webpack --config webpack/webpack.prod.js"
   },
   "homepage": "https://github.com/Golen87/EcoWebGame",
   "bugs": {
@@ -52,7 +58,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "mathjs": "^9.4.1",
+    "numeric": "^1.2.6",
     "phaser": "^3.54.0",
+    "phaser3-rex-plugins": "^1.1.51",
     "yarn": "^1.22.10"
   },
   "devDependencies": {
