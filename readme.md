@@ -20,7 +20,17 @@ yarn clean
 yarn superclean
 ```
 
-### Development mode
+### Web development
+Run these commands to build and run the web app
+``` bash
+# Webpack serves the code at localhost:8080
+$ yarn serve
+
+# Webpack bundles the code into a minimized product build
+$ yarn public
+```
+
+### Application development
 Run these commands to build and run the Electron app
 ``` bash
 # Parcel bundles the code
@@ -34,16 +44,17 @@ $ yarn app
 
 # Run the electron app with options for a debugger to attach to the render process
 $ yarn debug
-
-# To debug the app in VS Code you can
-# - use yarn debug and run 'Electron: Renderer' in the debugger
-# or
-# - run 'Electron: All' in the debugger
 ```
 
 ### Production mode and packaging app
 Run this command to bundle code in production mode
 ``` bash
-# Create executables
-$ yarn dist
+# Create windows executables
+$ yarn windows
+
+# Create mac executables
+$ yarn mac
+
+# Create linux executables
+$ yarn linux
 ```
