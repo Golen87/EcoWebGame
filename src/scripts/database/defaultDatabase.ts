@@ -1360,7 +1360,7 @@ let defaultDatabase = JSON.stringify(
             "chi": null,
             "group": 11,
             "iucn": null,
-            "image": "icon-annualFlower",
+            "image": "icon-annual-flower",
             "color": "#34a853",
             "type": "plant",
             "animal": {
@@ -4128,7 +4128,7 @@ let defaultDatabase = JSON.stringify(
             "chi": "丹皮草",
             "group": 13,
             "iucn": null,
-            "image": "icon-annualFlower",
+            "image": "icon-annual-flower",
             "color": "#34a853",
             "type": "plant",
             "animal": {
@@ -5493,7 +5493,7 @@ let defaultDatabase = JSON.stringify(
             "chi": "up草",
             "group": 13,
             "iucn": null,
-            "image": "icon-annualFlower",
+            "image": "icon-annual-flower",
             "color": "#34a853",
             "type": "plant",
             "animal": {
