@@ -96,7 +96,7 @@ export class Node extends BaseNode {
 		this.bindInteractive(this.circle.image, true);
 		this.add(this.circle);
 
-		this.nameText = this.scene.createText(0, -0.7*NODE_SIZE, 20, "#FFF", this.species.name);
+		this.nameText = this.scene.createText(0, -0.7*NODE_SIZE, 20, this.scene.weights.regular, "#FFF", this.species.name);
 		// this.nameText.setDepth(1);
 		this.nameText.setOrigin(0.5, 1.0);
 		// this.nameText.setVisible(false);
@@ -118,7 +118,7 @@ export class Node extends BaseNode {
 		// this.plus.bindInteractive(this.plus.image);
 		// this.add(this.plus);
 
-		// this.plusText = this.scene.createText(0, 0, 0.3*NODE_SIZE, "#000", "+");
+		// this.plusText = this.scene.createText(0, 0, 0.3*NODE_SIZE, this.scene.weights.regular, "#000", "+");
 		// this.plusText.setOrigin(0.5);
 		// this.plus.add(this.plusText);
 
@@ -132,7 +132,7 @@ export class Node extends BaseNode {
 		// this.minus.bindInteractive(this.minus.image);
 		// this.add(this.minus);
 
-		// this.minusText = this.scene.createText(0, -1, 0.3*NODE_SIZE, "#000", "–");
+		// this.minusText = this.scene.createText(0, -1, 0.3*NODE_SIZE, this.scene.weights.regular, "#000", "–");
 		// this.minusText.setOrigin(0.5);
 		// this.minus.add(this.minusText);
 

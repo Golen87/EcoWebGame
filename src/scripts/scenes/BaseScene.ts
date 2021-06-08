@@ -1,6 +1,24 @@
+enum Weights {
+	thin = "Thin",
+	light = "Light",
+	regular = "Regular",
+	bold = "Bold",
+	black = "Black"
+}
+
 export class BaseScene extends Phaser.Scene {
+	public weights: any;
+
 	constructor(config: Phaser.Types.Scenes.SettingsConfig) {
 		super(config);
+
+		this.weights = {
+			thin: Weights.thin,
+			light: Weights.light,
+			regular: Weights.regular,
+			bold: Weights.bold,
+			black: Weights.black,
+		};
 	}
 
 	// Start a camera fade effect to a specific color
@@ -10,8 +28,9 @@ export class BaseScene extends Phaser.Scene {
 	}
 
 	// Start a white camera flash effect
-	flash(time: number) {
-		this.cameras.main.flashEffect.start(time);
+	flash(time: number, hexColor: number=0xFFFFFF) {
+		let c = Phaser.Display.Color.ColorToRGBA(hexColor);
+		this.cameras.main.flashEffect.start(time, c.r, c.g, c.b);
 	}
 
 	// Creates a timer event
@@ -20,12 +39,12 @@ export class BaseScene extends Phaser.Scene {
 	}
 
 	// Creates Phaser text object
-	createText(x: number=0, y: number=0, size: number=20, color: string="#FFF", text: string=""): Phaser.GameObjects.Text {
+	createText(x: number=0, y: number=0, size: number=20, weight: Weights=Weights.regular, color: string="#FFF", text: string=""): Phaser.GameObjects.Text {
 		return this.add.text(x, y, text, {
-			fontFamily: "Mukta",
+			fontFamily: "Lato" + weight,
 			fontSize: Math.max(size, 1) + "px",
 			color: color
-		});
+		}).setLineSpacing(0.4*size);
 	}
 
 	// The image keeps its aspect ratio, but is resized to fit within the given dimension

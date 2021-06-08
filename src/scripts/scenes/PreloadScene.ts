@@ -26,7 +26,7 @@ export class PreloadScene extends BaseScene {
 		let bar = this.add.rectangle(x, y, 1, 8, 0xDDDDDD).setOrigin(0, 0.5);
 
 		// Loading text
-		let text = this.createText(x, y, 2*bar.height, "#DDDDDD", "Loading...").setOrigin(0, 1.5);
+		let text = this.createText(x, y, 3*bar.height, this.weights.bold, "#DDD", "Loading...").setOrigin(0, 1.5);
 
 		// Listener
 		this.load.on("progress", (progress) => {
@@ -50,8 +50,8 @@ export class PreloadScene extends BaseScene {
 	}
 
 	create() {
-		this.fade(true, 200, 0x000000);
-		this.addEvent(250, () => {
+		this.fade(true, 100, 0x000000);
+		this.addEvent(110, () => {
 			this.scene.start("SerengetiScene");
 		});
 	}

@@ -30,11 +30,12 @@ export class FakeNode extends BaseNode {
 		}
 		this.add(this.graphics);
 
-		this.text = this.scene.createText(0, 0, 20, "#FFF", name);
+		this.text = this.scene.createText(0, 0, 30, this.scene.weights.bold, "#FFF", name);
 		this.text.setOrigin(0.5);
+		this.text.setScale(0.5);
 		// Can lead to size issues...
 		language.bind(this.text, name);
-		this.text.setScale(Math.min(0.75 * NODE_SIZE / this.text.width, 1));
+		// this.text.setScale(Math.min(0.75 * NODE_SIZE / this.text.width, 1));
 		this.add(this.text);
 	}
 

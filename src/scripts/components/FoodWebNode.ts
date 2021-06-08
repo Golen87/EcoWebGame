@@ -64,7 +64,7 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 		this.add(this.nameBg);
 
 		// Name label next to node
-		this.nameText = this.scene.createText(this.nameBg.x, this.nameBg.y, 14, "#000000", "");
+		this.nameText = this.scene.createText(this.nameBg.x, this.nameBg.y, 14, this.scene.weights.regular, "#000000");
 		this.nameText.setOrigin(0.5);
 		this.add(this.nameText);
 		language.bind(this.nameText, species.id, () => {

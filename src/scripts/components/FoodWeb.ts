@@ -290,11 +290,11 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let titleSize = 24;
 		let imgFac = 1.4;
 
-		this.infoTitle = this.scene.createText(-w/2+p, -h/2+p + 1*titleSize/2, titleSize, "#ffffff", "Title");
+		this.infoTitle = this.scene.createText(-w/2+p, -h/2+p + 1*titleSize/2, titleSize, this.scene.weights.regular, "#FFF", "Title");
 		this.infoTitle.setOrigin(0, 0.5);
 		this.infoBox.add(this.infoTitle);
 
-		this.infoDescription = this.scene.createText(-w/2+p, -h/2+p + (1+0.5)*titleSize, 16, "#ffffff", "Description");
+		this.infoDescription = this.scene.createText(-w/2+p, -h/2+p + (1+0.5)*titleSize, 16, this.scene.weights.regular, "#FFF", "Description");
 		this.infoDescription.setOrigin(0);
 		this.infoDescription.setWordWrapWidth(w-2*p, true);
 		// this.infoDescription.setLineSpacing(10);
@@ -313,11 +313,11 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.infoIucnBg.setOrigin(1.0, 0.5);
 		this.infoBox.add(this.infoIucnBg);
 
-		this.infoIucnText = this.scene.createText(ix, iy, 14, "#000000", "XX");
+		this.infoIucnText = this.scene.createText(ix, iy, 14, this.scene.weights.regular, "#000", "XX");
 		this.infoIucnText.setOrigin(0.5);
 		this.infoBox.add(this.infoIucnText);
 
-		this.infoIucnStatus = this.scene.createText(ix, iy, 14, "#ffffff", "Status");
+		this.infoIucnStatus = this.scene.createText(ix, iy, 14, this.scene.weights.regular, "#ffffff", "Status");
 		this.infoIucnStatus.setOrigin(1.0, 0.5);
 		language.bind(this.infoIucnStatus, "iucn_status");
 		this.infoBox.add(this.infoIucnStatus);

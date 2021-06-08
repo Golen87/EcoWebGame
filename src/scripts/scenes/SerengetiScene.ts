@@ -102,7 +102,7 @@ export class SerengetiScene extends BaseScene {
 		// this.minimap.scrollY = 0;
 
 		let bg = this.add.image(this.CX, this.CY, 'bg_serengeti');
-		bg.setAlpha(0.2);
+		bg.setAlpha(0.3);
 		// bg.setPostPipeline(BlurPostFilter);
 		this.fitToScreen(bg);
 		// this.cameras.main.setPostPipeline(BlurPostFilter);
@@ -125,27 +125,27 @@ export class SerengetiScene extends BaseScene {
 		// this.sidebarBg.setAlpha(1.0);
 
 
-		// Scenario name text
-		this.titleText = this.createText(10, 10, 20, "#fcb061", "Serengeti Food Web");
+		// Scenario title
+		this.titleText = this.createText(10, 10, 28, this.weights.bold, "#FCB061", "Serengeti Food Web");
 		this.titleText.setAlpha(0.75);
 		this.titleText.setOrigin(0);
 		language.bind(this.titleText, "title");
 
 		// Instructions text
-		this.instructionText = this.createText(sbX, sbY - 0.85*NODE_SIZE , 20, "#FFF", "Instruction text");
+		this.instructionText = this.createText(sbX, sbY - 0.85*NODE_SIZE, 20, this.weights.regular, "#FFF", "Instruction text");
 		this.instructionText.setOrigin(0.5);
 		this.instructionText.setDepth(1);
 
-		this.storyText1 = this.createText(sbX, sbY-0.30*sbH , 30, "#fcb061", "Large instruction text");
+		this.storyText1 = this.createText(sbX, sbY-0.30*sbH , 28, this.weights.bold, "#FCB061", "Large instruction text");
 		this.storyText1.setOrigin(0.5);
-		this.storyText2 = this.createText(sbX, sbY-0.10*sbH, 20, "#FFF", "Small instruction text");
+		this.storyText2 = this.createText(sbX, sbY-0.12*sbH, 20, this.weights.regular, "#FFF", "Small instruction text");
 		this.storyText2.setOrigin(0.5);
 
-		this.nextButton = (this.add as any).rexRoundRectangle(sbX, sbY+0.20*sbH, 200, 20, 20, 0xa77440);
+		this.nextButton = (this.add as any).rexRoundRectangle(sbX, sbY+0.20*sbH, 200, 44, 22, 0xa77440);
 		this.nextButton.setInteractive({ useHandCursor: true })
 			.on('pointerup', () => { this.startStory(this.currentStory + 1); }
 		);
-		this.nextText = this.createText(sbX, sbY+0.20*sbH, 30, "#FFF", "Next");
+		this.nextText = this.createText(sbX, sbY+0.20*sbH, 20, this.weights.bold, "#FFF", "Next");
 		this.nextText.setOrigin(0.5);
 		language.bind(this.nextText, "next_button");
 
@@ -166,11 +166,11 @@ export class SerengetiScene extends BaseScene {
 			this.sliders.push(slider);
 			this.add.existing(slider);
 
-			let sliderText = this.createText(0.6*w, 0, h, "#FFF", slider.value.toFixed(2));
+			let sliderText = this.createText(0.6*w, 0, h, this.weights.regular, "#FFF", slider.value.toFixed(2));
 			sliderText.setOrigin(0.0, 0.5);
 			slider.add(sliderText);
 
-			let sliderTitle = this.createText(-0.5*w, -0.5*h, h, "#FFF", "Name");
+			let sliderTitle = this.createText(-0.5*w, -0.5*h, h, this.weights.regular, "#FFF", "Name");
 			sliderTitle.setOrigin(0.0, 1.0);
 			slider.add(sliderTitle);
 
@@ -236,7 +236,7 @@ export class SerengetiScene extends BaseScene {
 			image.setOrigin(0.5, 0);
 			tab.add(image);
 
-			let text = this.createText(0, 0, 15, "#FFF", "Name");
+			let text = this.createText(0, 0, 16, this.weights.bold, "#FFF", "Chapter");
 			text.setOrigin(0, 0.5);
 			text.setAngle(90);
 			tab.add(text);
@@ -372,8 +372,8 @@ export class SerengetiScene extends BaseScene {
 		this.add.existing(this.modeSlider);
 
 		let modeSep = 1.5 * this.modeSlider.height;
-		let groupText = this.createText(- this.modeSlider.width/2 - modeSep, 0, 20, "#FFF", "");
-		let linkText = this.createText(this.modeSlider.width/2 + modeSep, 0, 20, "#FFF", "");
+		let groupText = this.createText(- this.modeSlider.width/2 - modeSep, 0, 20, this.weights.bold);
+		let linkText = this.createText(this.modeSlider.width/2 + modeSep, 0, 20, this.weights.bold);
 		groupText.setOrigin(1, 0.5);
 		linkText.setOrigin(0, 0.5);
 		this.modeSlider.add(groupText);
@@ -469,8 +469,8 @@ export class SerengetiScene extends BaseScene {
 
 		// Graph
 
-		this.graph = new Graph(this, 360, 160);
-		this.graph.setPosition((0.5+0.25) * this.graph.width, sbY + 0.03*this.graph.height);
+		this.graph = new Graph(this, 1.6*sbH, 0.75*sbH);
+		this.graph.setPosition(0.32*sbH + 0.5*this.graph.width, sbY + 0.03*this.graph.height);
 
 
 		// Info text popup
