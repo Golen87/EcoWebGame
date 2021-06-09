@@ -1,5 +1,6 @@
 import { DataScenario } from "../database/Interfaces";
 import { Scenario } from "./Scenario";
+import { SIMULATION_LENGTH } from "../constants";
 import * as numeric from "numeric";
 
 interface DataHistory {
@@ -13,21 +14,18 @@ interface DataRelation {
 }
 
 class Simulator {
-	public carryingCapacity: number[];
-	public growthRate: number[];
-	public history: DataHistory;
-	public interactionMatrix: number[][];
-	public population: number[];
-	public relationMap: any;
-	// public result: number;
 	public scenario: Scenario;
-	public simTime: number;
-	public sol: numeric.Dopri;
+	public population: number[];
+	public history: DataHistory;
 	public time: number;
+	public sol: numeric.Dopri;
 
-	constructor() {
-		this.simTime = 20;
-	}
+	private growthRate: number[];
+	public interactionMatrix: number[][];
+	// private carryingCapacity: number[];
+	private relationMap: any;
+
+	constructor() {}
 
 	loadScenario(scenarioData: DataScenario) {
 		this.scenario = new Scenario(scenarioData);
@@ -36,7 +34,7 @@ class Simulator {
 		this.history = {x:[], y:[]};
 		this.population = [];
 		this.growthRate = [];
-		this.carryingCapacity = [];
+		// this.carryingCapacity = [];
 		this.interactionMatrix = [];
 		this.relationMap = {};
 
@@ -50,7 +48,7 @@ class Simulator {
 			// this.growthRate[i] = 1;
 
 			// this.carryingCapacity[i] = (this.species[i].type == 'plant') ? 2 : 1;
-			this.carryingCapacity[i] = 1;
+			// this.carryingCapacity[i] = 1;
 
 			this.interactionMatrix[i] = [];
 			this.relationMap[i] = [];
@@ -122,7 +120,7 @@ class Simulator {
 
 	run(startTime) {
 		this.updateInteractions();
-		this.solve(startTime, this.simTime);
+		this.solve(startTime, SIMULATION_LENGTH);
 	}
 
 	updateInteractions() {
@@ -190,21 +188,6 @@ class Simulator {
 
 		this.history.x = this.history.x.concat(this.sol.x);
 		this.history.y = this.history.y.concat(this.sol.y);
-
-		// if (this.sol.x[0] == this.result.x[this.result.x.length-1]) {
-			// this.result.x.pop();
-			// this.result.y.pop();
-		// }
-
-		// for (let i = 0; i < this.sol.x.length; i++) {
-			// console.log( "{0}: [{1}]".format(this.sol.x[i].toFixed(2), this.sol.y[i].map(x => x.toFixed(2)).join(", ")) );
-		// }
-
-		// SOL.AT is pretty useful
-		// console.log(this.sol.at(0));
-
-		// this.result.x.push(...this.sol.x);
-		// this.result.y.push(...this.sol.y);
 	}
 
 	// Lotka-Volterra equation (classical model for predator-prey interaction)
@@ -238,43 +221,6 @@ class Simulator {
 			return this.sol.at(t);
 		}
 	}
-
-	/*
-	getValueAt(speciesIndex, pos) {
-		if (pos <= this.result.x[0]) {
-			return this.result.y[0][speciesIndex];
-		}
-		if (pos >= this.result.x[this.result.x.length-1]) {
-			return this.result.y[this.result.x.length-1][speciesIndex];
-		}
-
-		// Binary search for closest x pair
-		let index = Math.floor(this.result.x.length / 2);
-		let step = Math.floor(index / 2);
-		while (this.result.x[index] > pos || pos > this.result.x[index+1]) {
-			if (this.result.x[index] < pos) {
-				index += step;
-			}
-			else {
-				index -= step;
-			}
-			step = Math.ceil(step / 4);
-		}
-
-		let minX = this.result.x[index];
-		let maxX = this.result.x[index+1];
-		let minY = this.result.y[index][speciesIndex];
-		let maxY = this.result.y[index+1][speciesIndex];
-
-		if (minX == maxX || minY == maxY) {
-			return minY;
-		}
-		else {
-			let slope = (maxY - minY) / (maxX - minX);
-			return minY + slope * (pos - minX);
-		}
-	}
-	*/
 
 	get species() { return this.scenario.species; }
 }

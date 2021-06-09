@@ -9,7 +9,7 @@ import { FoodWeb } from "../components/foodweb/FoodWeb";
 import { InfoPopup } from "../components/InfoPopup";
 import { Graph } from "../components/Graph";
 import { Slider } from "../components/Slider";
-import { NODE_SIZE } from "../constants";
+import { NODE_SIZE, SIMULATION_LENGTH } from "../constants";
 import { language } from "../language/LanguageManager";
 import { database } from "../database/Database";
 import { BlurPostFilter } from "../pipelines/BlurPostFilter";
