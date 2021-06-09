@@ -9,6 +9,7 @@ import { FoodWeb } from "../components/foodweb/FoodWeb";
 import { InfoPopup } from "../components/InfoPopup";
 import { Graph } from "../components/Graph";
 import { Slider } from "../components/Slider";
+import { HSVToRGB, colorToString } from "../utils";
 import { NODE_SIZE, SIMULATION_LENGTH } from "../constants";
 import { language } from "../language/LanguageManager";
 import { database } from "../database/Database";
@@ -132,16 +133,19 @@ export class SerengetiScene extends BaseScene {
 		language.bind(this.titleText, "title");
 
 		// Instructions text
+		const buttonOrange = HSVToRGB(30/360, 100/100, 80/100);
+		const textOrange = HSVToRGB(30/360, 80/100, 100/100);
+
 		this.instructionText = this.createText(sbX, sbY - 0.85*NODE_SIZE, 20, this.weights.regular, "#FFF", "Instruction text");
 		this.instructionText.setOrigin(0.5);
 		this.instructionText.setDepth(1);
 
-		this.storyText1 = this.createText(sbX, sbY-0.30*sbH , 28, this.weights.bold, "#FCB061", "Large instruction text");
+		this.storyText1 = this.createText(sbX, sbY-0.30*sbH , 28, this.weights.bold, colorToString(textOrange), "Large instruction text");
 		this.storyText1.setOrigin(0.5);
 		this.storyText2 = this.createText(sbX, sbY-0.12*sbH, 20, this.weights.regular, "#FFF", "Small instruction text");
 		this.storyText2.setOrigin(0.5);
 
-		this.nextButton = (this.add as any).rexRoundRectangle(sbX, sbY+0.20*sbH, 200, 44, 22, 0xa77440);
+		this.nextButton = (this.add as any).rexRoundRectangle(sbX, sbY+0.20*sbH, 200, 44, 22, buttonOrange);
 		this.nextButton.setInteractive({ useHandCursor: true })
 			.on('pointerup', () => { this.startStory(this.currentStory + 1); }
 		);
@@ -485,7 +489,7 @@ export class SerengetiScene extends BaseScene {
 		let delta = deltaMs / 1000;
 
 		if (this.timeStamp < simulator.time) {
-			let x = (this.timeStamp - (simulator.time - simulator.simTime)) / simulator.simTime;
+			let x = (this.timeStamp - (simulator.time - SIMULATION_LENGTH)) / SIMULATION_LENGTH;
 			let fac = 1 - Math.pow(x, 2);
 			this.timeStamp += Math.max(0.05 * fac, 0.01);
 			this.timeStamp = Math.min(this.timeStamp, simulator.time);
