@@ -235,7 +235,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		for (const id of chosen) {
 			for (const node of this.nodes) {
 				if (id == node.species.id) {
-					let size = 50;
+					let size = 55;
 					let x = this.scene.CX + 1.4 * size * (count - (chosen.length-1)/2);
 					let y = 0.88 * this.scene.H;
 

@@ -28,6 +28,13 @@ export class Slider extends Phaser.GameObjects.Container {
 		this.background.setAlpha(0.5);
 		this.add(this.background);
 
+		const padding = thinHeight + height;
+		this.background.setInteractive({ hitArea: this.background, useHandCursor: true, draggable: true })
+			.on('pointerdown', this.onDown.bind(this))
+			.on('drag', this.onDrag.bind(this));
+		this.background.input.hitArea.setTo(-padding, -padding, this.background.width+2*padding, this.background.height+2*padding);
+		// this.scene.input.enableDebug(this.background);
+
 
 		// Step notches
 		if (steps > 0) {
@@ -47,10 +54,6 @@ export class Slider extends Phaser.GameObjects.Container {
 		this.button = scene.add.ellipse(0, 0, height, height, 0xFFFFFF);
 		this.targetX = this.button.x;
 		this.add(this.button);
-
-		this.button.setInteractive({ hitArea: this.button, useHandCursor: true, draggable: true })
-			.on('drag', this.onDrag.bind(this));
-		this.button.input.hitArea.setTo(-height, -height, 3*height, 3*height);
 
 		this.minX = -width/2;
 		this.maxX = width/2;
@@ -81,21 +84,27 @@ export class Slider extends Phaser.GameObjects.Container {
 	}
 
 
-	onDrag(pointer: Phaser.Input.Pointer, x: number, y: number) {
+	onDown(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
+		let x = localX - this.background.width/2;
+		this.background.input.dragStartX = x;
+		this.onDrag(pointer, x, 0);
+	}
+
+	onDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number) {
 		// Clamp x-coord
-		x = Phaser.Math.Clamp(x, this.minX, this.maxX);
+		dragX = Phaser.Math.Clamp(dragX, this.minX, this.maxX);
 
 		// If slider is segmented, find value, round it to step, and convert back to position
 		if (this.steps > 0) {
-			let value = (x - this.minX) / (this.maxX - this.minX);
+			let value = (dragX - this.minX) / (this.maxX - this.minX);
 			value = Math.round(value * (this.steps-1)) / (this.steps-1);
-			x = this.minX + value * (this.maxX - this.minX);
+			dragX = this.minX + value * (this.maxX - this.minX);
 		}
 
-		this.targetX = x;
+		this.targetX = dragX;
 
 		// Update value based on button's x-coord
-		let baseValue = (x - this.minX) / (this.maxX - this.minX);
+		let baseValue = (dragX - this.minX) / (this.maxX - this.minX);
 		let scaledValue = this.minV + baseValue * (this.maxV - this.minV);
 		this._value = scaledValue;
 

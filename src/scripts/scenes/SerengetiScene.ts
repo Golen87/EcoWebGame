@@ -370,7 +370,7 @@ export class SerengetiScene extends BaseScene {
 
 		this.foodWeb = new FoodWeb(this, 0, 0);
 
-		this.modeSlider = new Slider(this, this.CX, 0.96*this.H, 250, 24, 6);
+		this.modeSlider = new Slider(this, this.CX, 0.95*this.H, 250, 24, 6);
 		this.modeSlider.setRange(0, 1);
 		this.sliders.push(this.modeSlider);
 		this.add.existing(this.modeSlider);

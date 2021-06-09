@@ -41,23 +41,22 @@ export class BaseNode extends Phaser.GameObjects.Container {
 			.on('dragstart', this.onDragStart.bind(this))
 			.on('drag', this.onDrag.bind(this))
 			.on('dragend', this.onDragEnd.bind(this));
-		this.onOut();
 	}
 
-	onOut() {
+	onOut(pointer: Phaser.Input.Pointer, event: Phaser.Types.Input.EventData) {
 		this.hover = false;
 		this.hold = false;
 	}
 
-	onOver() {
+	onOver(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
 		this.hover = true;
 	}
 
-	onDown() {
+	onDown(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
 		this.hold = true;
 	}
 
-	onUp() {
+	onUp(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
 		if (this.hold) {
 			this.hold = false;
 			// if (this.callback) {
