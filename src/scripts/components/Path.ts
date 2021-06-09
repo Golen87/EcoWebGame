@@ -1,7 +1,7 @@
 import { BaseScene } from "../scenes/BaseScene";
-import { BaseNode } from "./BaseNode";
+import { BaseNode } from "./nodes/BaseNode";
+import { Node } from "./nodes/Node";
 import { NODE_SIZE } from "../constants";
-import { Node } from "./Node";
 
 export class Path extends Phaser.GameObjects.Container {
 	public scene: BaseScene;

@@ -1,11 +1,11 @@
 import { BaseScene } from "./BaseScene";
 import { NodeId } from "../database/Types";
 import { simulator } from "../simulation/Simulator";
-import { BaseNode } from "../components/BaseNode";
-import { Node } from "../components/Node";
-import { FakeNode } from "../components/FakeNode";
+import { BaseNode } from "../components/nodes/BaseNode";
+import { Node } from "../components/nodes/Node";
+import { FakeNode } from "../components/nodes/FakeNode";
 import { Path } from "../components/Path";
-import { FoodWeb } from "../components/FoodWeb";
+import { FoodWeb } from "../components/foodweb/FoodWeb";
 import { InfoPopup } from "../components/InfoPopup";
 import { Graph } from "../components/Graph";
 import { Slider } from "../components/Slider";
@@ -532,7 +532,7 @@ export class SerengetiScene extends BaseScene {
 							cohCount++;
 						// }
 
-						let sepRad = node.circle.image.displayWidth/2 + other.circle.image.displayWidth/2;
+						let sepRad = node.circle.displayWidth/2 + other.circle.displayWidth/2;
 						sepRad *= 1.2;
 						if (dist < sepRad) {
 							let temp = new Phaser.Math.Vector2(node.x, node.y);

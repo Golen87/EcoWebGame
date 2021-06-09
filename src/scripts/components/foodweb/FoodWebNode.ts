@@ -1,6 +1,6 @@
-import { BaseScene } from "../scenes/BaseScene";
-import { language } from "../language/LanguageManager";
-import { Organism } from "../simulation/Organism";
+import { BaseScene } from "../../scenes/BaseScene";
+import { language } from "../../language/LanguageManager";
+import { Organism } from "../../simulation/Organism";
 
 export class FoodWebNode extends Phaser.GameObjects.Container {
 	public scene: BaseScene;

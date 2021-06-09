@@ -1,9 +1,8 @@
-import { BaseScene } from "../scenes/BaseScene";
+import { BaseScene } from "../../scenes/BaseScene";
 import { BaseNode } from "./BaseNode";
-import { Button } from "./Button";
 import { Node } from "./Node";
-import { NODE_SIZE } from "../constants";
-import { language } from "../language/LanguageManager";
+import { NODE_SIZE } from "../../constants";
+import { language } from "../../language/LanguageManager";
 
 export class FakeNode extends BaseNode {
 	private graphics: Phaser.GameObjects.Graphics;

@@ -1,11 +1,9 @@
-import { BaseScene } from "../scenes/BaseScene";
+import { BaseScene } from "../../scenes/BaseScene";
 import { BaseNode } from "./BaseNode";
-import { Button } from "./Button";
-import { CircleButton } from "./CircleButton";
-import { Organism } from "../simulation/Organism";
-import { language } from "../language/LanguageManager";
-import { NODE_SIZE, DEATH_THRESHOLD } from "../constants";
-import { GrayScalePostFilter } from "../pipelines/GrayScalePostFilter";
+import { Organism } from "../../simulation/Organism";
+import { language } from "../../language/LanguageManager";
+import { NODE_SIZE, DEATH_THRESHOLD } from "../../constants";
+import { GrayScalePostFilter } from "../../pipelines/GrayScalePostFilter";
 
 interface EnergyDot {
 	angle: number;
@@ -39,7 +37,7 @@ export class Node extends BaseNode {
 	public inPlay: boolean;
 	public velocity: Phaser.Math.Vector2;
 
-	public circle: CircleButton;
+	public circle: Phaser.GameObjects.Image;
 	public nameText: Phaser.GameObjects.Text;
 	public energyGraphics: Phaser.GameObjects.Graphics;
 	public energyDots: EnergyDot[];
@@ -91,9 +89,10 @@ export class Node extends BaseNode {
 
 
 		// Image
-		this.circle = new CircleButton(scene, 0, 0, NODE_SIZE, () => {}, this.species.image);
+		this.circle = this.scene.add.image(0, 0, this.species.image);
+		this.circle.setScale(NODE_SIZE / this.circle.width);
 		// this.circle.setDepth(1);
-		this.bindInteractive(this.circle.image, true);
+		this.bindInteractive(this.circle, true);
 		this.add(this.circle);
 
 		this.nameText = this.scene.createText(0, -0.7*NODE_SIZE, 20, this.scene.weights.regular, "#FFF", this.species.name);
@@ -177,7 +176,7 @@ export class Node extends BaseNode {
 
 
 	update(time, delta) {
-		this.circle.image.setAlpha(this.hold ? 0.7 : 1.0);
+		this.circle.setAlpha(this.hold ? 0.7 : 1.0);
 
 		this.x += (this.goalX - this.x) / 2.0;
 		this.y += (this.goalY - this.y) / 2.0;
@@ -186,7 +185,7 @@ export class Node extends BaseNode {
 			this.x += (this.stickX - this.x) / 1.5;
 			this.y += (this.stickY - this.y) / 1.5;
 
-			const dist = this.isInsidePlayingField() ? this.circle.image.displayWidth/4 : this.circle.image.displayWidth;
+			const dist = this.isInsidePlayingField() ? this.circle.displayWidth/4 : this.circle.displayWidth;
 			if (Phaser.Math.Distance.Between(this.goalX, this.goalY, this.stickX, this.stickY) > dist) {
 				this.stick = false;
 				this.scene.tweens.add({
@@ -204,7 +203,7 @@ export class Node extends BaseNode {
 		// this.minus.setVisible(showButtons);
 
 		let scale = 1 + 0.15 * this.liftSmooth;
-		this.circle.image.setScale(scale * this.circle.image.origScale);
+		this.circle.setScale(scale * NODE_SIZE / this.circle.width);
 
 		// Show name when holding the node
 		this.nameText.setAlpha(this.liftSmooth);
@@ -260,7 +259,7 @@ export class Node extends BaseNode {
 	}
 
 	getWidth() {
-		return this.circle.image.displayWidth * this.circle.scale;
+		return this.circle.displayWidth * this.circle.scale;
 	}
 
 

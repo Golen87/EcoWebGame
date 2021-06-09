@@ -1,10 +1,10 @@
-import { BaseScene } from "../scenes/BaseScene";
+import { BaseScene } from "../../scenes/BaseScene";
 import { FoodWebNode } from "./FoodWebNode";
-import { language } from "../language/LanguageManager";
-import { simulator } from "../simulation/Simulator";
-import { database } from "../database/Database";
+import { language } from "../../language/LanguageManager";
+import { simulator } from "../../simulation/Simulator";
+import { database } from "../../database/Database";
 // Change simulator to serengetiAssets
-import { jiggle } from "../utils";
+import { jiggle } from "../../utils";
 
 interface Relation {
 	pred: FoodWebNode;

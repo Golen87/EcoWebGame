@@ -1,21 +1,35 @@
-export class Button extends Phaser.GameObjects.Container {
+import { BaseScene } from "../../scenes/BaseScene";
+import { NODE_SIZE } from "../../constants";
+
+// TODO: Remove Button
+export class BaseNode extends Phaser.GameObjects.Container {
+	public scene: BaseScene;
+	public liftSmooth: number;
 	public hover: boolean;
 	public hold: boolean;
+	// public callback?: () => void;
+	// public image: any;
 
-	constructor(scene, x, y) {
+	constructor(scene: BaseScene, x: number, y: number) {
 		super(scene, x, y);
+		this.scene = scene;
+		scene.add.existing(this);
 
 		this.hover = false;
 		this.hold = false;
 
-		// this.soundHover = scene.sound.add('hover_button');
-		// this.soundHover.setVolume(0.05);
-		// this.soundPress = scene.sound.add('press_button');
-		// this.soundPress.setVolume(0.2);
-		// this.soundRelease = scene.sound.add('release_button');
-		// this.soundRelease.setVolume(0.2);
-	}
+		this.liftSmooth = 0;
 
+		// this.callback = callback;
+
+		// this.image = scene.add.image(0, 0, image);
+		// this.image.origScale = size / this.image.height;
+		// this.image.setScale(this.image.origScale);
+		// // this.image.setScrollFactor(0);
+		// this.add(this.image);
+
+		// this.onOut();
+	}
 
 	bindInteractive(gameObject, draggable=false) {
 		gameObject.removeInteractive();
@@ -30,7 +44,6 @@ export class Button extends Phaser.GameObjects.Container {
 		this.onOut();
 	}
 
-
 	onOut() {
 		this.hover = false;
 		this.hold = false;
@@ -38,27 +51,37 @@ export class Button extends Phaser.GameObjects.Container {
 
 	onOver() {
 		this.hover = true;
-		// this.soundHover.play();
 	}
 
 	onDown() {
 		this.hold = true;
-		// this.soundRelease.play();
 	}
 
 	onUp() {
 		if (this.hold) {
-			// this.soundPress.play();
 			this.hold = false;
-			this.onClick();
+			// if (this.callback) {
+				// this.callback();
+			// }
 		}
 	}
-
-	onClick() {}
 
 	onDragStart(pointer, dragX, dragY) {}
 
 	onDrag(pointer, dragX, dragY) {}
 
 	onDragEnd(pointer, dragX, dragY, dropped) {}
+
+
+	isInsidePlayingField(): boolean {
+		return false;
+	}
+
+	get alive(): boolean {
+		return false;
+	}
+
+	getWidth(): number {
+		return NODE_SIZE;
+	}
 }
