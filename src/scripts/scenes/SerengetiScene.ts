@@ -425,13 +425,13 @@ export class SerengetiScene extends BaseScene {
 		this.fakeNodes.set("plant_2",		new FakeNode(this, 0.27 * this.W, 0.65 * this.H, "node_plant"));
 		this.fakeNodes.set("plant_3",		new FakeNode(this, 0.75 * this.W, 0.65 * this.H, "node_plant"));
 
-		this.fakeNodes.set("c2",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_carnivore"));
-		this.fakeNodes.set("h2",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_herbivore"));
-		this.fakeNodes.set("h3",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_herbivore"));
-		this.fakeNodes.set("h4",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_herbivore"));
-		this.fakeNodes.set("p1",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_plant"));
-		this.fakeNodes.set("p3",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_plant"));
-		this.fakeNodes.set("p4",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_plant"));
+		this.fakeNodes.set("c2",			new FakeNode(this, 0.29 * this.W, 0.15 * this.H, "node_carnivore"));
+		this.fakeNodes.set("h2",			new FakeNode(this, 0.22 * this.W, 0.40 * this.H, "node_herbivore"));
+		this.fakeNodes.set("h3",			new FakeNode(this, 0.42 * this.W, 0.40 * this.H, "node_herbivore"));
+		this.fakeNodes.set("h4",			new FakeNode(this, 0.82 * this.W, 0.40 * this.H, "node_herbivore"));
+		this.fakeNodes.set("p1",			new FakeNode(this, 0.33 * this.W, 0.65 * this.H, "node_plant"));
+		this.fakeNodes.set("p3",			new FakeNode(this, 0.13 * this.W, 0.65 * this.H, "node_plant"));
+		this.fakeNodes.set("p4",			new FakeNode(this, 0.73 * this.W, 0.65 * this.H, "node_plant"));
 
 
 		// Node-fake relations
@@ -528,21 +528,23 @@ export class SerengetiScene extends BaseScene {
 					let sepSum = new Phaser.Math.Vector2();
 
 					for (const other of this.nodes) {
-						let dist = Phaser.Math.Distance.BetweenPoints(node, other);
+						if (other.visible) {
+							let dist = Phaser.Math.Distance.BetweenPoints(node, other);
 
-						let cohRad = 10000;
-						// if (dist < cohRad && node.species.group == other.species.group) {
-							cohSum.add(other);
-							cohCount++;
-						// }
+							let cohRad = 10000;
+							// if (dist < cohRad && node.species.group == other.species.group) {
+								cohSum.add(other);
+								cohCount++;
+							// }
 
-						let sepRad = node.circle.displayWidth/2 + other.circle.displayWidth/2;
-						sepRad *= 1.2;
-						if (dist < sepRad) {
-							let temp = new Phaser.Math.Vector2(node.x, node.y);
-							temp.subtract(other);
-							temp.scale(Math.pow((sepRad - dist) / sepRad, 1.1));
-							sepSum.add(temp);
+							let sepRad = node.circle.displayWidth/2 + other.circle.displayWidth/2;
+							sepRad *= 1.2;
+							if (dist < sepRad) {
+								let temp = new Phaser.Math.Vector2(node.x, node.y);
+								temp.subtract(other);
+								temp.scale(Math.pow((sepRad - dist) / sepRad, 1.1));
+								sepSum.add(temp);
+							}
 						}
 					}
 
@@ -664,7 +666,7 @@ export class SerengetiScene extends BaseScene {
 				node.setVisible(this.story3.includes(node.role));
 				if (node.inPlay && !node.visible) {
 					// TODO: Fix since this re-runs simulation 3 times
-					this.onNodeAddOrRemove(node, false, true);
+					node.resetPosition(false);
 				}
 			}
 			this.fakeNodes.forEach((fakeNode: FakeNode, key: NodeId) => {
