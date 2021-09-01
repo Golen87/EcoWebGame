@@ -12,8 +12,8 @@ let mainWindow: Electron.BrowserWindow | null;
 function createWindow() {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
-		width: 1200,
-		height: 600,
+		width: 1920,
+		height: 1080,
 		webPreferences: {
 			nodeIntegration: true,
 		},
@@ -27,7 +27,7 @@ function createWindow() {
 		mainWindow.webContents.openDevTools();
 	} else if (!process.env.ELECTRON_DEBUG || process.env.ELECTRON_DEBUG === 'false') {
 		// Open window in windowed
-		mainWindow.setFullScreen(false);
+		mainWindow.setFullScreen(true);
 		// Remove menu bar
 		mainWindow.setMenu(null);
 	}

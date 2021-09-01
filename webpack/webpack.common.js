@@ -29,6 +29,22 @@ module.exports = {
           // "sass-loader",
         // ],
       // },
+      {
+        test: /\.(gif|png|jpe?g|svg|xml)$/i,
+        use: "file-loader"
+      },
+      {
+        test: /\.mp4$/,
+        use: 'file-loader?name=videos/[name].[ext]',
+      },
+      // {
+      //     test: /\.(woff(2)?|ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+      //     loader: 'file-loader',
+      //     options: {
+      //         name: 'fonts/[name].[ext]?[hash]',
+      //         publicPath: '/'
+      //     }
+      // }
     ]
   },
   optimization: {
@@ -50,7 +66,9 @@ module.exports = {
       patterns: [
         { from: 'pwa', to: '' },
         { from: 'static' },
-        { from: 'src/assets', to: 'assets' },
+        { from: 'downloads', to: 'downloads' },
+        // { from: 'src/assets', to: 'assets' },
+        { from: 'src/assets/fonts', to: 'assets/fonts' },
         { from: 'src/style.css' },
       ]
     }),
