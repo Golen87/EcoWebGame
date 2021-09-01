@@ -1,9 +1,12 @@
 import { BaseScene } from "./BaseScene";
-import { nodes, images, videos } from "../assets/serengetiAssets";
-// import { nodes, images, videos } from "../assets/ecowebAssets";
+// import { images as uniImages, videos as uniVideos } from "../assets/serengetiAssets";
+// import { images as ecoImages, videos as ecoVideos } from "../assets/ecowebAssets";
+import { images, videos } from "../assets/serengetiAssets";
+// import { images, videos } from "../assets/ecowebAssets";
 import { language } from "../language/LanguageManager";
 import { GrayScalePostFilter } from "../pipelines/GrayScalePostFilter";
 import { BlurPostFilter } from "../pipelines/BlurPostFilter";
+import { UNIVERSEUM } from "../constants";
 
 
 export class PreloadScene extends BaseScene {
@@ -13,8 +16,10 @@ export class PreloadScene extends BaseScene {
 
 	init() {
 		let renderer = (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer);
-		renderer.pipelines.addPostPipeline("GrayScalePostFilter", GrayScalePostFilter);
-		renderer.pipelines.addPostPipeline("BlurPostFilter", BlurPostFilter);
+		if (renderer.pipelines) {
+			renderer.pipelines.addPostPipeline("GrayScalePostFilter", GrayScalePostFilter);
+			renderer.pipelines.addPostPipeline("BlurPostFilter", BlurPostFilter);
+		}
 	}
 
 	preload() {
@@ -36,9 +41,8 @@ export class PreloadScene extends BaseScene {
 
 		// Load assets
 
-		for (let image of nodes) {
-			this.load.image(image.key, image.path);
-		}
+		// let images = UNIVERSEUM ? uniImages : ecoImages;
+		// let videos = UNIVERSEUM ? uniVideos : ecoVideos;
 
 		for (let image of images) {
 			this.load.image(image.key, image.path);
@@ -52,7 +56,12 @@ export class PreloadScene extends BaseScene {
 	create() {
 		this.fade(true, 100, 0x000000);
 		this.addEvent(110, () => {
-			this.scene.start("SerengetiScene");
+			if (UNIVERSEUM) {
+				this.scene.start("SerengetiScene");
+			}
+			else {
+				this.scene.start("EcowebScene");
+			}
 		});
 	}
 }

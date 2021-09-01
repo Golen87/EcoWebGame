@@ -2,6 +2,7 @@ import "phaser";
 import { PreloadScene } from "./scripts/scenes/PreloadScene";
 import { SerengetiScene } from "./scripts/scenes/SerengetiScene";
 import RoundRectanglePlugin from "phaser3-rex-plugins/plugins/roundrectangle-plugin.js";
+import { EcowebScene } from "./scripts/scenes/EcowebScene";
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.WEBGL, // Phaser.AUTO
@@ -15,7 +16,8 @@ const config: Phaser.Types.Core.GameConfig = {
 	},
 	scene: [
 		PreloadScene,
-		SerengetiScene
+		SerengetiScene,
+		EcowebScene,
 	],
 	plugins: {
 		global: [

@@ -1,12 +1,11 @@
-import { defaultDatabase } from "./defaultDatabase";
+import { serengetiData } from "./serengetiData";
+import { ecowebData } from "./ecowebData";
 import { isPlainObject, uuidv4 } from "../utils";
 import { language } from "../language/LanguageManager";
 import { DatabaseStructure, DataNode, DataNodeAnimal, DataNodeService, DataNodeRelation, DataEvent, DataEventEffect, DataScenario, DataScenarioActor, DataScenarioAction } from "./Interfaces";
 import { NodeType, AnimalFood, AnimalSize, PlantLayer, PlantShade, ServiceCategory, RelationInteraction, ActorVisibility, ActionType, EffectMethod } from "./Enums";
 import { NodeId, EventId, ScenarioId, Point } from "./Types";
-
-const DATABASE_VERSION = 4;
-const DATABASE_LOCKED = true;
+import { DATABASE_VERSION, DATABASE_LOCKED, UNIVERSEUM } from "../constants";
 
 class Database {
 	private nodes: Map<NodeId, DataNode>;
@@ -91,12 +90,19 @@ class Database {
 
 		// if (!success) {
 		// 	console.log("Loading default database");
-		this.importJSON(defaultDatabase);
+		// 	import
 		// }
+
+		if (UNIVERSEUM) {
+			this.importJSON(serengetiData);
+		}
+		else {
+			this.importJSON(ecowebData);
+		}
 
 		// this.save();
 
-		this.nodes.forEach((node: DataNode, key: string) => {
+		this.nodes.forEach((node: DataNode, nodeId: NodeId) => {
 			language.addNodeName(node);
 		});
 	}
@@ -148,6 +154,10 @@ class Database {
 		let obj = this.nodes.get(id);
 		console.assert(obj, "Could not find node with id '" + id + "'");
 		return obj;
+	}
+
+	getAllNodes(): Map<NodeId, DataNode> {
+		return this.nodes;
 	}
 
 
@@ -449,7 +459,7 @@ class Database {
 			if (typeof obj[key] === typeof data[key]) {
 				obj[key] = data[key];
 			}
-			else if (!required && data[key] === null) {
+			else if (!required && data[key] == null) {
 				obj[key] = undefined;
 			}
 			else {
@@ -495,7 +505,9 @@ class Database {
 
 					console.assert(Object.values(RelationInteraction).includes(relationData.interaction), "Unknown relation interaction");
 					relation.interaction = relationData.interaction;
-					relation.preference = parseInt(relationData.preference);
+					if (relationData.preference != null) {
+						relation.preference = parseInt(relationData.preference);
+					}
 				}
 			}
 		}

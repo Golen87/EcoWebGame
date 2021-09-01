@@ -1,190 +1,117 @@
-import { prependPath } from "../utils";
+import { nodes as uniNodes, icons as uniIcons } from "../assets/serengetiAssets";
+
+
+/* Interface */
 
 interface Asset {
 	key: string;
 	path: string;
 }
 
-const nodes: Asset[] = prependPath("assets/ecoweb/nodes/128/", [
+
+/* Nodes */
+
+// Serengeti
+import crocuta_crocuta from "../../assets/ecoweb/nodes/128/Toppkonsument_Crocuta_crocuta.png"; // Hyena
+import leptailurus_serval from "../../assets/ecoweb/nodes/128/Toppkonsument_Leptailurus_serval.png"; // Serval
+import lycaon_pictus from "../../assets/ecoweb/nodes/128/Toppkonsument_Lycaon_pictus.png"; // Vildhund
+import panthera_leo_f from "../../assets/ecoweb/nodes/128/Toppkonsument_Panthera_leo_f.png"; // Lejon
+import connochaetes_taurinus from "../../assets/ecoweb/nodes/128/Konsument_Connochaetes_taurinus.png"; // Gnu
+import equus_quagga from "../../assets/ecoweb/nodes/128/Konsument_Equus_quagga.png"; // Zebra
+import giraffa_camelopardalis from "../../assets/ecoweb/nodes/128/Konsument_Giraffa_camelopardalis_tippelskirchii.png"; // Giraff
+import loxodonta_africana from "../../assets/ecoweb/nodes/128/Konsument_Loxodonta_africana.png"; // Elefant
+import madoqua_kirkii from "../../assets/ecoweb/nodes/128/Konsument_Madoqua_kirkii.png"; // Dikdik
+import rhabdomys_pumilio from "../../assets/ecoweb/nodes/128/Konsument_Rhabdomys_pumilio.png"; // Mus
+import acacia_senegal from "../../assets/ecoweb/nodes/128/Producent_Acacia_senegal.png"; // Acacia
+import acalypha_fruticosa from "../../assets/ecoweb/nodes/128/Producent_Acalypha_fruticosa.png"; // Acalypha
+import aristidia from "../../assets/ecoweb/nodes/128/Producent_Aristidia.png"; // Aristidia
+import balanites_aegyptiaca from "../../assets/ecoweb/nodes/128/Producent_Balanites_aegyptiaca.png"; // Balanties
+import heteropogon_contortus from "../../assets/ecoweb/nodes/128/Producent_Heteropogon_contortus.png"; // Heteropogon
+import solanum_incanum from "../../assets/ecoweb/nodes/128/Producent_Solanum_incanum.png"; // Solanum
+import themeda_triandra from "../../assets/ecoweb/nodes/128/Producent_Themeda_triandra.png"; // Themeda
+
+// Bondgården
+// import syrphidae from "../../assets/ecoweb/nodes/128/Toppkonsument_Syrphidae.png"; // Geting
+// import anthophila from "../../assets/ecoweb/nodes/128/Konsument_Anthophila.png"; // Bi
+// import argyresthia_conjugella from "../../assets/ecoweb/nodes/128/Konsument_Argyresthia_conjugella.png"; // Rönnbärsmal
+// import bombus from "../../assets/ecoweb/nodes/128/Konsument_Bombus.png"; // Humla
+// import deroceras_reticulatum from "../../assets/ecoweb/nodes/128/Konsument_Deroceras_reticulatum.png"; // Åkersnigel
+// import meligethes_aeneus from "../../assets/ecoweb/nodes/128/Konsument_Meligethes_aeneus.png"; // Rapsbagge
+// import rhopalocera from "../../assets/ecoweb/nodes/128/Konsument_Rhopalocera.png"; // Dagfjäril
+// import avena_sativa from "../../assets/ecoweb/nodes/128/Producent_Avena_sativa.png"; // Havre
+// import brassica_napus from "../../assets/ecoweb/nodes/128/Producent_Brassica_napus.png"; // Raps
+// import carum_carvi from "../../assets/ecoweb/nodes/128/Producent_Carum_carvi.png"; // Kummin
+// import festuca_rubra from "../../assets/ecoweb/nodes/128/Producent_Festuca_rubra.png"; // Rödsvingel
+// import hordeum_vulgare from "../../assets/ecoweb/nodes/128/Producent_Hordeum_vulgare.png"; // Korn
+// import lactuca_sativa from "../../assets/ecoweb/nodes/128/Producent_Lactuca_sativa.png"; // Sallat
+// import malus_domestica from "../../assets/ecoweb/nodes/128/Producent_Malus_domestica.png"; // Äppelträd
+
+const nodes: Asset[] = [
 	// Serengeti
-	{ key: "crocuta_crocuta",			path: "Toppkonsument_Crocuta_crocuta.png" }, // Hyena
-	{ key: "leptailurus_serval",		path: "Toppkonsument_Leptailurus_serval.png" }, // Serval
-	{ key: "lycaon_pictus",				path: "Toppkonsument_Lycaon_pictus.png" }, // Vildhund
-	{ key: "panthera_leo_f",			path: "Toppkonsument_Panthera_leo_f.png" }, // Lejon
-	{ key: "connochaetes_taurinus",		path: "Konsument_Connochaetes_taurinus.png" }, // Gnu
-	{ key: "equus_quagga",				path: "Konsument_Equus_quagga.png" }, // Zebra
-	{ key: "giraffa_camelopardalis",	path: "Konsument_Giraffa_camelopardalis_tippelskirchii.png" }, // Giraff
-	{ key: "loxodonta_africana",		path: "Konsument_Loxodonta_africana.png" }, // Elefant
-	{ key: "madoqua_kirkii",			path: "Konsument_Madoqua_kirkii.png" }, // Dikdik
-	{ key: "rhabdomys_pumilio",			path: "Konsument_Rhabdomys_pumilio.png" }, // Mus
-	{ key: "acacia_senegal",			path: "Producent_Acacia_senegal.png" }, // Acacia
-	{ key: "acalypha_fruticosa",		path: "Producent_Acalypha_fruticosa.png" }, // Acalypha
-	{ key: "aristidia",					path: "Producent_Aristidia.png" }, // Aristidia
-	{ key: "balanites_aegyptiaca",		path: "Producent_Balanites_aegyptiaca.png" }, // Balanties
-	{ key: "heteropogon_contortus",		path: "Producent_Heteropogon_contortus.png" }, // Heteropogon
-	{ key: "solanum_incanum",			path: "Producent_Solanum_incanum.png" }, // Solanum
-	{ key: "themeda_triandra",			path: "Producent_Themeda_triandra.png" }, // Themeda
+	{ key: "crocuta_crocuta",			path: crocuta_crocuta }, // Hyena
+	{ key: "leptailurus_serval",		path: leptailurus_serval }, // Serval
+	{ key: "lycaon_pictus",				path: lycaon_pictus }, // Vildhund
+	{ key: "panthera_leo_f",			path: panthera_leo_f }, // Lejon
+	{ key: "connochaetes_taurinus",		path: connochaetes_taurinus }, // Gnu
+	{ key: "equus_quagga",				path: equus_quagga }, // Zebra
+	{ key: "giraffa_camelopardalis",	path: giraffa_camelopardalis }, // Giraff
+	{ key: "loxodonta_africana",		path: loxodonta_africana }, // Elefant
+	{ key: "madoqua_kirkii",			path: madoqua_kirkii }, // Dikdik
+	{ key: "rhabdomys_pumilio",			path: rhabdomys_pumilio }, // Mus
+	{ key: "acacia_senegal",			path: acacia_senegal }, // Acacia
+	{ key: "acalypha_fruticosa",		path: acalypha_fruticosa }, // Acalypha
+	{ key: "aristidia",					path: aristidia }, // Aristidia
+	{ key: "balanites_aegyptiaca",		path: balanites_aegyptiaca }, // Balanties
+	{ key: "heteropogon_contortus",		path: heteropogon_contortus }, // Heteropogon
+	{ key: "solanum_incanum",			path: solanum_incanum }, // Solanum
+	{ key: "themeda_triandra",			path: themeda_triandra }, // Themeda
 
 	// Bondgården
-	// { key: "syrphidae",					path: "Toppkonsument_Syrphidae.png" }, // Geting
-	// { key: "anthophila",				path: "Konsument_Anthophila.png" }, // Bi
-	// { key: "argyresthia_conjugella",	path: "Konsument_Argyresthia_conjugella.png" }, // Rönnbärsmal
-	// { key: "bombus",					path: "Konsument_Bombus.png" }, // Humla
-	// { key: "deroceras_reticulatum",		path: "Konsument_Deroceras_reticulatum.png" }, // Åkersnigel
-	// { key: "meligethes_aeneus",			path: "Konsument_Meligethes_aeneus.png" }, // Rapsbagge
-	// { key: "rhopalocera",				path: "Konsument_Rhopalocera.png" }, // Dagfjäril
-	// { key: "avena_sativa",				path: "Producent_Avena_sativa.png" }, // Havre
-	// { key: "brassica_napus",			path: "Producent_Brassica_napus.png" }, // Raps
-	// { key: "carum_carvi",				path: "Producent_Carum_carvi.png" }, // Kummin
-	// { key: "festuca_rubra",				path: "Producent_Festuca_rubra.png" }, // Rödsvingel
-	// { key: "hordeum_vulgare",			path: "Producent_Hordeum_vulgare.png" }, // Korn
-	// { key: "lactuca_sativa",			path: "Producent_Lactuca_sativa.png" }, // Sallat
-	// { key: "malus_domestica",			path: "Producent_Malus_domestica.png" }, // Äppelträd
-]);
-
-const universeumNodes: Asset[] = prependPath("assets/serengeti/nodes/128/", [
-	// Animals
-	{ key: "ACIJUB",	path: "ACIJUB.png" },
-	{ key: "AEPMEL",	path: "AEPMEL.png" },
-	{ key: "ALCBUS",	path: "ALCBUS.png" },
-	{ key: "CANAUR",	path: "CANAUR.png" },
-	{ key: "CANMES",	path: "CANMES.png" },
-	{ key: "CARCAR",	path: "CARCAR.png" },
-	{ key: "CONTAU",	path: "CONTAU.png" },
-	{ key: "CROCRO",	path: "CROCRO.png" },
-	{ key: "DAMKOR",	path: "DAMKOR.png" },
-	{ key: "EQUBUR",	path: "EQUBUR.png" },
-	{ key: "GAZGRA",	path: "GAZGRA.png" },
-	{ key: "GAZTHO",	path: "GAZTHO.png" },
-	{ key: "GIRCAM",	path: "GIRCAM.png" },
-	{ key: "HETBRU",	path: "HETBRU.png" },
-	{ key: "HIPAMP",	path: "HIPAMP.png" },
-	{ key: "KOBELL",	path: "KOBELL.png" },
-	{ key: "LEPSER",	path: "LEPSER.png" },
-	{ key: "LOXAFR",	path: "LOXAFR.png" },
-	{ key: "LYCPIC",	path: "LYCPIC.png" },
-	{ key: "MADKIR",	path: "MADKIR.png" },
-	{ key: "OUROUR",	path: "OUROUR.png" },
-	{ key: "PANLEO",	path: "PANLEO.png" },
-	{ key: "PANPAR",	path: "PANPAR.png" },
-	{ key: "PAPANU",	path: "PAPANU.png" },
-	{ key: "PEDCAP",	path: "PEDCAP.png" },
-	{ key: "PHAAET",	path: "PHAAET.png" },
-	{ key: "PROCAP",	path: "PROCAP.png" },
-	{ key: "REDRED",	path: "REDRED.png" },
-	{ key: "RHAPUM",	path: "RHAPUM.png" },
-	{ key: "SYNCAF",	path: "SYNCAF.png" },
-	{ key: "TAUORY",	path: "TAUORY.png" },
-	{ key: "TRASCR",	path: "TRASCR.png" },
-	// Plants
-	{ key: "ACASEN",	path: "ACASEN.png" },
-	{ key: "ACASEY",	path: "ACASEY.png" },
-	{ key: "ACATOR",	path: "ACATOR.png" },
-	{ key: "ACAXAN",	path: "ACAXAN.png" },
-	{ key: "ACHASP",	path: "ACHASP.png" },
-	{ key: "ALLRUB",	path: "ALLRUB.png" },
-	{ key: "ALOMAC",	path: "ALOMAC.png" },
-	{ key: "ALOSEC",	path: "ALOSEC.png" },
-	{ key: "BALAEG",	path: "BALAEG.png" },
-	{ key: "BLEACA",	path: "BLEACA.png" },
-	{ key: "BOSAUG",	path: "BOSAUG.png" },
-	{ key: "CAPTOM",	path: "CAPTOM.png" },
-	{ key: "CHLGAY",	path: "CHLGAY.png" },
-	{ key: "CISQUA",	path: "CISQUA.png" },
-	{ key: "CISROT",	path: "CISROT.png" },
-	{ key: "COMMEAFR",	path: "COMMEAFR.png" },
-	{ key: "COMMOL",	path: "COMMOL.png" },
-	{ key: "CROMAC",	path: "CROMAC.png" },
-	{ key: "CYNDAC",	path: "CYNDAC.png" },
-	{ key: "EMICOC",	path: "EMICOC.png" },
-	{ key: "ERACIL",	path: "ERACIL.png" },
-	{ key: "EUPCAN",	path: "EUPCAN.png" },
-	{ key: "EUSPAS",	path: "EUSPAS.png" },
-	{ key: "FICTHI",	path: "FICTHI.png" },
-	{ key: "GREBIC",	path: "GREBIC.png" },
-	{ key: "HELSTE",	path: "HELSTE.png" },
-	{ key: "HETCON",	path: "HETCON.png" },
-	{ key: "HIB",		path: "HIB.png" },
-	{ key: "HOSOPP",	path: "HOSOPP.png" },
-	{ key: "HYPFOR",	path: "HYPFOR.png" },
-	{ key: "INDHOC",	path: "INDHOC.png" },
-	{ key: "IPOOBS",	path: "IPOOBS.png" },
-	{ key: "KIGAFR",	path: "KIGAFR.png" },
-	{ key: "MAETRI",	path: "MAETRI.png" },
-	{ key: "OLE",		path: "OLE.png" },
-	{ key: "PANCOL",	path: "PANCOL.png" },
-	{ key: "PANMAX",	path: "PANMAX.png" },
-	{ key: "PANREP",	path: "PANREP.png" },
-	{ key: "PAPCAP",	path: "PAPCAP.png" },
-	{ key: "PELCAL",	path: "PELCAL.png" },
-	{ key: "PHRMAU",	path: "PHRMAU.png" },
-	{ key: "FICGLU",	path: "FICGLU.png" },
-	{ key: "RHOREV",	path: "RHOREV.png" },
-	{ key: "SCLBIR",	path: "SCLBIR.png" },
-	{ key: "SENDID",	path: "SENDID.png" },
-	{ key: "SENEHR",	path: "SENEHR.png" },
-	{ key: "SENSUF",	path: "SENSUF.png" },
-	{ key: "SETSPH",	path: "SETSPH.png" },
-	{ key: "SID",		path: "SID.png" },
-	{ key: "SOLINC",	path: "SOLINC.png" },
-	{ key: "SOLNIG",	path: "SOLNIG.png" },
-	{ key: "SPOPYR",	path: "SPOPYR.png" },
-	{ key: "THETRI",	path: "THETRI.png" },
-	{ key: "TYPCAP",	path: "TYPCAP.png" },
-	{ key: "XIMCAF",	path: "XIMCAF.png" },
-	{ key: "ZIZ",		path: "ZIZ.png" },
-	// Icons
-	// { key: "icon-annualFlower",	path: "PlaceHolder-Plant.png" },
-	// { key: "icon-grass",		path: "PlaceHolder-Plant.png" },
-	// { key: "icon-herb",			path: "PlaceHolder-Plant.png" },
-	// { key: "icon-shrub",		path: "PlaceHolder-Plant.png" },
-	// { key: "icon-tree",			path: "PlaceHolder-Plant.png" },
-]);
-
-const backgrounds: Asset[] = prependPath("assets/ecoweb/backgrounds/", [
-	{ key: "planet_still",	path: "planet.jpg" },
-	{ key: "bg_serengeti",	path: "serengeti-blur2.jpg" },
-]);
-
-const icons: Asset[] = prependPath("assets/serengeti/icons/", [
-	{ key: "icon-foodWeb",				path: "icon-food-web.png" },
-	{ key: "icon-ecoWeb",				path: "icon-eco-web.png" },
-	{ key: "icon-ecoChallenge",			path: "icon-eco-challenge.png" },
-	{ key: "icon-ecoMission",			path: "icon-eco-mission.png" },
-	{ key: "icon-backToBeginning",		path: "icon-back-to-beginning.png" },
-	{ key: "icon-backward",				path: "icon-backward.png" },
-	{ key: "icon-forward",				path: "icon-forward.png" },
-	{ key: "icon-play",					path: "icon-play.png" },
-	{ key: "icon-plant-soil",			path: "icon-plant-soil.png" },
-	{ key: "icon-plant-sun",			path: "icon-plant-sun.png" },
-	{ key: "icon-plant-rain",			path: "icon-plant-rain.png" },
-	{ key: "icon-info",					path: "icon-info.png" },
-	{ key: "icon-reset",				path: "icon-reset.png" },
-	{ key: "icon-bookmark-saved",		path: "icon-bookmark-saved.png" },
-	{ key: "icon-bookmark-selected",	path: "icon-bookmark-selected.png" },
-	{ key: "icon-bookmark-unselected",	path: "icon-bookmark-unselected.png" },
-	{ key: "icon-video-record",			path: "icon-video-record.png" },
-	{ key: "icon-map-africa",			path: "icon-map-africa.png" },
-	{ key: "icon-location",				path: "icon-location.png" },
-	{ key: "icon-annual-flower",		path: "icon-annual-flower.png" },
-	{ key: "icon-grass",				path: "icon-grass.png" },
-	{ key: "icon-herb",					path: "icon-herb.png" },
-	{ key: "icon-shrub",				path: "icon-shrub.png" },
-	{ key: "icon-tree",					path: "icon-tree.png" },
-	{ key: "icon-sun",					path: "icon-sun.png" },
-	{ key: "icon-water",				path: "icon-water.png" },
-	{ key: "icon-leaf",					path: "icon-leaf.png" },
-	{ key: "icon-meat",					path: "icon-meat.png" },
-	{ key: "icon-menu-flag-se",			path: "icon-menu-flag-se.png" },
-	{ key: "icon-menu-flag-en",			path: "icon-menu-flag-en.png" },
-]);
+	// { key: "syrphidae",					path: syrphidae }, // Geting
+	// { key: "anthophila",				path: anthophila }, // Bi
+	// { key: "argyresthia_conjugella",	path: argyresthia_conjugella }, // Rönnbärsmal
+	// { key: "bombus",					path: bombus }, // Humla
+	// { key: "deroceras_reticulatum",		path: deroceras_reticulatum }, // Åkersnigel
+	// { key: "meligethes_aeneus",			path: meligethes_aeneus }, // Rapsbagge
+	// { key: "rhopalocera",				path: rhopalocera }, // Dagfjäril
+	// { key: "avena_sativa",				path: avena_sativa }, // Havre
+	// { key: "brassica_napus",			path: brassica_napus }, // Raps
+	// { key: "carum_carvi",				path: carum_carvi }, // Kummin
+	// { key: "festuca_rubra",				path: festuca_rubra }, // Rödsvingel
+	// { key: "hordeum_vulgare",			path: hordeum_vulgare }, // Korn
+	// { key: "lactuca_sativa",			path: lactuca_sativa }, // Sallat
+	// { key: "malus_domestica",			path: malus_domestica }, // Äppelträd
+];
 
 
-const images: Asset[] = nodes.concat(universeumNodes, backgrounds, icons);
+/* Backgrounds */
 
-const videos: Asset[] = prependPath("assets/ecoweb/videos/", [
-	// { key: "planet_video",	path: "planet.mp4" },
-]);
+import planet_still from "../../assets/ecoweb/backgrounds/planet.jpg";
+import bg_serengeti from "../../assets/ecoweb/backgrounds/serengeti-blur2.jpg";
+
+const backgrounds: Asset[] = [
+	{ key: "planet_still",	path: planet_still },
+	{ key: "bg_serengeti",	path: bg_serengeti },
+];
 
 
-export { nodes, images, videos };
+/* Videos */
+
+import planet_video from "../../assets/ecoweb/videos/planet.mp4";
+
+const videos: Asset[] = [
+	{ key: "planet_video",	path: planet_video },
+];
+
+
+/* Export */
+
+const images: Asset[] = nodes.concat(backgrounds, uniNodes, uniIcons);
+
+export {
+	images,
+	videos,
+
+	nodes,
+	backgrounds,
+};
