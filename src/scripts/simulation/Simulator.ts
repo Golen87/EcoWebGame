@@ -1,5 +1,6 @@
 import { DataScenario } from "../database/Interfaces";
 import { Scenario } from "./Scenario";
+import { Organism } from "./Organism";
 import { SIMULATION_LENGTH } from "../constants";
 import * as numeric from "numeric";
 
@@ -21,13 +22,17 @@ class Simulator {
 	public sol: numeric.Dopri;
 
 	private growthRate: number[];
-	public interactionMatrix: number[][];
+	private interactionMatrix: number[][];
 	// private carryingCapacity: number[];
 	private relationMap: any;
 
+	private extraGrowthRate: number[];
+	private extraInteractionMatrix: number[][];
+	private extraFactor: number;
+
 	constructor() {}
 
-	loadScenario(scenarioData: DataScenario) {
+	loadScenario(scenarioData: DataScenario): void {
 		this.scenario = new Scenario(scenarioData);
 
 		this.time = 0;
@@ -37,6 +42,9 @@ class Simulator {
 		// this.carryingCapacity = [];
 		this.interactionMatrix = [];
 		this.relationMap = {};
+		this.extraGrowthRate = [];
+		this.extraInteractionMatrix = [];
+		this.extraFactor = 0;
 
 		const L = this.species.length;
 
@@ -45,17 +53,19 @@ class Simulator {
 			this.population[i] = 0;
 
 			this.growthRate[i] = (this.species[i].type == 'animal') ? -0.1 : 1;
-			// this.growthRate[i] = 1;
+			this.extraGrowthRate[i] = 0;
 
 			// this.carryingCapacity[i] = (this.species[i].type == 'plant') ? 2 : 1;
 			// this.carryingCapacity[i] = 1;
 
 			this.interactionMatrix[i] = [];
+			this.extraInteractionMatrix[i] = [];
 			this.relationMap[i] = [];
 
 			for (let j = 0; j < L; j++) {
 				// Update this in `addOrRemove`
 				this.interactionMatrix[i][j] = 0;
+				this.extraInteractionMatrix[i][j] = 0;
 
 				let pref = this.getRelationPref(i, j);
 				if (pref > 0) {
@@ -76,7 +86,7 @@ class Simulator {
 		this.solve(0, 1);
 	}
 
-	getRelationPref(predIndex, preyIndex) {
+	getRelationPref(predIndex: number, preyIndex: number): number {
 		for (let relation of this.species[predIndex].diet) {
 			if (relation.prey.id == this.species[preyIndex].id) {
 				return relation.preference;
@@ -85,7 +95,7 @@ class Simulator {
 		return 0;
 	}
 
-	addOrRemoveSpecies(species, active) {
+	addOrRemoveSpecies(species: Organism, active: boolean): void {
 		let index = this.species.findIndex(x => x.id == species.id);
 
 		if (active) {
@@ -96,7 +106,7 @@ class Simulator {
 		}
 	}
 
-	changeGrowthRate(species, value) {
+	changeGrowthRate(species: Organism, value: number): void {
 		let index = this.species.findIndex(x => x.id == species.id);
 
 		// if ((value == 1 && this.growthRate[index] > 0) || (value == -1 && this.growthRate[index] < 0)) {
@@ -108,7 +118,11 @@ class Simulator {
 		}
 	}
 
-	reset() {
+	setTempEffect(value: number): void {
+		this.extraFactor = Phaser.Math.Clamp(value, 0, 1);
+	}
+
+	reset(): void {
 		this.time = 0;
 		this.history = {x:[], y:[]};
 
@@ -118,19 +132,19 @@ class Simulator {
 		}
 	}
 
-	run(startTime) {
+	run(startTime: number): void {
 		this.updateInteractions();
 		this.solve(startTime, SIMULATION_LENGTH);
 	}
 
-	updateInteractions() {
+	updateInteractions(): void {
 		const L = this.species.length;
 
 		// Reset interactions
 		for (let i = 0; i < L; i++) {
 			for (let j = 0; j < L; j++) {
 				if (i != j) {
-					this.interactionMatrix[i][j] = 0;
+					this.interactionMatrix[i][j] = this.extraFactor * this.extraInteractionMatrix[i][j];
 				}
 			}
 		}
@@ -152,12 +166,12 @@ class Simulator {
 
 					if (this.population[j] > 0) {
 						let value = weights.shift() ?? 0;
-						this.interactionMatrix[i][j] = value;
-						this.interactionMatrix[j][i] = -value;
+						this.interactionMatrix[i][j] += value;
+						this.interactionMatrix[j][i] -= value;
 					}
 					else if (this.population[j] <= 0) {
-						this.interactionMatrix[i][j] = 0.5;
-						this.interactionMatrix[j][i] = -0.5;
+						this.interactionMatrix[i][j] += 0.5;
+						this.interactionMatrix[j][i] -= 0.5;
 					}
 				}
 			}
@@ -165,13 +179,15 @@ class Simulator {
 	}
 
 
-	solve(startTime, duration) {
+	solve(startTime: number, duration: number): void {
 		console.log("> Solving", startTime.toFixed(0), "-", (startTime+duration).toFixed(0));
 
 		// ODE Solver
 		let start = startTime;
 		let end = start + duration;
+		// let population = this.getPopulationAt(startTime);
 		let population = this.population;
+		// console.log(population, this.population, this.sol);
 
 		this.sol = numeric.dopri(start, end, population, this.getDerivative.bind(this), 1e-6, 2000);
 		this.population = [...this.sol.y[this.sol.y.length-1]]; // Copy
@@ -193,7 +209,7 @@ class Simulator {
 	// Lotka-Volterra equation (classical model for predator-prey interaction)
 	// t: time
 	// x: population at time t
-	getDerivative(t, pop) {
+	getDerivative(time: number, pop: number[]): number[] {
 		let dPop: number[] = [];
 		for (let i = 0; i < pop.length; i++) {
 
@@ -204,25 +220,51 @@ class Simulator {
 			}
 
 			// dPop[i] = this.growthRate[i] * pop[i] * (1 - sum / this.carryingCapacity[i]);
-			dPop[i] = this.growthRate[i] * pop[i] + pop[i] * sum;
+			dPop[i] = (this.growthRate[i] + this.extraFactor * this.extraGrowthRate[i]) * pop[i] + pop[i] * sum;
 		}
 		return dPop;
 	}
 
 
-	getPopulationAt(t) {
-		if (!this.sol || t >= this.time) {
+	getPopulationAt(time: number): number[] {
+		if (!this.sol || time >= this.time) {
 			return this.population;
 		}
-		else if (t <= this.sol.x[0]) {
+		else if (time <= this.sol.x[0]) {
 			return this.sol.y[0];
 		}
 		else {
-			return this.sol.at(t);
+			return this.sol.at(time);
 		}
 	}
 
-	get species() { return this.scenario.species; }
+	getGrowthRate(i: number): number {
+		return this.growthRate[i];
+	}
+
+	getInteractionStrength(i: number, j: number): number {
+		return this.interactionMatrix[i][j];
+	}
+
+	getExtraGrowthRate(i: number): number {
+		return this.extraGrowthRate[i];
+	}
+
+	getExtraInteractionStrength(i: number, j: number): number {
+		return this.extraInteractionMatrix[i][j];
+	}
+
+	incGrowthRate(i: number, value: number): void {
+		this.extraGrowthRate[i] += value;
+		this.extraGrowthRate[i] = Phaser.Math.Clamp(this.extraGrowthRate[i], -1, 1);
+	}
+
+	incInteractionStrength(i: number, j: number, value: number): void {
+		this.extraInteractionMatrix[i][j] += value;
+		this.extraInteractionMatrix[i][j] = Phaser.Math.Clamp(this.extraInteractionMatrix[i][j], -1, 1);
+	}
+
+	get species(): Organism[] { return this.scenario.species; }
 }
 
 
