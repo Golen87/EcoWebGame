@@ -9,6 +9,7 @@ import { FoodWeb } from "../components/foodweb/FoodWeb";
 import { InfoPopup } from "../components/InfoPopup";
 import { Graph } from "../components/Graph";
 import { Slider } from "../components/Slider";
+import { RoundRectangle } from "../components/RoundRectangle";
 import { HSVToRGB, colorToString } from "../utils";
 import { NODE_SIZE, SIMULATION_LENGTH } from "../constants";
 import { language } from "../language/LanguageManager";
@@ -22,12 +23,12 @@ interface NodeSlot {
 }
 
 export class SerengetiScene extends BaseScene {
-	private sidebarBg: Phaser.GameObjects.Rectangle;
+	private sidebarBg: RoundRectangle;
 	private titleText: Phaser.GameObjects.Text;
 	private instructionText: Phaser.GameObjects.Text;
 	private storyText1: Phaser.GameObjects.Text;
 	private storyText2: Phaser.GameObjects.Text;
-	private nextButton: Phaser.GameObjects.Rectangle;
+	private nextButton: RoundRectangle;
 	private nextText: Phaser.GameObjects.Text;
 	private chapterTabs: Phaser.GameObjects.Container[];
 
@@ -121,9 +122,8 @@ export class SerengetiScene extends BaseScene {
 		let sbH = 0.22 * this.H;
 		let sbX = this.CX;
 		let sbY = this.H - 0.5*sbH;
-		this.sidebarBg = (this.add as any).rexRoundRectangle(sbX, sbY, sbW, sbH, 10, 0X000000);
+		this.sidebarBg = new RoundRectangle(this, sbX, sbY, sbW, sbH, 10, 0X000000);
 		this.sidebarBg.setAlpha(0.2);
-		// this.sidebarBg.setAlpha(1.0);
 
 
 		// Scenario title
@@ -140,12 +140,14 @@ export class SerengetiScene extends BaseScene {
 		this.instructionText.setOrigin(0.5);
 		this.instructionText.setDepth(1);
 
+		// "#FCB061"
 		this.storyText1 = this.createText(sbX, sbY-0.30*sbH , 28, this.weights.bold, colorToString(textOrange), "Large instruction text");
 		this.storyText1.setOrigin(0.5);
 		this.storyText2 = this.createText(sbX, sbY-0.12*sbH, 20, this.weights.regular, "#FFF", "Small instruction text");
 		this.storyText2.setOrigin(0.5);
 
-		this.nextButton = (this.add as any).rexRoundRectangle(sbX, sbY+0.20*sbH, 200, 44, 22, buttonOrange);
+		// let color = 0xa77440;
+		this.nextButton = new RoundRectangle(this, sbX, sbY+0.20*sbH, 200, 44, 22, buttonOrange);
 		this.nextButton.setInteractive({ useHandCursor: true })
 			.on('pointerup', () => { this.startStory(this.currentStory + 1); }
 		);
@@ -159,29 +161,29 @@ export class SerengetiScene extends BaseScene {
 		this.sliders = [];
 
 		// Debug sliders
-		for (let i = 0; i < 10; i++) {
-			let x = 100;
-			let y = 70 + 50 * i;
-			let w = 160;
-			let h = 16;
-			let slider = new Slider(this, x, y, w, h, 0.5*h);
-			slider.setDepth(10);
-			slider.setVisible(false);
-			this.sliders.push(slider);
-			this.add.existing(slider);
+		// for (let i = 0; i < 10; i++) {
+		// 	let x = 100;
+		// 	let y = 70 + 50 * i;
+		// 	let w = 160;
+		// 	let h = 16;
+		// 	let slider = new Slider(this, x, y, w, h, 0.5*h);
+		// 	slider.setDepth(10);
+		// 	slider.setVisible(false);
+		// 	this.sliders.push(slider);
+		// 	this.add.existing(slider);
 
-			let sliderText = this.createText(0.6*w, 0, h, this.weights.regular, "#FFF", slider.value.toFixed(2));
-			sliderText.setOrigin(0.0, 0.5);
-			slider.add(sliderText);
+		// 	let sliderText = this.createText(0.6*w, 0, h, this.weights.regular, "#FFF", slider.value.toFixed(2));
+		// 	sliderText.setOrigin(0.0, 0.5);
+		// 	slider.add(sliderText);
 
-			let sliderTitle = this.createText(-0.5*w, -0.5*h, h, this.weights.regular, "#FFF", "Name");
-			sliderTitle.setOrigin(0.0, 1.0);
-			slider.add(sliderTitle);
+		// 	let sliderTitle = this.createText(-0.5*w, -0.5*h, h, this.weights.regular, "#FFF", "Name");
+		// 	sliderTitle.setOrigin(0.0, 1.0);
+		// 	slider.add(sliderTitle);
 
-			slider.on('onChange', (value) => {
-				sliderText.setText(value.toFixed(2));
-			}, this);
-		}
+		// 	slider.on('onChange', (value) => {
+		// 		sliderText.setText(value.toFixed(2));
+		// 	}, this);
+		// }
 
 
 		// Chapter tabs
@@ -195,11 +197,14 @@ export class SerengetiScene extends BaseScene {
 					this.startStory(1);
 				}
 			},
-			// {
-				// name: "chapter_2",
-				// image: 'icon-ecoChallenge',
-				// function: () => {}
-			// },
+			{
+				name: "chapter_2",
+				image: 'icon-ecoChallenge',
+				function: () => {
+					this.reset();
+					this.startStory(3);
+				}
+			},
 			// {
 				// name: "chapter_3",
 				// image: 'icon-ecoMission',
@@ -231,7 +236,7 @@ export class SerengetiScene extends BaseScene {
 			tab.setAlpha(0.5);
 			this.chapterTabs.push(tab);
 
-			let bg = (this.add as any).rexRoundRectangle(0.5*ctW, 0, 2*ctW, ctH, 10, 0XFFFFFF);
+			let bg = new RoundRectangle(this, 0.5*ctW, 0, 2*ctW, ctH, 10, 0XFFFFFF);
 			bg.setAlpha(0.2);
 			tab.add(bg);
 
@@ -253,7 +258,7 @@ export class SerengetiScene extends BaseScene {
 			});
 
 			bg.setInteractive({ useHandCursor: true })
-				.on('pointerup', chapter.function.bind(this));
+				.on('pointerup', chapter.function, this);
 		}
 
 

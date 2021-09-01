@@ -6,7 +6,6 @@ import { language } from "../../language/LanguageManager";
 
 export class FakeNode extends BaseNode {
 	private graphics: Phaser.GameObjects.Graphics;
-	private neighbours: Node[];
 	private replacements: Node[];
 	private text: Phaser.GameObjects.Text;
 
@@ -14,7 +13,6 @@ export class FakeNode extends BaseNode {
 		super(scene, x, y);
 		scene.add.existing(this);
 
-		this.neighbours = [];
 		this.replacements = [];
 
 		this.graphics = scene.add.graphics({x: 0, y: 0});
@@ -39,6 +37,8 @@ export class FakeNode extends BaseNode {
 	}
 
 	update(time: number, delta: number) {
+		super.update(time, delta);
+
 		let anyInside = this.replacements.some(node => node.isInsidePlayingField() || !node.stick);
 		let anyActive = this.replacements.some(node => node.inPlay);
 
@@ -65,5 +65,9 @@ export class FakeNode extends BaseNode {
 
 	isInsidePlayingField(): boolean {
 		return this.visible && this.replacements.every(node => node.stick && !node.isInsidePlayingField());
+	}
+
+	getWidth(): number {
+		return NODE_SIZE + 4;
 	}
 }

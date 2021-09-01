@@ -1,9 +1,9 @@
 import { BaseScene } from "../../scenes/BaseScene";
 import { FoodWebNode } from "./FoodWebNode";
+import { RoundRectangle } from "../RoundRectangle";
 import { language } from "../../language/LanguageManager";
-import { simulator } from "../../simulation/Simulator";
+import { Scenario } from "../../simulation/Scenario";
 import { database } from "../../database/Database";
-// Change simulator to serengetiAssets
 import { jiggle } from "../../utils";
 
 interface Relation {
@@ -17,11 +17,11 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 	public config: any;
 
 	private infoBox: Phaser.GameObjects.Container;
-	private infoBg: Phaser.GameObjects.Rectangle;
+	private infoBg: RoundRectangle;
 	private infoImage: Phaser.GameObjects.Image;
 	private infoTitle: Phaser.GameObjects.Text;
 	private infoDescription: Phaser.GameObjects.Text;
-	private infoIucnBg: Phaser.GameObjects.Rectangle;
+	private infoIucnBg: RoundRectangle;
 	private infoIucnStatus: Phaser.GameObjects.Text;
 	private infoIucnText: Phaser.GameObjects.Text;
 
@@ -156,9 +156,11 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.nodeContainer = this.scene.add.container(0, 0);
 		this.add(this.nodeContainer);
 
-		for (let i = 0, n = simulator.scenario.species.length; i < n; i++) {
+		let scenarioData = database.getScenario("serengeti_all")!;
+		let scenario = new Scenario(scenarioData);
 
-			let species = simulator.scenario.species[i];
+		for (let species of scenario.species) {
+
 			// let x = Phaser.Math.Between(0, this.scene.W);
 			// let y = Phaser.Math.Between(0, this.scene.H);
 			let x = Phaser.Math.Between(this.config.borderLeft, this.config.borderRight);
@@ -216,19 +218,19 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 	initButtons() {
 		let chosen = [
-			"138fc562-6fb9-45ff-bcdf-656208d2be14", // Lion
-			"00107254-185b-47ab-bc45-bc68e13ace3f", // Vildhund
-			"3c3f0fdf-e6c1-4a94-b52e-e3785a2849ca", // Plains zebra
-			"f4f32888-4079-4c70-a204-a094647ea210", // Kirk's dik-dik
-			"2dd450bc-8faa-4971-ad5d-53b04a958105", // Gnu
-			// "c2d58e40-9606-4d58-9a62-dc08ccb02e2b", // Impala
-			"6f868898-a03f-467b-a797-a1252e75e36c", // Vattenbock
-			// "042f48d0-4a28-4e77-874f-b9a5b1f821af", // Heteropogon contortus
-			"37b60be7-d897-41cb-91e5-56045687788e", // Allophylus rubifolius
-			"93878dd9-1df5-4521-b5ba-57f63450e912", // Panicum coloratum
-			// "93d59a4b-5517-4eb5-8e81-1caa61b9db6a", // Kängrugräs
-			// "70640c68-402d-4a0b-ae47-4089329d0b01", // Fingerhirs
-			"f62f5010-632f-4870-91a8-9bf4d90e961c", // Acacia
+			"panthera_leo", // Lion
+			"lycaon_pictus", // Vildhund
+			"equus_quagga", // Zebra
+			"madoqua_kirkii", // Kirk's dik-dik
+			"connochaetes_taurinus", // Gnu
+			// "aepyceros_melampus", // Impala
+			"kobus_ellipsiprymnus", // Vattenbock
+			// "heteropogon_contortus", // Heteropogon
+			"allophylus_rubifolius", // Allophylus rubifolius
+			"panicum_coloratum", // Panicum coloratum
+			// "themeda_triandra", // Kängrugräs
+			// "digitaria_scalarum", // Fingerhirs
+			"acacia_tortilis", // Acacia
 		];
 
 		let count = 0;
@@ -283,7 +285,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.infoBox.setAlpha(0);
 		this.add(this.infoBox);
 
-		this.infoBg = (this.scene.add as any).rexRoundRectangle(0, 0, w, h, 5, 0X222222);
+		this.infoBg = new RoundRectangle(this.scene, 0, 0, w, h, 5, 0X222222);
 		this.infoBg.setAlpha(0.5);
 		this.infoBox.add(this.infoBg);
 
@@ -309,7 +311,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let ix = w/2-p;
 		let iy = h/2-p-size/2;
 
-		this.infoIucnBg = (this.scene.add as any).rexRoundRectangle(ix, iy, size, size, size/2, 0xFFFFFF, 1.0);
+		this.infoIucnBg = new RoundRectangle(this.scene, ix, iy, size, size, size/2, 0xFFFFFF, 1.0);
 		this.infoIucnBg.setOrigin(1.0, 0.5);
 		this.infoBox.add(this.infoIucnBg);
 
@@ -338,7 +340,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		language.bind(this.infoIucnText, key, this.resizeInfoIucn.bind(this));
 
 		this.infoIucnText.setColor(this.config.iucnTextColors[node.species.iucn]);
-		this.infoIucnBg.fillColor = this.config.iucnColors[node.species.iucn];
+		this.infoIucnBg.setColor(this.config.iucnColors[node.species.iucn]);
 
 		this.scene.tweens.add({
 			targets: this.infoBox,
@@ -360,7 +362,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		if (this.infoIucnText.displayWidth > 0) {
 			this.infoIucnBg.setVisible(true);
 			this.infoIucnStatus.setVisible(true);
-			this.infoIucnBg.width = this.infoIucnText.width + this.infoIucnBg.height;
+			this.infoIucnBg.setWidth(this.infoIucnText.width + this.infoIucnBg.height);
 			this.infoIucnText.x = this.infoIucnBg.x - this.infoIucnBg.width/2;
 			this.infoIucnStatus.x = this.infoIucnBg.x - this.infoIucnBg.width - this.infoIucnBg.height/4;
 		}

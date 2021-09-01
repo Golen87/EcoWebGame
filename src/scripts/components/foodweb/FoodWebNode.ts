@@ -1,6 +1,7 @@
 import { BaseScene } from "../../scenes/BaseScene";
 import { language } from "../../language/LanguageManager";
 import { Organism } from "../../simulation/Organism";
+import { RoundRectangle } from "../RoundRectangle";
 
 export class FoodWebNode extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
@@ -15,7 +16,7 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 	private velocity: Phaser.Math.Vector2;
 	private circle: Phaser.GameObjects.Ellipse;
 	private image: Phaser.GameObjects.Image;
-	private nameBg: Phaser.GameObjects.Rectangle;
+	private nameBg: RoundRectangle;
 	private nameText: Phaser.GameObjects.Text;
 
 	private hasImage: boolean;
@@ -47,6 +48,7 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 		let tier = (species.isPlant() ? 1 : (species.isHerbivore() ? 2 : 3));
 		this.hasImage = !species.image.startsWith('icon');
 		this.size = 20 + 12 * tier;
+		// this.size = 2*(20 + 12 * tier);
 
 		// Colored background circle
 		this.circle = scene.add.ellipse(0, 0, this.size+6, this.size+6, this.config.groupColors[species.group]);
@@ -59,7 +61,7 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 		this.add(this.image);
 
 		// Name background
-		this.nameBg = (this.scene.add as any).rexRoundRectangle(0, -this.size/2 - 24, 24, 24, 24/2, 0xFFFFFF, 1.0);
+		this.nameBg = new RoundRectangle(this.scene, 0, -this.size/2 - 24, 24, 24, 24/2, 0xFFFFFF, 1.0);
 		this.nameBg.setOrigin(0.5);
 		this.add(this.nameBg);
 
@@ -68,7 +70,7 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 		this.nameText.setOrigin(0.5);
 		this.add(this.nameText);
 		language.bind(this.nameText, species.id, () => {
-			this.nameBg.width = this.nameText.width + this.nameBg.height;
+			this.nameBg.setWidth(this.nameText.width + this.nameBg.height);
 			// this.nameText.x = this.nameBg.x + this.nameBg.width/2;
 		});
 

@@ -46,9 +46,9 @@ export class Graph extends Phaser.GameObjects.Container {
 		this.add(this.foregroundSelected);
 
 
-		this.gridSize = 0.5;
+		this.gridSize = 0.75;
 		// this.stepSize = 1.0;
-		this.axisSize = 1.0;
+		this.axisSize = 1.5;
 		this.lineSize = 2.5;
 		this.nodeSize = 24;
 

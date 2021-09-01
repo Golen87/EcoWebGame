@@ -1,10 +1,11 @@
 import { BaseScene } from "../scenes/BaseScene";
+import { RoundRectangle } from "../components/RoundRectangle";
 
 export class Slider extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
 
 	private _value: number;
-	private background: Phaser.GameObjects.Rectangle;
+	private background: RoundRectangle;
 	private button: Phaser.GameObjects.Ellipse;
 	private maxV: number;
 	private maxX: number;
@@ -24,27 +25,27 @@ export class Slider extends Phaser.GameObjects.Container {
 
 
 		// Slider background
-		this.background = (scene.add as any).rexRoundRectangle(0, 0, width + thinHeight, thinHeight, thinHeight/2, 0XFFFFFF);
+		this.background = new RoundRectangle(this.scene, 0, 0, width + thinHeight, thinHeight, thinHeight/2, 0XFFFFFF);
 		this.background.setAlpha(0.5);
 		this.add(this.background);
 
 		const padding = thinHeight + height;
 		this.background.setInteractive({ hitArea: this.background, useHandCursor: true, draggable: true })
-			.on('pointerdown', this.onDown.bind(this))
-			.on('drag', this.onDrag.bind(this));
+			.on('pointerdown', this.onDown, this)
+			.on('drag', this.onDrag, this);
 		this.background.input.hitArea.setTo(-padding, -padding, this.background.width+2*padding, this.background.height+2*padding);
 		// this.scene.input.enableDebug(this.background);
 
 
 		// Step notches
-		if (steps > 0) {
+		if (steps > 1) {
 			for (let i = 0; i < steps; i++) {
 				let x = -width/2 + i / (steps - 1) * width;
 				let y = 0;
 				let size = 0.75 * thinHeight;
 
 				let notch = scene.add.ellipse(x, y, size, size, 0x000000);
-				notch.setAlpha(0.5);
+				notch.setAlpha(0.25);
 				this.add(notch);
 			}
 		}
@@ -114,7 +115,7 @@ export class Slider extends Phaser.GameObjects.Container {
 	lock() {
 		this.button.removeInteractive();
 		this.button.fillColor = 0x555555;
-		this.background.fillColor = 0x555555;
+		this.background.setColor(0x555555);
 	}
 
 	update(time: number, delta: number) {

@@ -1,10 +1,11 @@
 import { language } from "../language/LanguageManager";
 import { BaseScene } from "../scenes/BaseScene";
+import { RoundRectangle } from "../components/RoundRectangle";
 
 export class InfoPopup extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
 	private text: Phaser.GameObjects.Text;
-	private box: Phaser.GameObjects.Rectangle;
+	private box: RoundRectangle;
 	private tween: Phaser.Tweens.Tween;
 	private isActive: boolean;
 	private dir: number;
@@ -18,9 +19,8 @@ export class InfoPopup extends Phaser.GameObjects.Container {
 		this.setDepth(1);
 		this.isActive = false;
 
-		this.box = (this.scene.add as any).rexRoundRectangle(0, 0, 10, 10, 5, 0X555555);
+		this.box = new RoundRectangle(this.scene, 0, 0, 10, 10, 5, 0X555555);
 		this.box.setAlpha(0.5);
-		this.box.setOrigin(0.5);
 		this.add(this.box);
 		this.sendToBack(this.box);
 
@@ -37,8 +37,8 @@ export class InfoPopup extends Phaser.GameObjects.Container {
 		if (!this.isActive) {
 			language.bind(this.text, key, () => {
 				let sep = 1.5 * 20;
-				this.box.width = this.text.displayWidth + sep;
-				this.box.height = this.text.displayHeight + sep;
+				this.box.setWidth(this.text.displayWidth + sep);
+				this.box.setHeight(this.text.displayHeight + sep);
 			});
 
 			let w = this.box.displayWidth;
