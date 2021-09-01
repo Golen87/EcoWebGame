@@ -272,7 +272,7 @@ export class Node extends BaseNode {
 		// Enlargen node when dragging
 		let liftScale = 1 + 0.2 * this.liftSmooth;
 		this.circleCont.setScale(liftScale * this.popScale);
-		this.circleCont.setAlpha(this.hold ? 0.7 : 1.0);
+		// this.circleCont.setAlpha(this.hold ? 0.7 : 1.0);
 		// this.circleShadow.setScale(1 - 0.15 * this.liftSmooth);
 		this.circleShadow.x = 10 / this.circleCont.scaleX * (0.25 + 0.75*this.liftSmooth);
 		this.circleShadow.y = 10 / this.circleCont.scaleX * (0.25 + 0.75*this.liftSmooth);

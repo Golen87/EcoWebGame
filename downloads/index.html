@@ -35,7 +35,7 @@
 					<a class="btn btn-light col-5" href="EcoWebLand-Windows.zip">
 						<i class="fa fa-windows"></i> Windows
 						<hr class="my-1">
-						159,0 MB (zip)
+						159,1 MB (zip)
 					</a>
 					<!-- <a class="btn btn-light col-3 disabled" disabled> -->
 						<!-- <i class="fa fa-apple"></i> Mac -->
@@ -48,7 +48,13 @@
 				</div>
 
 				<hr>
-				<p id="days" class="text-muted">...</p>
+				<p id="days" class="text-muted">Updated ...</p>
+				<div style="width: 50%; margin-left: auto; margin-right: auto; text-align: left;">
+					<p class="text-muted mb-0">Version 1.0.1</p>
+					<ul class="text-muted">
+						<li>Added info page</li>
+					</ul>
+				</div>
 			</main>
 
 			<footer class="mastfoot mt-auto">
@@ -61,7 +67,7 @@
 
 		<script type="text/javascript">
 			var now = new Date();
-			var then = 1630079743925; // (new Date()).getTime()
+			var then = 1630515886096; // (new Date()).getTime()
 			var days = Math.round((now - then) / (1000 * 3600 * 24));
 			var text = "Updated " + (days == 0 ? "today" : days + " days ago");
 			document.getElementById("days").innerHTML = text;
