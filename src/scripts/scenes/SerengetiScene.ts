@@ -41,6 +41,7 @@ export class SerengetiScene extends BaseScene {
 	private infoPopup: InfoPopup;
 	private foodWeb: FoodWeb;
 	private modeSlider: Slider;
+	private minimap: Phaser.Cameras.Scene2D.Camera;
 
 	private timeStamp: number;
 	private currentStory: number;
@@ -49,6 +50,7 @@ export class SerengetiScene extends BaseScene {
 	private story2: string[];
 	private story3: string[];
 	private storyRunning: boolean;
+	private infoWindowLock: boolean;
 
 	constructor() {
 		super({key: 'SerengetiScene'});
@@ -97,11 +99,14 @@ export class SerengetiScene extends BaseScene {
 
 		this.input.addPointer(3);
 
-		// this.minimap = this.cameras.add(0, 0, this.W, this.H).setZoom(1.0).setName('mini');
+		this.scene.launch('UIScene');
+
+		// this.minimap = this.cameras.add(0, 0, this.W/2, this.H/2).setZoom(1.0).setName('mini');
 		// this.minimap.setBackgroundColor(0x000000);
 		// this.minimap.setPostPipeline(BlurPostFilter);
 		// this.minimap.scrollX = 0;
 		// this.minimap.scrollY = 0;
+		// this.minimap.setVisible(false);
 
 		let bg = this.add.image(this.CX, this.CY, 'bg_serengeti');
 		bg.setAlpha(0.3);
@@ -264,64 +269,21 @@ export class SerengetiScene extends BaseScene {
 
 		// Toolbox
 
-		let tbX = this.W - ctW/2;
-		let tbY = this.H - sbH/2;
-		const toolButtons = [
-			{
-				image: 'icon-bookmark-saved',
-				function: () => {}
-			},
-			{
-				image: 'icon-info',
-				function: this.openInfoWindow
-			},
-			{
-				image: 'icon-reset',
-				function: this.reset
-			},
-			{
-				image: 'icon-menu-flag-se',
-				function: () => {
-					language.setLanguage("Swedish");
-				}
-			},
-			{
-				image: 'icon-menu-flag-en',
-				function: () => {
-					language.setLanguage("English");
-				}
-			}
-		];
 
-		for (let i = 0; i < toolButtons.length; i++) {
-			let button = toolButtons[i];
-			let size = 0.02 * this.H;
-			let x = tbX;
-			let y = tbY + (i - (toolButtons.length-1)/2) * 1.75*size;
+		this.infoWindowLock = false;
 
-			let image = this.add.image(x, y, button.image);
-			image.setScale(size / image.height);
-			image.setAlpha(0.65);
-			image.setInteractive({ useHandCursor: true })
-				// .on('pointerover', () => {image.setAlpha(1.0);})
-				// .on('pointerout', () => {image.setAlpha(0.5);})
-				.on('pointerup', button.function.bind(this));
-		}
+		// Listen for events from the main scene
+		this.scene.get('UIScene').events.on('openInfo', () => {
+			this.openInfoWindow();
+		}, this);
 
-		// this.add.image(100, 100, 'icon-backToBeginning');
-		// this.add.image(200, 100, 'icon-backward');
-		// this.add.image(300, 100, 'icon-forward');
-		// this.add.image(400, 100, 'icon-play');
-		// this.add.image(100, 300, 'icon-soil');
-		// this.add.image(300, 300, 'icon-sun');
-		// this.add.image(200, 300, 'icon-rain');
-		// 'icon-annualFlower'
-		// 'icon-grass'
-		// 'icon-herb'
-		// 'icon-shrub'
-		// 'icon-tree'
-		// let land = this.add.image(this.CX, this.H - sbH - NODE_SIZE/2, 'bg_land');
-		// this.containToScreen(land);
+		this.scene.get('UIScene').events.on('closeInfo', () => {
+			this.openInfoWindow();
+		}, this);
+
+		this.scene.get('UIScene').events.on('restart', () => {
+			this.restart();
+		}, this);
 
 
 		// Node slots
@@ -719,6 +681,12 @@ export class SerengetiScene extends BaseScene {
 	}
 
 
+	restart(): void {
+		this.reset();
+		this.startStory(1);
+		this.flash(500, 0x000000);
+	}
+
 	reset(): void {
 		for (const node of this.nodes) {
 			// this.updateSize(node, -node.size);
@@ -731,7 +699,6 @@ export class SerengetiScene extends BaseScene {
 		simulator.run(0);
 		this.updatePaths();
 		this.dismissInfoPopup(false);
-		this.startStory(1);
 	}
 
 	onNodePlusMinus(node: Node, value: number): void {
@@ -847,16 +814,18 @@ export class SerengetiScene extends BaseScene {
 		if (this.storyRunning) {
 			let success = true;
 			for (const node of this.nodes) {
-				if ( (this.currentStory == 1 && this.story1.includes(node.role)) || (this.currentStory == 2 && this.story2.includes(node.role)) ) {
+				if ( (this.currentStory == 1 && this.story1.includes(node.role))
+					|| (this.currentStory == 2 && this.story2.includes(node.role))
+					|| (this.currentStory == 3 && this.story3.includes(node.role)) ) {
 					if (!node.inPlay) {
 						success = false;
 						break;
 					}
 				}
 			}
-			if (this.currentStory > 2) {
-				success = false;
-			}
+			// if (this.currentStory > 2) {
+				// success = false;
+			// }
 			if (success) {
 				this.completeStory();
 			}
@@ -878,9 +847,6 @@ export class SerengetiScene extends BaseScene {
 				// if (!node.alive) {
 					// node.resetPosition(false);
 				// }
-			}
-			else {
-				this.nodes[i].circle.setScale(1);
 			}
 		}
 	}
@@ -911,25 +877,40 @@ export class SerengetiScene extends BaseScene {
 
 
 	openInfoWindow(): void {
-		/*
-		let textureManager = this.textures;
-		let scene = this;
+		this.events.emit('openInfo');
 
-		this.game.renderer.snapshot((image) => {
-		// this.game.renderer.snapshotArea(740, 720, 200, 200, (image) => {
-			document.body.appendChild(image);
+		let filter = this.cameras.main.getPostPipeline('BlurPostFilter');
+		let active = !Array.isArray(filter);
 
-			if (textureManager.exists('snap')) {
-				textureManager.remove('snap');
-			}
-			textureManager.addImage('snap', image);
+		if (!active) {
+			this.cameras.main.setPostPipeline(BlurPostFilter);
 
-			if (!this.test)
-				this.test = this.add.image(0, 0, 'snap');
-			this.test.setPosition(200+200*Math.random(), 200+200*Math.random());
-			this.test.setTexture('snap');
-		});
-		*/
+			let filter = this.cameras.main.getPostPipeline('BlurPostFilter');
+			this.tweens.add({
+				targets: filter,
+				steps: { from: 0, to: 12 },
+				offsetX: { from: 0, to: 1.5 },
+				offsetY: { from: 0, to: 1.5 },
+				ease: 'Linear',
+				duration: 250
+			});
+		}
+		else if (!this.infoWindowLock) {
+			this.infoWindowLock = true;
+
+			this.tweens.add({
+				targets: filter,
+				steps: { from: 12, to: 0 },
+				offsetX: { from: 1.5, to: 0 },
+				offsetY: { from: 1.5, to: 0 },
+				ease: 'Linear',
+				duration: 250,
+				onComplete: () => {
+					this.cameras.main.resetPostPipeline();
+					this.infoWindowLock = false;
+				}
+			});
+		}
 	}
 
 

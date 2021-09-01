@@ -5,6 +5,29 @@ const languageData = {
 	"English": {
 		"": "",
 
+		"attraction_title": "Ecoweb land",
+		"attraction_heading": "heading",
+		"attraction_question_1": "question 1?",
+		"attraction_question_2": "question 2?",
+		"attraction_question_3": "question 3?",
+		"attraction_question_4": "question 4?",
+
+		"info_welcome": "Welcome to",
+		"info_title": "Ecoweb-game",
+		"info_pitch": "Lorem ipsum do labore voluptate est cillum et sint sunt ea minim incididunt enim ut nisi ea voluptate consequat occaecat sint et dolore non id quis exercitation occaecat mollit in ut.",
+		"info_how_1": "How do I use",
+		"info_how_2": "Laboris adipisicing laboris excepteur occaecat in amet cillum qui eu quis eu.",
+		"info_data_1": "Source for the data?",
+		"info_data_2": "Voluptate labore magna consectetur exercitation deserunt sunt proident sed enim occaecat nulla proident veniam do laborum ut deserunt in id cupidatat dolore quis dolore anim culpa adipisicing enim ad nulla officia occaecat adipisicing qui.",
+		"info_who_1": "Who collected this data?",
+		"info_who_2": "Dolor culpa consequat eiusmod sint sunt fugiat ut eiusmod eu sit dolor.",
+		"info_model_1": "What model was used?",
+		"info_model_2": "Commodo ea officia adipisicing reprehenderit dolor adipisicing dolor proident proident non fugiat dolor adipisicing commodo ut amet.",
+		"info_rights_1": "Any disclamation and explanation",
+		"info_rights_2": "Exercitation ullamco consectetur mollit elit laborum duis labore cillum dolor dolore consectetur cillum dolor fugiat deserunt proident anim aliqua.",
+		"info_qr": "Scan the QR code to\nview the instruction video\non your mobile device",
+		"info_copyright": "Copyright @2021 Lutra Interactive. All right reserved.",
+
 		"title": "Serengeti Food Web",
 		"next_button": "Next",
 
@@ -64,17 +87,40 @@ const languageData = {
 	"Swedish": {
 		"": "",
 
+		"attraction_title": "Ecoweb-spelet",
+		"attraction_heading": "HÅLL EKOSYSTEMET I BALANS",
+		"attraction_question_1": "Vad äter djuren i Serengeti?",
+		"attraction_question_2": "Vad händer om alla lejon i Serengeti dör?",
+		"attraction_question_3": "Hur kan klimatförändringar påverka Serengetis näringsväv?",
+		"attraction_question_4": "Vad vore världen utan växter?",
+
+		"info_welcome": "Välkommen till",
+		"info_title": "Ecoweb-spelet",
+		"info_pitch": "Om en art i ett näringskedja förändras eller ges nya förutsättningar påverkas en hel kedja av arter och ett ekosystem kan få helt nya konsekvenser. Testa vad som händer och hur ett ekologiskt nätverk påverkas genom att förändra några avgörande parametrar. Kan du till exempel se vad som händer om alla lejon i Serengeti dör, och hur vi människor påverkar livet i Serengeti? Försök hålla väven i balans. Lycka till!",
+		"info_how_1": "Hur använder jag",
+		"info_how_2": "Laboris adipisicing laboris excepteur occaecat in amet cillum qui eu quis eu.",
+		"info_data_1": "Vilken data finns här?",
+		"info_data_2": "Anna Eklöfs modeller är baserade på Bayesiansk statistik där varje art antas ha en inneboende utdöenderisk och att alla arter i nätverket påverkas av dessa risker, samt nätverkets struktur. De inneboende riskerna kan bero på till exempel kroppsstorlek eller behov av stora revir. Här arbetar Anna också mer specifikt med att modellera effekter av exempelvis ökat fisketryck och habitatförstörelse.",
+		"info_who_1": "Vem har samlat in datan?",
+		"info_who_2": "Dolor culpa consequat eiusmod sint sunt fugiat ut eiusmod eu sit dolor.",
+		"info_model_1": "Vilken modell har använts?",
+		"info_model_2": "Commodo ea officia adipisicing reprehenderit dolor adipisicing dolor proident proident non fugiat dolor adipisicing commodo ut amet.",
+		"info_rights_1": "Om rättigheterna",
+		"info_rights_2": "Exercitation ullamco consectetur mollit elit laborum duis labore cillum dolor dolore consectetur cillum dolor fugiat deserunt proident anim aliqua.",
+		"info_qr": "Dolor quis consectetur\nut amet laborum nulla\nsunt labore sit.",
+		"info_copyright": "Copyright @2021 Lutra Interactive. All right reserved.",
+
 		"title": "Serengeti näringsväv",
 		"next_button": "Gå vidare",
 
 		"instruction_0": "Tryck på en art för att se dess näringsväv",
-		"instruction_1": "Bygg en näringskedja genom att placera plantor och djur",
+		"instruction_1": "Bygg en näringskedja genom att placera växter och djur",
 		"instruction_2": "Lägg till fler arter i näringskedjan för att bygga en näringsväv",
 		"instruction_3": "Ut id cupidatat sunt exercitation reprehenderit duis aliquip dolor aliquip labore.",
-		"instruction_4": "Prova att bort plantor och djur för att see hur de påverkar varandra",
+		"instruction_4": "Prova att bort växter och djur för att see hur de påverkar varandra",
 
 		"explanation_1a": "Du har byggt en näringskedja!",
-		"explanation_1b": "Energi flödar från plantor till växtätare och sedan till köttätare",
+		"explanation_1b": "Energi flödar från växter till växtätare och sedan till köttätare",
 		"explanation_2a": "Du har byggt en näringsväv!",
 		"explanation_2b": "Djuren föredrar ibland viss mat över annan, vilket får mer energi att flöda mellan dem",
 
@@ -137,7 +183,7 @@ class LanguageManager {
 
 	constructor() {
 		this.languageList = ["English", "Swedish"];
-		this.currentLanguage = "English";
+		this.currentLanguage = "Swedish";
 		this.boundObjects = new Map();
 
 		this.checkLanguageData();

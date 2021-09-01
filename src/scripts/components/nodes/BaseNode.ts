@@ -1,14 +1,11 @@
 import { BaseScene } from "../../scenes/BaseScene";
 import { NODE_SIZE } from "../../constants";
 
-// TODO: Remove Button
 export class BaseNode extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
 	public liftSmooth: number;
-	public hover: boolean;
+	private hover: boolean;
 	public hold: boolean;
-	// public callback?: () => void;
-	// public image: any;
 
 	constructor(scene: BaseScene, x: number, y: number) {
 		super(scene, x, y);
@@ -19,28 +16,18 @@ export class BaseNode extends Phaser.GameObjects.Container {
 		this.hold = false;
 
 		this.liftSmooth = 0;
-
-		// this.callback = callback;
-
-		// this.image = scene.add.image(0, 0, image);
-		// this.image.origScale = size / this.image.height;
-		// this.image.setScale(this.image.origScale);
-		// // this.image.setScrollFactor(0);
-		// this.add(this.image);
-
-		// this.onOut();
 	}
 
 	bindInteractive(gameObject, draggable=false) {
 		gameObject.removeInteractive();
 		gameObject.setInteractive({ useHandCursor: true, draggable: draggable })
-			.on('pointerout', this.onOut.bind(this))
-			.on('pointerover', this.onOver.bind(this))
-			.on('pointerdown', this.onDown.bind(this))
-			.on('pointerup', this.onUp.bind(this))
-			.on('dragstart', this.onDragStart.bind(this))
-			.on('drag', this.onDrag.bind(this))
-			.on('dragend', this.onDragEnd.bind(this));
+			.on('pointerout', this.onOut, this)
+			.on('pointerover', this.onOver, this)
+			.on('pointerdown', this.onDown, this)
+			.on('pointerup', this.onUp, this)
+			.on('dragstart', this.onDragStart, this)
+			.on('drag', this.onDrag, this)
+			.on('dragend', this.onDragEnd, this);
 	}
 
 	onOut(pointer: Phaser.Input.Pointer, event: Phaser.Types.Input.EventData) {
@@ -59,9 +46,6 @@ export class BaseNode extends Phaser.GameObjects.Container {
 	onUp(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
 		if (this.hold) {
 			this.hold = false;
-			// if (this.callback) {
-				// this.callback();
-			// }
 		}
 	}
 
@@ -82,5 +66,10 @@ export class BaseNode extends Phaser.GameObjects.Container {
 
 	getWidth(): number {
 		return NODE_SIZE;
+	}
+
+
+	update(time, delta) {
+		this.setDepth(1 + this.liftSmooth);
 	}
 }

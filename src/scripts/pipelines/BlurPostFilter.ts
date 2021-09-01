@@ -1,8 +1,8 @@
 export class BlurPostFilter extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline {
-	private offsetX: number;
-	private offsetY: number;
-	private lowres: boolean;
-	private steps: number;
+	public offsetX: number;
+	public offsetY: number;
+	public lowres: boolean;
+	public steps: number;
 
 	constructor (game) {
 		super({
