@@ -74,8 +74,8 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 			// this.nameText.x = this.nameBg.x + this.nameBg.width/2;
 		});
 
-		this.velocity = new Phaser.Math.Vector2(10, 0);
-		this.arbitraryLockTimer = 2 * (1 - Math.pow(Math.random(), 1.5));
+		this.velocity = new Phaser.Math.Vector2();
+		this.arbitraryLockTimer = 0;
 
 		this._selected = false;
 		this._dragged = false;
@@ -207,6 +207,12 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 	setAlphaGoal(value: number) {
 		this.alphaGoal = value;
 	}
+
+	resetLock(): void {
+		this.arbitraryLockTimer = 1.5 * (1 - Math.pow(Math.random(), 1.5));
+		this._visibilityCache = 0;
+	}
+
 
 	get selected(): boolean {
 		return this._selected || this._dragged || this._held;

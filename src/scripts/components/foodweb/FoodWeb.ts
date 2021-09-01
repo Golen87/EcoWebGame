@@ -92,10 +92,10 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			center: new Phaser.Math.Vector2(WX+WW/2, WY+WH/2), // Center point which gravity pulls towards
 
 			// Borders which nodes stay within
-			borderLeft: -200,
-			borderTop: -200,
-			borderRight: scene.W + 200,
-			borderBottom: scene.H + 200,
+			borderLeft: -100,
+			borderTop: -100,
+			borderRight: scene.W + 100,
+			borderBottom: scene.H + 100,
 		};
 
 		this.initNodes();
@@ -183,6 +183,16 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 					this.clearInfoBox();
 				}
 			});
+		}
+	}
+
+	resetNodes() {
+		for (const node of this.nodes) {
+			let x = Phaser.Math.Between(this.config.borderLeft, this.config.borderRight);
+			let y = this.config.borderTop;
+
+			node.setPosition(x, y);
+			node.resetLock();
 		}
 	}
 

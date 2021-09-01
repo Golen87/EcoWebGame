@@ -643,6 +643,7 @@ export class SerengetiScene extends BaseScene {
 			this.africa.setVisible(false);
 			this.africaIcon.setVisible(false);
 			this.foodWeb.setVisible(true);
+			this.foodWeb.resetNodes();
 			this.modeSlider.setVisible(true);
 		}
 		else { // Introduction levels
@@ -706,13 +707,14 @@ export class SerengetiScene extends BaseScene {
 			});
 		}
 		else {
-			language.bind(this.instructionText, "instruction_4");
-			for (const node of this.nodes) {
-				node.setVisible(this.story2.includes(node.role));
-			}
-			this.fakeNodes.forEach((fakeNode: FakeNode, key: NodeId) => {
-				this.fakeNodes.get(key)!.setVisible(false);
-			});
+			this.startStory(0);
+			// language.bind(this.instructionText, "instruction_4");
+			// for (const node of this.nodes) {
+			// 	node.setVisible(this.story2.includes(node.role));
+			// }
+			// this.fakeNodes.forEach((fakeNode: FakeNode, key: NodeId) => {
+			// 	this.fakeNodes.get(key)!.setVisible(false);
+			// });
 		}
 
 		// Move nodes to slots
