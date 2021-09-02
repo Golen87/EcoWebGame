@@ -21,9 +21,12 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 	private infoImage: Phaser.GameObjects.Image;
 	private infoTitle: Phaser.GameObjects.Text;
 	private infoDescription: Phaser.GameObjects.Text;
+	private infoIucn: Phaser.GameObjects.Container;
 	private infoIucnBg: RoundRectangle;
 	private infoIucnStatus: Phaser.GameObjects.Text;
 	private infoIucnText: Phaser.GameObjects.Text;
+	private infoIucnSelected: string;
+	private infoIucnHeld: boolean;
 
 	private nodeContainer: Phaser.GameObjects.Container;
 	private nodes: FoodWebNode[];
@@ -138,6 +141,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		// this.scene.V5.value = this.config.friction;
 		// this.scene.V6.value = this.config.groupStrength;
 
+		this.infoIucnBg.setScale(this.infoIucnHeld ? 0.94 : 1.0);
+		this.infoIucnText.setScale(this.infoIucnHeld ? 0.94 : 1.0);
 
 		this.anyNodesSelected = false;
 		this.updateNodes(time, delta);
@@ -145,6 +150,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 		for (const node of this.nodes) {
 			node.update(time, delta);
+			node.highlightIucn(this.infoIucnHeld, this.infoIucnSelected);
 		}
 
 		this.nodeContainer.sort("y");
@@ -321,18 +327,28 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let ix = w/2-p;
 		let iy = h/2-p-size/2;
 
-		this.infoIucnBg = new RoundRectangle(this.scene, ix, iy, size, size, size/2, 0xFFFFFF, 1.0);
-		this.infoIucnBg.setOrigin(1.0, 0.5);
-		this.infoBox.add(this.infoIucnBg);
+		this.infoIucn = this.scene.add.container(ix, iy);
+		this.infoBox.add(this.infoIucn);
 
-		this.infoIucnText = this.scene.createText(ix, iy, 14, this.scene.weights.regular, "#000", "XX");
+		this.infoIucnBg = new RoundRectangle(this.scene, 0, 0, size, size, size/2, 0xFFFFFF, 1.0);
+		this.infoIucnBg.setOrigin(0.5);
+		this.infoIucn.add(this.infoIucnBg);
+
+		this.infoIucnText = this.scene.createText(0, 0, 14, this.scene.weights.regular, "#000", "XX");
 		this.infoIucnText.setOrigin(0.5);
-		this.infoBox.add(this.infoIucnText);
+		this.infoIucn.add(this.infoIucnText);
 
-		this.infoIucnStatus = this.scene.createText(ix, iy, 14, this.scene.weights.regular, "#ffffff", "Status");
+		this.infoIucnStatus = this.scene.createText(0, 0, 14, this.scene.weights.regular, "#ffffff", "Status");
 		this.infoIucnStatus.setOrigin(1.0, 0.5);
 		language.bind(this.infoIucnStatus, "iucn_status");
-		this.infoBox.add(this.infoIucnStatus);
+		this.infoIucn.add(this.infoIucnStatus);
+
+		// Allow highlighting species by clicking the IUCN button
+		this.infoIucnHeld = false;
+		this.infoIucnBg.setInteractive({ useHandCursor: true })
+			.on('pointerdown', () => { this.infoIucnHeld = true; })
+			.on('pointerout', () => { this.infoIucnHeld = false; })
+			.on('pointerup', () => { this.infoIucnHeld = false; });
 
 		this.clearInfoBox();
 	}
@@ -349,6 +365,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let key = node.species.iucn ? "iucn_" + node.species.iucn : "";
 		language.bind(this.infoIucnText, key, this.resizeInfoIucn.bind(this));
 
+		this.infoIucnSelected = node.species.iucn;
 		this.infoIucnText.setColor(this.config.iucnTextColors[node.species.iucn]);
 		this.infoIucnBg.setColor(this.config.iucnColors[node.species.iucn]);
 
@@ -373,8 +390,12 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			this.infoIucnBg.setVisible(true);
 			this.infoIucnStatus.setVisible(true);
 			this.infoIucnBg.setWidth(this.infoIucnText.width + this.infoIucnBg.height);
-			this.infoIucnText.x = this.infoIucnBg.x - this.infoIucnBg.width/2;
-			this.infoIucnStatus.x = this.infoIucnBg.x - this.infoIucnBg.width - this.infoIucnBg.height/4;
+			this.infoIucnBg.x = -this.infoIucnBg.width/2;
+			this.infoIucnText.x = -this.infoIucnBg.width/2;
+			this.infoIucnStatus.x = -this.infoIucnBg.width - this.infoIucnBg.height/4;
+
+			// Add padding to button for easier clicking
+			this.infoIucnBg.input.hitArea.setTo(-15, -15, this.infoIucnBg.width+2*15, this.infoIucnBg.height+2*15);
 		}
 		else {
 			this.infoIucnBg.setVisible(false);
@@ -401,6 +422,9 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			node1 = this.nodes[i];
 			node1.move(-sx, -sy);
 			node1.setAlphaGoal(this.anyNodesSelected ? 0.3 : 1.0);
+			if (this.infoIucnHeld && this.infoIucnSelected == node1.species.iucn) {
+				node1.setAlphaGoal(1.0);
+			}
 		}
 
 		let pred, prey, x, y, l, count1, count2, bias;
@@ -476,7 +500,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			// this.relationGraphics.setBlendMode(Phaser.BlendModes.ADD);
 
 			let visibility: number = relation.pred.visibility * relation.prey.visibility;
-			let selected: number = visibility * (relation.pred.selected || relation.prey.selected ? 1 : 0);
+			let selected: number = visibility * (relation.pred.selected || relation.prey.selected ? 1 : 0) * (this.infoIucnHeld ? 0 : 1);
 
 			let strokeWidth = selected > 0 ? 2.5 : 1.5;
 			let strokeColor = selected > 0 ? 0xFFFFFF : 0xFFFFFF;
@@ -490,7 +514,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			relation.line.draw(this.relationGraphics);
 
 
-			if (this.anyNodesSelected && selected) {
+			if (this.anyNodesSelected && selected && !this.infoIucnHeld) {
 				relation.pred.setAlphaGoal(1.0);
 				relation.prey.setAlphaGoal(1.0);
 			}

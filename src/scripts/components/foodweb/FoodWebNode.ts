@@ -213,6 +213,19 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 		this._visibilityCache = 0;
 	}
 
+	highlightIucn(active: boolean, iucn: string): void {
+		if (active && this.species.iucn) {
+			if (this.species.iucn == iucn) {
+				this.circle.fillColor = 0xFFFFFF;
+				this.circle.setAlpha(1.0);
+			}
+			else {
+				this.circle.setAlpha(0.75);
+				this.circle.fillColor = this.config.iucnColors[this.species.iucn!];
+			}
+		}
+	}
+
 
 	get selected(): boolean {
 		return this._selected || this._dragged || this._held;
