@@ -164,45 +164,6 @@ export class Node extends BaseNode {
 		});
 
 
-
-		this.nameText = this.scene.createText(0, -0.7*NODE_SIZE, 20, this.scene.weights.regular, "#FFF", this.species.name);
-		this.nameText.setOrigin(0.5, 1.0);
-		this.nameText.setAlpha(0);
-		language.bind(this.nameText, this.species.id);
-		this.add(this.nameText);
-
-
-		// let xs = 73 * (NODE_SIZE/100);
-		// let ys = 22 * (NODE_SIZE/100);
-
-		// Plus button
-		// this.plus = new CircleButton(scene, xs, -ys, 0.3*NODE_SIZE, () => {
-		// 	this.emit('onPlusMinus', this, 1);
-		// });
-		// this.plus.image.setAlpha(0.7);
-		// this.plus.setVisible(false);
-		// this.plus.bindInteractive(this.plus.image);
-		// this.add(this.plus);
-
-		// this.plusText = this.scene.createText(0, 0, 0.3*NODE_SIZE, this.scene.weights.regular, "#000", "+");
-		// this.plusText.setOrigin(0.5);
-		// this.plus.add(this.plusText);
-
-
-		// Minus button
-		// this.minus = new CircleButton(scene, xs, ys, 0.3*NODE_SIZE, () => {
-		// 	this.emit('onPlusMinus', this, -1);
-		// });
-		// this.minus.image.setAlpha(0.7);
-		// this.minus.setVisible(false);
-		// this.minus.bindInteractive(this.minus.image);
-		// this.add(this.minus);
-
-		// this.minusText = this.scene.createText(0, -1, 0.3*NODE_SIZE, this.scene.weights.regular, "#000", "–");
-		// this.minusText.setOrigin(0.5);
-		// this.minus.add(this.minusText);
-
-
 		// Plant energy
 		this.energyGraphics = scene.add.graphics();
 		this.energyGraphics.setBlendMode(Phaser.BlendModes.ADD);
@@ -264,13 +225,13 @@ export class Node extends BaseNode {
 			}
 		}
 
-		let withinDistance = Phaser.Math.Distance.BetweenPoints(this, this.scene.input) < NODE_SIZE;
-		let showButtons = withinDistance && !this.hold && this.isInsidePlayingField();
+		// let withinDistance = Phaser.Math.Distance.BetweenPoints(this, this.scene.input) < NODE_SIZE;
+		// let showButtons = withinDistance && !this.hold && this.isInsidePlayingField();
 		// this.plus.setVisible(showButtons);
 		// this.minus.setVisible(showButtons);
 
 		// Enlargen node when dragging
-		let liftScale = 1 + 0.2 * this.liftSmooth;
+		let liftScale = 1 + 0 * 0.2 * this.liftSmooth - 0.1 * this.holdSmooth;
 		this.circleCont.setScale(liftScale * this.popScale);
 		// this.circleCont.setAlpha(this.hold ? 0.7 : 1.0);
 		// this.circleShadow.setScale(1 - 0.15 * this.liftSmooth);
@@ -284,6 +245,9 @@ export class Node extends BaseNode {
 		if (this.inPlay && this.alive && this.species.isPlant()) {
 			this.drawEnergy(time, delta);
 		}
+
+		// Hack to place above other nodes
+		this.setDepth(1 + this.liftSmooth);
 	}
 
 	drawEnergy(time, delta) {
