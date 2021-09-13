@@ -4,6 +4,7 @@ import { RoundRectangle } from "../RoundRectangle";
 import { Organism } from "../../simulation/Organism";
 import { language } from "../../language/LanguageManager";
 import { NODE_SIZE, DEATH_THRESHOLD } from "../../constants";
+import { colorToNumber } from "../../utils";
 import { GrayScalePostFilter } from "../../pipelines/GrayScalePostFilter";
 
 interface EnergyDot {
@@ -130,18 +131,20 @@ export class Node extends BaseNode {
 
 		// Colored background circle
 		this.circleMiddleBg = this.scene.add.ellipse(0, 0, NODE_SIZE+6, NODE_SIZE+6, groupColors[species.group]);
-		this.circleMiddleBg.setVisible(false);
-		// this.circleMiddleBg.setAlpha(0.4);
+		this.circleMiddleBg.fillColor = colorToNumber(this.species.color);
+		// this.circleMiddleBg.setVisible(false);
+		this.circleMiddleBg.setAlpha(0.5);
 		this.circleCont.add(this.circleMiddleBg);
 
 		// Colored background circle
 		this.circleBg = this.scene.add.ellipse(0, 0, NODE_SIZE, NODE_SIZE, 0XE6D8BE);
+		this.circleBg.fillColor = colorToNumber(this.species.color);
 		this.bindInteractive(this.circleBg, true);
 		this.circleCont.add(this.circleBg);
 
 		// Image of species (or icon if missing)
 		this.circleImage = this.scene.add.image(0, 0, species.image);
-		this.circleImage.setAlpha(this.hasImage ? 1.0 : 0.75);
+		// this.circleImage.setAlpha(this.hasImage ? 1.0 : 0.75);
 		this.circleImage.setScale((this.hasImage ? 1.0 : 0.8) * NODE_SIZE / this.circleImage.width);
 		this.circleCont.add(this.circleImage);
 
@@ -237,6 +240,8 @@ export class Node extends BaseNode {
 		// this.circleShadow.setScale(1 - 0.15 * this.liftSmooth);
 		this.circleShadow.x = 10 / this.circleCont.scaleX * (0.25 + 0.75*this.liftSmooth);
 		this.circleShadow.y = 10 / this.circleCont.scaleX * (0.25 + 0.75*this.liftSmooth);
+		this.circleMiddleBg.setScale((this.circleCont.scaleX * NODE_SIZE + 4) / this.circleMiddleBg.width / this.circleCont.scaleX);
+		// (2*this.circleCont.width) / this.circleMiddleBg.width
 
 		// Show name when holding the node
 		this.nameCont.setAlpha(this.liftSmooth);
