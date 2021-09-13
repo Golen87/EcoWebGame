@@ -24,6 +24,7 @@ interface NodeSlot {
 }
 
 export class SerengetiScene extends BaseScene {
+	private bg: Phaser.GameObjects.Image;
 	private sidebarBg: RoundRectangle;
 	private titleText: Phaser.GameObjects.Text;
 	private instructionText: Phaser.GameObjects.Text;
@@ -48,6 +49,10 @@ export class SerengetiScene extends BaseScene {
 	private tempSlider: Slider;
 	private minimap: Phaser.Cameras.Scene2D.Camera;
 
+	private attractionOpen: boolean;
+	private infoOpen: boolean;
+	private blurTween: Phaser.Tweens.Tween;
+
 	private timeStamp: number;
 	private currentStory: number;
 	private roleMap: object;
@@ -55,7 +60,6 @@ export class SerengetiScene extends BaseScene {
 	private story2: string[];
 	private story3: string[];
 	private storyRunning: boolean;
-	private infoWindowLock: boolean;
 
 	constructor() {
 		super({key: 'SerengetiScene'});
@@ -97,11 +101,12 @@ export class SerengetiScene extends BaseScene {
 	create(): void {
 		this.fade(false, 200, 0x000000);
 
+		this.scene.launch('UIScene');
+
 		simulator.loadScenario(database.getScenario("serengeti_1")!);
 
-		this.input.addPointer(3);
+		this.input.addPointer(4);
 
-		this.scene.launch('UIScene');
 
 		// this.minimap = this.cameras.add(0, 0, this.W/2, this.H/2).setZoom(1.0).setName('mini');
 		// this.minimap.setBackgroundColor(0x000000);
@@ -110,10 +115,10 @@ export class SerengetiScene extends BaseScene {
 		// this.minimap.scrollY = 0;
 		// this.minimap.setVisible(false);
 
-		let bg = this.add.image(this.CX, this.CY, 'bg_serengeti');
-		bg.setAlpha(0.3);
-		// bg.setPostPipeline(BlurPostFilter);
-		this.fitToScreen(bg);
+		this.bg = this.add.image(this.CX, this.CY, 'bg_serengeti');
+		this.bg.setAlpha(0.3);
+		// this.bg.setPostPipeline(BlurPostFilter);
+		this.fitToScreen(this.bg);
 		// this.cameras.main.setPostPipeline(BlurPostFilter);
 
 
@@ -283,18 +288,19 @@ export class SerengetiScene extends BaseScene {
 		}
 
 
-		// Toolbox
+		// Listen for events from the UI scene
+		this.scene.get('UIScene').events.on('attraction', (state: boolean) => {
+			this.attractionOpen = state;
 
-
-		this.infoWindowLock = false;
-
-		// Listen for events from the main scene
-		this.scene.get('UIScene').events.on('openInfo', () => {
-			this.openInfoWindow();
+			this.updateBlur();
+			this.startStory(state ? -1 : 0);
+			this.foodWeb.toggleAttraction(state);
+			this.instructionText.setVisible(!state);
 		}, this);
 
-		this.scene.get('UIScene').events.on('closeInfo', () => {
-			this.openInfoWindow();
+		this.scene.get('UIScene').events.on('info', (state: boolean) => {
+			this.infoOpen = state;
+			this.updateBlur();
 		}, this);
 
 		this.scene.get('UIScene').events.on('restart', () => {
@@ -325,7 +331,6 @@ export class SerengetiScene extends BaseScene {
 			const organism = simulator.scenario.species[i];
 
 			if (this.roleMap[organism.id]) {
-
 				let node = new Node(this, 0, 0, organism);
 				this.nodes.push(node);
 
@@ -347,7 +352,7 @@ export class SerengetiScene extends BaseScene {
 				node.simIndex = i;
 			}
 			else {
-				console.error("Excuse me?");
+				console.error("Organism found in database but not in roleMap:", organism.id);
 			}
 		}
 
@@ -501,7 +506,10 @@ export class SerengetiScene extends BaseScene {
 		this.tempSlider.setVisible(false);
 
 
-		this.startStory(0);
+		this.attractionOpen = true;
+		this.infoOpen = false;
+
+		// this.startStory(-1);
 	}
 
 	update(time: number, deltaMs: number): void {
@@ -614,10 +622,12 @@ export class SerengetiScene extends BaseScene {
 		}
 
 
-
-		// Boids
-		if (this.currentStory == 0) {
+		if (this.currentStory <= 0) {
 			this.foodWeb.update(time, delta);
+
+			if (this.attractionOpen) {
+				this.foodWeb.config.mode = Phaser.Math.Easing.Cubic.InOut(0.5 + 0.5 * Math.sin(time/8000));
+			}
 		}
 	}
 
@@ -635,25 +645,43 @@ export class SerengetiScene extends BaseScene {
 
 		for (var i = this.chapterTabs.length - 1; i >= 0; i--) {
 			this.chapterTabs[i].setAlpha(i == selectedChapter ? 1.0 : 0.5);
+			this.chapterTabs[i].setVisible(number != -1);
 		}
 
 		if (number == 0) { // Large network
-			// this.sidebarBg.setVisible(false);
+			this.sidebarBg.setVisible(true);
 			this.graph.setVisible(false);
 			this.africa.setVisible(false);
 			this.africaIcon.setVisible(false);
 			this.foodWeb.setVisible(true);
-			this.foodWeb.resetNodes();
 			this.modeSlider.setVisible(true);
 			this.modeSlider.value = 0.5;
+			// this.bg.setTexture('bg_serengeti_2');
+			// this.fitToScreen(this.bg);
+			this.titleText.setVisible(true);
+			this.bg.setVisible(true);
 		}
-		else { // Introduction levels
-			// this.sidebarBg.setVisible(true);
+		else if (number > 0) { // Introduction levels
+			this.sidebarBg.setVisible(true);
+			this.foodWeb.setVisible(false);
+			this.foodWeb.resetNodes();
 			this.graph.setVisible(true);
 			this.africa.setVisible(true);
 			this.africaIcon.setVisible(true);
-			this.foodWeb.setVisible(false);
 			this.modeSlider.setVisible(false);
+			// this.bg.setTexture('bg_serengeti');
+			// this.fitToScreen(this.bg);
+			this.titleText.setVisible(true);
+		}
+		else {
+			this.sidebarBg.setVisible(false);
+			this.foodWeb.setVisible(true);
+			this.foodWeb.resetNodes();
+			this.modeSlider.setVisible(false);
+			this.graph.setVisible(false);
+			this.africa.setVisible(false);
+			this.africaIcon.setVisible(false);
+			this.titleText.setVisible(false);
 		}
 
 		this.storyRunning = true;
@@ -708,7 +736,13 @@ export class SerengetiScene extends BaseScene {
 			});
 		}
 		else {
-			this.startStory(0);
+			for (const node of this.nodes) {
+				node.setVisible(false);
+			}
+			this.fakeNodes.forEach((fakeNode: FakeNode, key: NodeId) => {
+				this.fakeNodes.get(key)!.setVisible(false);
+			});
+			// this.startStory(0);
 			// language.bind(this.instructionText, "instruction_4");
 			// for (const node of this.nodes) {
 			// 	node.setVisible(this.story2.includes(node.role));
@@ -943,38 +977,44 @@ export class SerengetiScene extends BaseScene {
 	}
 
 
-	openInfoWindow(): void {
-		this.events.emit('openInfo');
-
-		let filter = this.cameras.main.getPostPipeline('BlurPostFilter');
+	updateBlur(): void {
+		let filter = this.cameras.main.getPostPipeline('BlurPostFilter') as BlurPostFilter;
 		let active = !Array.isArray(filter);
+		let on = this.attractionOpen || this.infoOpen;
 
-		if (!active) {
-			this.cameras.main.setPostPipeline(BlurPostFilter);
+		if (on) {
+			if (!active) {
+				this.cameras.main.setPostPipeline(BlurPostFilter);
+				filter = this.cameras.main.getPostPipeline('BlurPostFilter') as BlurPostFilter;
+			}
 
-			let filter = this.cameras.main.getPostPipeline('BlurPostFilter');
-			this.tweens.add({
+			if (this.blurTween) {
+				this.blurTween.stop();
+			}
+
+			this.blurTween = this.tweens.add({
 				targets: filter,
-				steps: { from: 0, to: 12 },
-				offsetX: { from: 0, to: 1.5 },
-				offsetY: { from: 0, to: 1.5 },
+				steps: { from: filter.steps, to: 2 },
+				offsetX: { from: filter.offsetX, to: 1.5 },
+				offsetY: { from: filter.offsetY, to: 1.5 },
 				ease: 'Linear',
 				duration: 250
 			});
 		}
-		else if (!this.infoWindowLock) {
-			this.infoWindowLock = true;
+		else {
+			if (this.blurTween) {
+				this.blurTween.stop();
+			}
 
-			this.tweens.add({
+			this.blurTween = this.tweens.add({
 				targets: filter,
-				steps: { from: 12, to: 0 },
-				offsetX: { from: 1.5, to: 0 },
-				offsetY: { from: 1.5, to: 0 },
+				steps: { from: filter.steps, to: 0 },
+				offsetX: { from: filter.offsetX, to: 0 },
+				offsetY: { from: filter.offsetY, to: 0 },
 				ease: 'Linear',
 				duration: 250,
 				onComplete: () => {
 					this.cameras.main.resetPostPipeline();
-					this.infoWindowLock = false;
 				}
 			});
 		}

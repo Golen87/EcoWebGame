@@ -122,6 +122,7 @@ export class FoodWebNode extends BaseNode {
 		// Gravity
 		let gravityStrength = (1 / this.config.gravity) * this.config.mode;
 		let towardCenter = this.config.center.clone();
+		towardCenter.add(this.config.centerOffset);
 		towardCenter.subtract(this);
 		towardCenter.x *= gravityStrength;
 		towardCenter.y *= 2.2*gravityStrength;
@@ -130,6 +131,7 @@ export class FoodWebNode extends BaseNode {
 		// Group
 		let groupStrength = (1 / this.config.groupStrength) * (1 - this.config.mode);
 		let towardGroup = this.config.groupPositions[this.species.group].clone();
+		towardGroup.add(this.config.centerOffset);
 		towardGroup.y += 7*Math.sin(time/1500+towardGroup.x/400+towardGroup.y/1000);
 		towardGroup.subtract(this);
 		towardGroup.scale(groupStrength);
@@ -188,8 +190,8 @@ export class FoodWebNode extends BaseNode {
 		if (!this.hasImage) {
 			this.image.setTint(this.selected ? 0x000000 : 0xFFFFFF);
 		}
-		this.nameBg.setVisible(this.selected);
-		this.nameText.setVisible(this.selected);
+		this.nameBg.setVisible(this.selected && !this.config.attractionMode);
+		this.nameText.setVisible(this.selected && !this.config.attractionMode);
 
 		// this.alpha += 0.1 * (this.alphaGoal - this.alpha);
 		this.alpha += Phaser.Math.Clamp(this.alphaGoal - this.alpha, -4*delta, 4*delta);

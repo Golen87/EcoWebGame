@@ -96,12 +96,16 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			iucnColors, // IUCN endangerment colors
 			iucnTextColors, // IUCN endangerment text colors
 			center: new Phaser.Math.Vector2(WX+WW/2, WY+WH/2), // Center point which gravity pulls towards
+			centerOffset: new Phaser.Math.Vector2(0, 0), // Center point which gravity pulls towards
 
 			// Borders which nodes stay within
 			borderLeft: -100,
 			borderTop: -100,
 			borderRight: scene.W + 100,
 			borderBottom: scene.H + 100,
+
+			attractionMode: false,
+			attractionTimer: 0,
 		};
 
 		this.initNodes();
@@ -114,35 +118,20 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 
 	update(time, delta) {
-		// this.config.mode = this.scene.V8.value;
-
-		// this.config.gravity = this.scene.V1.value;
-		// this.config.linkDistance = this.scene.V2.value;
-		// this.config.linkStrength = this.scene.V3.value;
-		// this.config.charge = this.scene.V4.value;
-		// this.config.friction = this.scene.V5.value;
-		// this.config.groupStrength = this.scene.V6.value;
-
 		this.config.gravity = 50 - 20 * this.config.mode;
-		// this.config.linkDistance = 150;
-		// this.config.linkStrength = 0.04;
 		this.config.charge = -50 - 50 * this.config.mode;
-		// this.config.friction = 0.5;
-		// this.config.groupStrength = 10;
 
-		// Update settings tied to mode
-		// this.config.gravity = 0.2 * this.config.mode;
-		// this.config.linkStrength = 0.1 * this.config.mode;
-		// this.config.groupStrength = 1 - this.config.mode;
-		// if(link.source.selected) linkStrength += 0.45;
-		// if(link.target.selected) linkStrength += 0.45;
+		if (this.config.attractionMode) {
+			this.config.gravity *= 1 + 3 * Phaser.Math.Easing.Quadratic.InOut(0.5 + 0.5 * Math.sin(time/8000));
 
-		// this.scene.V1.value = this.config.gravity;
-		// this.scene.V2.value = this.config.linkDistance;
-		// this.scene.V3.value = this.config.linkStrength;
-		// this.scene.V4.value = this.config.charge;
-		// this.scene.V5.value = this.config.friction;
-		// this.scene.V6.value = this.config.groupStrength;
+			// if (time > this.config.attractionTimer) {
+			// 	this.unselectNodes();
+			// 	Phaser.Math.RND.pick(this.nodes)._selected = true;
+			// 	Phaser.Math.RND.pick(this.nodes)._selected = true;
+			// 	Phaser.Math.RND.pick(this.nodes)._selected = true;
+			// 	this.config.attractionTimer = time + 3000;
+			// }
+		}
 
 		this.infoIucnBg.setScale(this.infoIucnHeld ? 0.94 : 1.0);
 		this.infoIucnText.setScale(this.infoIucnHeld ? 0.94 : 1.0);
@@ -186,9 +175,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			this.nodes.push(node);
 
 			node.on('onSelect', (target, active) => {
-				for (const node of this.nodes) {
-					node._selected = false;
-				}
+				this.unselectNodes();
 				if (active) {
 					this.setInfoBox(target);
 				}
@@ -407,8 +394,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			sy += node1.y;
 			this.anyNodesSelected = this.anyNodesSelected || node1.selected;
 		}
-		sx = (sx / n - this.config.center.x) * this.config.centering * this.config.mode;
-		sy = (sy / n - this.config.center.y) * this.config.centering * this.config.mode;
+		sx = (sx / n - this.config.center.x - this.config.centerOffset.x) * this.config.centering * this.config.mode;
+		sy = (sy / n - this.config.center.y - this.config.centerOffset.y) * this.config.centering * this.config.mode;
 
 		for (let i = 0; i < n; i++) {
 			node1 = this.nodes[i];
@@ -510,6 +497,32 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 				relation.pred.setAlphaGoal(1.0);
 				relation.prey.setAlphaGoal(1.0);
 			}
+		}
+	}
+
+
+	unselectNodes() {
+		for (const node of this.nodes) {
+			node._selected = false;
+		}
+	}
+
+	toggleAttraction(state: boolean) {
+		this.config.attractionMode = state;
+
+		for (const button of this.buttons) {
+			button.setVisible(!state);
+		}
+
+		this.unselectNodes();
+		this.clearInfoBox();
+		this.infoBox.setVisible(!state);
+
+		if (state) {
+			this.config.centerOffset.set(0, 100);
+		}
+		else {
+			this.config.centerOffset.set(0, 0);
 		}
 	}
 }

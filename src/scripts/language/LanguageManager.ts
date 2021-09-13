@@ -10,7 +10,6 @@ const languageData = {
 		"attraction_question_1": "What are the animals of Serengeti eating?",
 		"attraction_question_2": "question 2?",
 		"attraction_question_3": "question 3?",
-		"attraction_question_4": "question 4?",
 
 		"info_welcome": "Welcome to",
 		"info_title": "Ecoweb",
@@ -94,7 +93,6 @@ const languageData = {
 		"attraction_question_1": "Vad äter djuren i Serengeti?",
 		"attraction_question_2": "Vad händer om alla lejon i Serengeti dör?",
 		"attraction_question_3": "Hur kan klimatförändringar påverka Serengetis näringsväv?",
-		"attraction_question_4": "Vad vore världen utan växter?",
 
 		"info_welcome": "Välkommen till",
 		"info_title": "Ecoweb",

@@ -1,22 +1,47 @@
 import { BaseScene } from "./BaseScene";
 import { InfoWindow } from "../components/InfoWindow";
 import { ToolboxButton } from "../components/ToolboxButton";
+import { AttractionView } from "../components/AttractionView";
 import { language } from "../language/LanguageManager";
+import { IDLE_TIME, IDLE_FADE } from "../constants";
 
 export class UIScene extends BaseScene {
+	private attractionMode: boolean;
+	private attractionView: AttractionView;
+	private idleTimer: number;
+	private fader: Phaser.GameObjects.Rectangle;
+
 	private infoWindow: InfoWindow;
 	private toolButtons: ToolboxButton[];
 	private language: string;
 
 	constructor() {
-		super({key: 'UIScene'});
+		super({key: "UIScene"});
 	}
 
 	create(): void {
-		// Info window (clicking info-button)
+		this.fade(false, 200, 0x000000);
+
+		this.language = "Swedish";
+
+
+		/* Attraction mode */
+
+		this.attractionMode = true;
+		this.idleTimer = -2;
+		// this.add.rectangle(this.CX, this.CY, this.W, this.H, 0xFFFFFF, 0.3);
+		this.attractionView = new AttractionView(this, "#FFF");
+		this.attractionView.show();
+		// this.attractionView.setVisible(false);
+		this.attractionView.on("click", this.wakeUp, this);
+		this.events.emit("attraction", true);
+
+
+		/* Info window (clicking info-button) */
+
 		this.infoWindow = new InfoWindow(this);
-		this.infoWindow.on('closeInfo', () => {
-			this.events.emit('closeInfo');
+		this.infoWindow.on("closeInfo", () => {
+			this.events.emit("info", false);
 		}, this);
 
 
@@ -29,19 +54,19 @@ export class UIScene extends BaseScene {
 
 		const toolButtons = [
 			{
-				image: 'icon-bookmark-saved',
+				image: "icon-bookmark-saved",
 				function: this.bookmarkButton
 			},
 			{
-				image: 'icon-info',
+				image: "icon-info",
 				function: this.infoButton
 			},
 			{
-				image: 'icon-reset',
+				image: "icon-reset",
 				function: this.restartButton
 			},
 			{
-				image: 'icon-menu-flag-en',
+				image: "icon-menu-flag-en",
 				function: this.languageButton
 			}
 		];
@@ -49,7 +74,7 @@ export class UIScene extends BaseScene {
 		this.toolButtons = [];
 		for (let i = 0; i < toolButtons.length; i++) {
 			let button = toolButtons[i];
-			let size = 0.023 * this.H;
+			let size = 0.024 * this.H;
 			let x = tbX;
 			let y = tbY + (i - (toolButtons.length-1)/2) * 1.75*size;
 
@@ -57,25 +82,58 @@ export class UIScene extends BaseScene {
 			this.add.existing(obj);
 			this.toolButtons.push(obj);
 
-			obj.on('click', button.function, this);
+			obj.on("click", button.function, this);
 		}
 
-		// let land = this.add.image(this.CX, this.H - sbH - NODE_SIZE/2, 'bg_land');
+		// let land = this.add.image(this.CX, this.H - sbH - NODE_SIZE/2, "bg_land");
 		// this.containToScreen(land);
 
 
-		this.language = "Swedish";
+		/* Fader */
+
+		this.fader = this.add.rectangle(this.CX, this.CY, this.W, this.H, 0);
+		this.fader.setVisible(false);
+		this.fader.setInteractive({ useHandCursor: true })
+			.on('pointerdown', this.wakeUp, this);
 
 
 		/* Escape to reset */
 		this.input.keyboard.on("keydown-ESC", this.restartButton, this);
+
+		this.input.on("pointerdown", () => { if (this.idleTimer > 0) this.idleTimer = 0; }, this);
+		this.input.on("pointerup", () => { if (this.idleTimer > 0) this.idleTimer = 0; }, this);
 	}
 
 	update(time: number, delta: number): void {
+		this.attractionView.update(time, delta);
 		this.infoWindow.update(time, delta);
+
+		this.attractionView.alpha *= (1 - 0.99 * this.infoWindow.alpha);
 
 		for (let button of this.toolButtons) {
 			button.update(time, delta);
+		}
+
+		this.idleTimer += delta / 1000;
+		if (!this.attractionView.visible || this.infoWindow.isOpen) {
+			if (this.idleTimer > IDLE_TIME) {
+				this.fader.setVisible(true);
+				this.fader.setAlpha(Math.pow((this.idleTimer - IDLE_TIME) / IDLE_FADE, 0.8));
+
+				if (this.idleTimer > IDLE_TIME + IDLE_FADE) {
+					this.restartButton();
+					this.idleTimer = -2;
+				}
+			}
+			else {
+				this.fader.setVisible(false);
+			}
+		}
+		else if (this.fader.visible) {
+			this.fader.setAlpha(- this.idleTimer / 2);
+			if (this.fader.alpha <= 0) {
+				this.fader.setVisible(false);
+			}
 		}
 	}
 
@@ -84,23 +142,27 @@ export class UIScene extends BaseScene {
 
 	infoButton() {
 		if (this.infoWindow.isClosed) {
-			this.events.emit('openInfo');
+			this.events.emit("info", true);
 			this.infoWindow.show();
 		}
 		else if (this.infoWindow.isOpen) {
-			this.events.emit('closeInfo');
+			this.events.emit("info", false);
 			this.infoWindow.hide();
 		}
 	}
 
 	restartButton() {
-		if (this.infoWindow.isClosed) {
-			this.events.emit('restart');
-		}
-		else if (this.infoWindow.isOpen) {
-			this.events.emit('closeInfo');
-			this.events.emit('restart');
+		if (!this.attractionView.visible || this.infoWindow.isOpen) {
 			this.infoWindow.hide();
+			this.attractionView.show();
+
+			this.events.emit("restart");
+			this.events.emit("attraction", true);
+			this.events.emit("info", false);
+		}
+
+		if (this.language == "English") {
+			this.languageButton();
 		}
 	}
 
@@ -115,5 +177,14 @@ export class UIScene extends BaseScene {
 			language.setLanguage("Swedish");
 			this.toolButtons[3].setTexture("icon-menu-flag-en");
 		}
+	}
+
+	wakeUp() {
+		if (this.attractionView.visible) {
+			this.attractionView.hide();
+			this.events.emit("attraction", false);
+		}
+		this.fader.setVisible(false);
+		this.idleTimer = 0;
 	}
 }

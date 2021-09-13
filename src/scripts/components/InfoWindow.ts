@@ -129,7 +129,6 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 
 	hide() {
 		this.alphaGoal = 0;
-		console.log("alphaGoal", this.alphaGoal);
 		this.emit("closeInfo");
 	}
 
