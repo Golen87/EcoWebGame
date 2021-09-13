@@ -7,7 +7,7 @@
     "postinstall": "electron-builder install-app-deps",
     "download-phaser-typedef": "download --out typings https://raw.githubusercontent.com/photonstorm/phaser/master/types/phaser.d.ts",
 
-    "superclean": "rimraf .cache node_modules build dist",
+    "superclean": "rimraf .cache node_modules build dist public",
     "clean": "rimraf build dist public",
 
     "build": "rimraf build && parcel build src/electron.ts src/index.html --public-url ./ -d build --out-file=main --target=electron",
