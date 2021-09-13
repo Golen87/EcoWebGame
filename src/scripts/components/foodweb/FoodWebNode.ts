@@ -1,14 +1,16 @@
 import { BaseScene } from "../../scenes/BaseScene";
+import { FoodWebButton } from "./FoodWebButton";
+import { BaseNode } from "../nodes/BaseNode";
 import { language } from "../../language/LanguageManager";
 import { Organism } from "../../simulation/Organism";
 import { RoundRectangle } from "../RoundRectangle";
 
-export class FoodWebNode extends Phaser.GameObjects.Container {
+export class FoodWebNode extends BaseNode {
 	public scene: BaseScene;
 
 	public species: Organism;
 	public neighbours: FoodWebNode[];
-	public hyperLink: Phaser.GameObjects.Ellipse;
+	public hyperLink: FoodWebButton;
 	public _selected: boolean;
 
 	private config: any;
@@ -28,7 +30,6 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 	private dragOffsetX: number;
 	private dragOffsetY: number;
 	private _dragged: boolean;
-	private _held: boolean;
 	private _dragX: number;
 	private _dragY: number;
 	private _visibilityCache: number;
@@ -79,38 +80,41 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 
 		this._selected = false;
 		this._dragged = false;
-		this._held = false; // Used only to determine click
 
-		this.circle.setInteractive({ useHandCursor: true, draggable: true })
-			.on('pointerdown', () => {
-				this._held = true;
-			})
-			.on('pointerout', () => {
-				this._held = false;
-			})
-			.on('pointerup', () => {
-				if (this._held) {
-					this.selected = !this._selected;
-					this._held = false;
-				}
-			})
-			.on('dragstart', (pointer, dragX, dragY) => {
-				this.dragOffsetX = this.x;
-				this.dragOffsetY = this.y;
-				this._dragX = pointer.x;
-				this._dragY = pointer.y;
-			})
-			.on('drag', (pointer, dragX, dragY) => {
-				if (this._held && (Math.abs(pointer.x - this._dragX) > 20 || Math.abs(pointer.y - this._dragY) > 20)) {
-					this._held = false;
-				}
-				this._dragged = true;
-				this.goalX = dragX + this.dragOffsetX;
-				this.goalY = dragY + this.dragOffsetY;
-			})
-			.on('dragend', (pointer, dragX, dragY, dropped) => {
-				this._dragged = false;
-			});
+		this.bindInteractive(this.circle, true);
+	}
+
+	onUp(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
+		if (this.hold) {
+			this.selected = !this._selected;
+			this.hold = false;
+		}
+
+		// Parent
+		// if (this.hold) {
+			// this.hold = false;
+			// this.emit('click');
+		// }
+	}
+
+	onDragStart(pointer, dragX, dragY) {
+		this.dragOffsetX = this.x;
+		this.dragOffsetY = this.y;
+		this._dragX = pointer.x;
+		this._dragY = pointer.y;
+	}
+
+	onDrag(pointer, dragX, dragY) {
+		if (this.hold && (Math.abs(pointer.x - this._dragX) > 20 || Math.abs(pointer.y - this._dragY) > 20)) {
+			this.hold = false;
+		}
+		this._dragged = true;
+		this.goalX = dragX + this.dragOffsetX;
+		this.goalY = dragY + this.dragOffsetY;
+	}
+
+	onDragEnd(pointer, dragX, dragY, dropped) {
+		this._dragged = false;
 	}
 
 
@@ -137,7 +141,7 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 			this.velocity.reset();
 		}
 		else if (this._dragged) {
-			if (!this._held) {
+			if (!this.hold) {
 				this.x += (this.goalX - this.x) / 2.0;
 				this.y += (this.goalY - this.y) / 2.0;
 			}
@@ -191,9 +195,13 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 		this.alpha += Phaser.Math.Clamp(this.alphaGoal - this.alpha, -4*delta, 4*delta);
 
 		if (this.hyperLink) {
-			this.hyperLink.setAlpha(this._selected ? 1.0 : 0.4);
-			this.hyperLink.fillColor = this.selected ? 0xFFFFFF : this.config.groupColors[this.species.group];
+			this.hyperLink.updateCircle(
+				this._selected ? 1.0 : 0.4,
+				this.selected ? 0xFFFFFF : this.config.groupColors[this.species.group]
+			);
 		}
+
+		this.setScale(1 - 0.1 * this.holdSmooth);
 	}
 
 
@@ -211,6 +219,7 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 	resetLock(): void {
 		this.arbitraryLockTimer = 1.5 * (1 - Math.pow(Math.random(), 1.5));
 		this._visibilityCache = 0;
+		this._selected = false;
 	}
 
 	highlightIucn(active: boolean, iucn: string): void {
@@ -228,7 +237,7 @@ export class FoodWebNode extends Phaser.GameObjects.Container {
 
 
 	get selected(): boolean {
-		return this._selected || this._dragged || this._held;
+		return this._selected || this._dragged || this.hold;
 	}
 
 	set selected(value: boolean) {

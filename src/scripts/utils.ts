@@ -46,3 +46,9 @@ export function colorToString(color: number): string {
 	let c = Phaser.Display.Color.ValueToColor(color);
 	return Phaser.Display.Color.RGBToString(c.red, c.green, c.blue);
 }
+
+// Convert hex string color to hex number color
+export function colorToNumber(color: string): number {
+	let c = Phaser.Display.Color.ValueToColor(color);
+	return c.color;
+}

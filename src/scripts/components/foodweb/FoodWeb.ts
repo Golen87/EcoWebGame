@@ -1,5 +1,6 @@
 import { BaseScene } from "../../scenes/BaseScene";
 import { FoodWebNode } from "./FoodWebNode";
+import { FoodWebButton } from "./FoodWebButton";
 import { RoundRectangle } from "../RoundRectangle";
 import { language } from "../../language/LanguageManager";
 import { Scenario } from "../../simulation/Scenario";
@@ -31,6 +32,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 	private nodeContainer: Phaser.GameObjects.Container;
 	private nodes: FoodWebNode[];
 	private anyNodesSelected: boolean;
+
+	private buttons: FoodWebButton[];
 
 	private relationGraphics: Phaser.GameObjects.Graphics;
 	private relations: Relation[];
@@ -153,6 +156,10 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			node.highlightIucn(this.infoIucnHeld, this.infoIucnSelected);
 		}
 
+		for (const button of this.buttons) {
+			button.update(time, delta);
+		}
+
 		this.nodeContainer.sort("y");
 	}
 
@@ -233,6 +240,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 	}
 
 	initButtons() {
+		this.buttons = [];
+
 		let chosen = [
 			"panthera_leo", // Lion
 			"lycaon_pictus", // Vildhund
@@ -249,40 +258,23 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			"acacia_tortilis", // Acacia
 		];
 
-		let count = 0;
-		for (const id of chosen) {
+		for (let i = 0; i < chosen.length; i++) {
+			let id = chosen[i];
 			for (const node of this.nodes) {
 				if (id == node.species.id) {
 					let size = 55;
-					let x = this.scene.CX + 1.4 * size * (count - (chosen.length-1)/2);
+					let x = this.scene.CX + 1.4 * size * (i - (chosen.length-1)/2);
 					let y = 0.88 * this.scene.H;
 
-					// Colored background circle
-					let circle = this.scene.add.ellipse(x, y, size+6, size+6, 0xFFFFFF);
-					this.add(circle);
+					let obj = new FoodWebButton(this.scene, x, y, size, node.species.image);
+					this.add(obj);
+					this.buttons.push(obj);
 
-					// Image of species (or icon if missing)
-					let image = this.scene.add.image(x, y, node.species.image);
-					image.setScale(size / image.width);
-					this.add(image);
+					node.hyperLink = obj;
 
-					let held = false;
-					node.hyperLink = circle;
-					circle.setInteractive({ useHandCursor: true, draggable: true })
-						.on('pointerdown', () => {
-							held = true;
-						})
-						.on('pointerout', () => {
-							held = false;
-						})
-						.on('pointerup', () => {
-							if (held) {
-								node.selected = !node._selected;
-								held = false;
-							}
-						});
-
-					count++;
+					obj.on('click', () => {
+						node.selected = !node._selected;
+					}, this);
 				}
 			}
 		}

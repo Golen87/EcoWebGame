@@ -22,8 +22,8 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 		this.setAlpha(0);
 		this.setVisible(false);
 
-		this.width = 0.5 * scene.W;
-		this.height = 0.55 * scene.H;
+		this.width = 0.6 * scene.W;
+		this.height = 0.65 * scene.H;
 		this.fontSize = 12;
 		this.sep = 1 * this.fontSize;
 		this.pad = 3 * this.fontSize;
@@ -48,9 +48,11 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 			null,
 			{ weight: w.bold, size: 1, text: "info_data_1" },
 			{ weight: w.regular, text: "info_data_2" },
+			{ weight: w.regular, text: "info_data_3" },
 			null,
 			{ weight: w.bold, size: 1, text: "info_who_1" },
 			{ weight: w.regular, text: "info_who_2" },
+			{ weight: w.regular, text: "info_who_3" },
 			null,
 			{ weight: w.bold, size: 1, text: "info_model_1" },
 			{ weight: w.regular, text: "info_model_2" },

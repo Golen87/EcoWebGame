@@ -501,7 +501,7 @@ export class SerengetiScene extends BaseScene {
 		this.tempSlider.setVisible(false);
 
 
-		this.startStory(1);
+		this.startStory(0);
 	}
 
 	update(time: number, deltaMs: number): void {
@@ -645,6 +645,7 @@ export class SerengetiScene extends BaseScene {
 			this.foodWeb.setVisible(true);
 			this.foodWeb.resetNodes();
 			this.modeSlider.setVisible(true);
+			this.modeSlider.value = 0.5;
 		}
 		else { // Introduction levels
 			// this.sidebarBg.setVisible(true);
