@@ -75,6 +75,8 @@ export class AttractionView extends Phaser.GameObjects.Container {
 		this.questionKeys = ["attraction_question_1", "attraction_question_2", "attraction_question_3"];
 		this.questionTimer = 0;
 		this.questionIndex = 0;
+
+		this.newQuestion();
 	}
 
 	update(time, delta) {
@@ -85,7 +87,7 @@ export class AttractionView extends Phaser.GameObjects.Container {
 
 		if (this.visible) {
 			this.questionTimer += delta / 1000;
-			if (this.questionTimer > 0.8 * QUESTION_TIME) {
+			if (this.questionTimer > 0.75 * QUESTION_TIME) {
 				this.newQuestion();
 				this.questionTimer = 0;
 			}
@@ -98,21 +100,24 @@ export class AttractionView extends Phaser.GameObjects.Container {
 				this.questionSmooth[i] += delta / 1000 / QUESTION_TIME;
 			}
 		}
-		else {
-			this.questionTimer = 0;
-		}
 	}
 
 	show() {
 		this.alphaGoal = 1;
 		this.outside.setVisible(true);
-		this.newQuestion();
+
+		if (this.alpha == 0) {
+			this.questionTimer = 0;
+			for (let i = this.questionTexts.length-1; i >= 0; i--) {
+				this.questionTexts[i].setVisible(false);
+			}
+			this.newQuestion();
+		}
 	}
 
 	hide() {
 		this.alphaGoal = 0;
 		this.outside.setVisible(false);
-		this.emit("closeInfo");
 	}
 
 	newQuestion() {

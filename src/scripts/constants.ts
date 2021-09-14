@@ -8,8 +8,8 @@ const DATABASE_LOCKED = true;
 
 const UNIVERSEUM = true;
 
-const IDLE_TIME = 5;
-const IDLE_FADE = 5;
+const IDLE_TIME = 90;
+const IDLE_FADE = 10;
 const QUESTION_TIME = 12;
 
 export {
