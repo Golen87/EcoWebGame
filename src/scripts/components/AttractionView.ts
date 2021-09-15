@@ -15,6 +15,7 @@ export class AttractionView extends Phaser.GameObjects.Container {
 	private questionIndex: number;
 	private questionTexts: Phaser.GameObjects.Text[];
 	private questionSmooth: number[];
+	private previousY: number;
 
 	private alphaGoal: number;
 
@@ -48,17 +49,18 @@ export class AttractionView extends Phaser.GameObjects.Container {
 		this.questionTexts = [];
 		this.questionSmooth = [];
 		for (let i = 0; i < 3; i++) {
+
 			let text = this.scene.createText(0, 0, 60, this.scene.weights.regular, textColor, "Question?");
 			text.setVisible(false);
 			text.setWordWrapWidth(0.45*scene.W, true);
-			this.questionTexts.push(text);
-			this.questionSmooth.push(0);
-
-			this.container.add(text);
 			text.setOrigin(0.5);
 			text.setPadding(30);
 			text.setShadow(0, 0, "#FFF", 15);
 			text.setStroke("#000", 3);
+
+			this.container.add(text);
+			this.questionTexts.push(text);
+			this.questionSmooth.push(0);
 		}
 
 
@@ -75,6 +77,7 @@ export class AttractionView extends Phaser.GameObjects.Container {
 		this.questionKeys = ["attraction_question_1", "attraction_question_2", "attraction_question_3"];
 		this.questionTimer = 0;
 		this.questionIndex = 0;
+		this.previousY = 0;
 
 		this.newQuestion();
 	}
@@ -129,7 +132,11 @@ export class AttractionView extends Phaser.GameObjects.Container {
 
 		target.setVisible(true);
 		target.x = (0.5 - Math.random()) * this.scene.W/4;
-		target.y = this.scene.W/12 + (0.5 - Math.random()) * this.scene.W/8;
+		target.y = this.previousY;
+		while (Math.abs(target.y - this.previousY) < 0.1 * this.scene.H) {
+			target.y = (-0.1 + 0.3 * Math.random()) * this.scene.H;
+		}
+		this.previousY = target.y;
 
 		language.bind(target, this.questionKeys[this.questionIndex]);
 	}
