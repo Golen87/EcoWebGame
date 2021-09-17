@@ -8,12 +8,15 @@ export class FakeNode extends BaseNode {
 	private graphics: Phaser.GameObjects.Graphics;
 	private replacements: Node[];
 	private text: Phaser.GameObjects.Text;
+	private alphaGoal: number;
 
 	constructor(scene: BaseScene, x: number, y: number, name: string) {
 		super(scene, x, y);
 		scene.add.existing(this);
 
 		this.replacements = [];
+		this.alphaGoal = 0;
+		this.alpha = 0;
 
 		this.graphics = scene.add.graphics({x: 0, y: 0});
 		this.graphics.lineStyle(2.0, 0xffffff, 1.0);
@@ -40,23 +43,24 @@ export class FakeNode extends BaseNode {
 		super.update(time, delta);
 
 		let anyInside = this.replacements.some(node => node.isInsidePlayingField() || !node.stick);
-		let anyActive = this.replacements.some(node => node.inPlay);
+		let anyActive = this.replacements.some(node => node.inPlay || Phaser.Math.Distance.BetweenPoints(node, this) < NODE_SIZE*2);
 
 		// 0.0 if any node is active
 		// 0.5 if any node is held, not yet active
 		// 1.0 if idle
-		this.setAlpha(
+		this.alphaGoal =
 			(anyActive) ?
 				0.0 :
 				(!anyActive && anyInside) ?
 					0.5+0.25*Math.sin(0.008*time) :
-					1.0
-		);
+					1.0;
 		this.setScale(
 			(!anyActive && anyInside) ?
 				1.0+0.03*Math.sin(0.008*time) :
 				1.0
 		);
+
+		this.alpha += Phaser.Math.Clamp(this.alphaGoal - this.alpha, -delta/0.5, delta/0.5);
 	}
 
 	addReplacement(node: Node) {
