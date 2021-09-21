@@ -14,9 +14,9 @@ export class RoundRectangle extends Phaser.GameObjects.Container {
 		scene.add.existing(this);
 
 		this.scene = scene;
-		this.width = width;
-		this.height = height;
 		this.radius = radius;
+		this.width = Math.max(width, 2*radius);
+		this.height = Math.max(height, 2*radius);
 		this.color = color;
 		this.origin = new Phaser.Math.Vector2(0.5, 0.5);
 		this.setAlpha(alpha);
