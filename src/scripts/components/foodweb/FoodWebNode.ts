@@ -12,6 +12,7 @@ export class FoodWebNode extends BaseNode {
 	public neighbours: FoodWebNode[];
 	public hyperLink: FoodWebButton;
 	public _selected: boolean;
+	public subselected: boolean;
 
 	private config: any;
 
@@ -48,7 +49,7 @@ export class FoodWebNode extends BaseNode {
 
 		let tier = (species.isPlant() ? 1 : (species.isHerbivore() ? 2 : 3));
 		this.hasImage = !species.image.startsWith('icon');
-		this.size = 20 + 12 * tier;
+		this.size = 24 + 12 * tier - (this.hasImage ? 0 : 4);
 		// this.size = 2*(20 + 12 * tier);
 
 		// Colored background circle
@@ -80,6 +81,7 @@ export class FoodWebNode extends BaseNode {
 
 		this._selected = false;
 		this._dragged = false;
+		this.subselected = false;
 
 		this.bindInteractive(this.circle, true);
 	}
@@ -124,8 +126,8 @@ export class FoodWebNode extends BaseNode {
 		let towardCenter = this.config.center.clone();
 		towardCenter.add(this.config.centerOffset);
 		towardCenter.subtract(this);
-		towardCenter.x *= gravityStrength;
-		towardCenter.y *= 2.2*gravityStrength;
+		towardCenter.x *= 0.85 * gravityStrength;
+		towardCenter.y *= 2.1 * gravityStrength;
 		this.velocity.add(towardCenter);
 
 		// Group
@@ -188,7 +190,7 @@ export class FoodWebNode extends BaseNode {
 		// this.circle.setTint(this.selected ? 0xFFFFFF : this.config.groupColors[this.species.group]);
 		this.circle.setAlpha(this.selected ? 1.0 : 0.4);
 		if (!this.hasImage) {
-			this.image.setTint(this.selected ? 0x000000 : 0xFFFFFF);
+			this.image.setTint(this.selected || this.subselected ? 0x000000 : 0xFFFFFF);
 		}
 		this.nameBg.setVisible(this.selected && !this.config.attractionMode);
 		this.nameText.setVisible(this.selected && !this.config.attractionMode);
@@ -224,17 +226,14 @@ export class FoodWebNode extends BaseNode {
 		this._selected = false;
 	}
 
-	highlightIucn(active: boolean, iucn: string): void {
-		if (active && this.species.iucn) {
-			if (this.species.iucn == iucn) {
-				this.circle.fillColor = 0xFFFFFF;
-				this.circle.setAlpha(1.0);
-			}
-			else {
-				this.circle.setAlpha(0.75);
-				this.circle.fillColor = this.config.iucnColors[this.species.iucn!];
-			}
-		}
+	highlight(): void {
+		this.circle.fillColor = 0xFFFFFF;
+		this.circle.setAlpha(1.0);
+	}
+
+	highlightIucnColor(): void {
+		this.circle.fillColor = this.config.iucnColors[this.species.iucn!];
+		this.circle.setAlpha(1.0);
 	}
 
 

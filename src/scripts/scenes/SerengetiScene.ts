@@ -44,7 +44,6 @@ export class SerengetiScene extends BaseScene {
 	private graph: Graph;
 	private infoPopup: InfoPopup;
 	private foodWeb: FoodWeb;
-	private modeSlider: Slider;
 	private matrixEditor: MatrixEditor;
 	private tempSlider: Slider;
 	private minimap: Phaser.Cameras.Scene2D.Camera;
@@ -132,9 +131,9 @@ export class SerengetiScene extends BaseScene {
 		// let sbY = this.CY;
 		let sbW = this.W;
 		let sbH = 0.22 * this.H;
-		let sbX = this.CX;
+		let sbX = this.CX + 0.13 * this.W;
 		let sbY = this.H - 0.5*sbH;
-		this.sidebarBg = new RoundRectangle(this, sbX, sbY, sbW, sbH, 10, 0X000000);
+		this.sidebarBg = new RoundRectangle(this, this.CX, sbY, sbW, sbH, 10, 0X000000);
 		this.sidebarBg.setAlpha(0.2);
 
 
@@ -142,7 +141,7 @@ export class SerengetiScene extends BaseScene {
 		this.titleText = this.createText(10, 10, 28, this.weights.bold, "#FCB061", "Serengeti Food Web");
 		this.titleText.setAlpha(0.75);
 		this.titleText.setOrigin(0);
-		language.bind(this.titleText, "title");
+		language.bind(this.titleText, "serengeti_title");
 
 		// TODO: Move to component (and add popup on click)
 		this.africa = this.add.image(0 + this.titleText.width/2, 60, 'icon-map-africa');
@@ -359,28 +358,7 @@ export class SerengetiScene extends BaseScene {
 
 		/* Large food web */
 
-		this.foodWeb = new FoodWeb(this, 0, 0);
-
-		this.modeSlider = new Slider(this, this.CX, 0.95*this.H, 250, 24, 6);
-		this.modeSlider.setRange(0, 1);
-		this.sliders.push(this.modeSlider);
-		this.add.existing(this.modeSlider);
-
-		let modeSep = 1.5 * this.modeSlider.height;
-		let groupText = this.createText(- this.modeSlider.width/2 - modeSep, 0, 20, this.weights.bold);
-		let linkText = this.createText(this.modeSlider.width/2 + modeSep, 0, 20, this.weights.bold);
-		groupText.setOrigin(1, 0.5);
-		linkText.setOrigin(0, 0.5);
-		this.modeSlider.add(groupText);
-		this.modeSlider.add(linkText);
-		language.bind(groupText, "slider_groups");
-		language.bind(linkText, "slider_links");
-
-		this.modeSlider.value = this.foodWeb.config.mode;
-		this.modeSlider.on('onChange', (value) => {
-			this.foodWeb.config.mode = value;
-		}, this);
-		this.modeSlider.setVisible(false);
+		this.foodWeb = new FoodWeb(this);
 
 
 		// Empty nodes
@@ -447,7 +425,7 @@ export class SerengetiScene extends BaseScene {
 		// Graph
 
 		this.graph = new Graph(this, 1.6*sbH, 0.75*sbH);
-		this.graph.setPosition(0.32*sbH + 0.5*this.graph.width, sbY + 0.03*this.graph.height);
+		this.graph.setPosition(0.32*sbH + 0.5*this.graph.width + 0.16*this.W, sbY + 0.03*this.graph.height);
 
 
 		// Info text popup
@@ -479,7 +457,7 @@ export class SerengetiScene extends BaseScene {
 		this.add.existing(editSlider);
 		editSlider.setAlpha(0);
 
-		this.tempSlider = new Slider(this, 3/4*this.W, sbY, 250, 24, 6, 5);
+		this.tempSlider = new Slider(this, sbX, sbY, 250, 24, 6, 5);
 		this.tempSlider.setRange(0, 1);
 		this.sliders.push(this.tempSlider);
 		this.add.existing(this.tempSlider);
@@ -654,8 +632,6 @@ export class SerengetiScene extends BaseScene {
 			this.africa.setVisible(false);
 			this.africaIcon.setVisible(false);
 			this.foodWeb.setVisible(true);
-			this.modeSlider.setVisible(true);
-			this.modeSlider.value = 0.5;
 			// this.bg.setTexture('bg_serengeti_2');
 			// this.fitToScreen(this.bg);
 			this.titleText.setVisible(true);
@@ -668,7 +644,6 @@ export class SerengetiScene extends BaseScene {
 			this.graph.setVisible(true);
 			this.africa.setVisible(true);
 			this.africaIcon.setVisible(true);
-			this.modeSlider.setVisible(false);
 			// this.bg.setTexture('bg_serengeti');
 			// this.fitToScreen(this.bg);
 			this.titleText.setVisible(true);
@@ -677,7 +652,6 @@ export class SerengetiScene extends BaseScene {
 			this.sidebarBg.setVisible(false);
 			this.foodWeb.setVisible(true);
 			this.foodWeb.resetNodes();
-			this.modeSlider.setVisible(false);
 			this.graph.setVisible(false);
 			this.africa.setVisible(false);
 			this.africaIcon.setVisible(false);
@@ -692,10 +666,11 @@ export class SerengetiScene extends BaseScene {
 		this.nextText.setVisible(false);
 		this.storyText1.setVisible(false);
 		this.storyText2.setVisible(false);
+		this.tempSlider.setVisible(false);
 
 		if (number == 0) {
-			// language.bind(this.instructionText, null);
-			language.bind(this.instructionText, "instruction_0");
+			language.bind(this.instructionText, "");
+			// language.bind(this.instructionText, "instruction_0");
 			for (const node of this.nodes) {
 				node.setVisible(false);
 			}
@@ -778,6 +753,9 @@ export class SerengetiScene extends BaseScene {
 		else if (this.currentStory == 2) {
 			language.bind(this.storyText1, "explanation_2a");
 			language.bind(this.storyText2, "explanation_2b");
+		}
+		else if (this.currentStory == 3) {
+			this.tempSlider.setVisible(true);
 		}
 	}
 
@@ -995,8 +973,8 @@ export class SerengetiScene extends BaseScene {
 			this.blurTween = this.tweens.add({
 				targets: filter,
 				steps: { from: filter.steps, to: 2 },
-				offsetX: { from: filter.offsetX, to: 1.5 },
-				offsetY: { from: filter.offsetY, to: 1.5 },
+				offsetX: { from: filter.offsetX, to: 1.4 },
+				offsetY: { from: filter.offsetY, to: 1.4 },
 				ease: 'Linear',
 				duration: 250
 			});

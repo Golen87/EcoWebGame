@@ -118,7 +118,7 @@ export class UIScene extends BaseScene {
 		if (!this.attractionView.visible || this.infoWindow.isOpen) {
 			if (this.idleTimer > IDLE_TIME) {
 				this.fader.setVisible(true);
-				this.fader.setAlpha(Math.pow((this.idleTimer - IDLE_TIME) / IDLE_FADE, 0.8));
+				this.fader.setAlpha(Math.pow((this.idleTimer - IDLE_TIME) / IDLE_FADE, 0.7));
 
 				if (this.idleTimer > IDLE_TIME + IDLE_FADE) {
 					this.restartButton();

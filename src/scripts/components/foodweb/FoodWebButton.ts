@@ -24,7 +24,7 @@ export class FoodWebButton extends BaseNode {
 	}
 
 	update(time, delta) {
-		this.setScale(1 - 0.1 * this.holdSmooth);
+		this.setScale(1 - 0.1 * this.holdSmooth - 0.1 + 0.25 * this.circle.alpha);
 	}
 
 	updateCircle(alpha: number, color: number) {

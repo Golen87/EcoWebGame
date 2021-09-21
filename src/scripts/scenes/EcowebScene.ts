@@ -376,7 +376,7 @@ export class EcowebScene extends BaseScene {
 
 		/* Large food web */
 
-		this.foodWeb = new FoodWeb(this, 0, 0);
+		this.foodWeb = new FoodWeb(this);
 
 		this.modeSlider = new Slider(this, this.CX, 0.95*this.H, 250, 24, 6);
 		this.modeSlider.setRange(0, 1);
