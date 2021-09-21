@@ -52,11 +52,11 @@ export class AttractionView extends Phaser.GameObjects.Container {
 
 			let text = this.scene.createText(0, 0, 60, this.scene.weights.regular, textColor, "Question?");
 			text.setVisible(false);
-			text.setWordWrapWidth(0.45*scene.W, true);
+			// text.setWordWrapWidth(0.45*scene.W, true);
 			text.setOrigin(0.5);
 			text.setPadding(30);
 			text.setShadow(0, 0, "#FFF", 15);
-			text.setStroke("#000", 3);
+			text.setStroke("#FFA", 1);
 
 			this.container.add(text);
 			this.questionTexts.push(text);
@@ -70,7 +70,7 @@ export class AttractionView extends Phaser.GameObjects.Container {
 			text.setOrigin(0.5);
 			text.setPadding(30);
 			text.setShadow(0, 0, "#FFF", 15);
-			text.setStroke("#000", 3);
+			text.setStroke("#FFA", 1);
 		}
 
 
@@ -131,10 +131,12 @@ export class AttractionView extends Phaser.GameObjects.Container {
 		this.questionSmooth[this.questionIndex] = 0;
 
 		target.setVisible(true);
-		target.x = (0.5 - Math.random()) * this.scene.W/4;
+		target.x = (0.5 - Math.random()) * this.scene.W/6;
 		target.y = this.previousY;
-		while (Math.abs(target.y - this.previousY) < 0.1 * this.scene.H) {
+		let limit = 100;
+		while (Math.abs(target.y - this.previousY) < 0.13 * this.scene.H) {
 			target.y = (-0.1 + 0.3 * Math.random()) * this.scene.H;
+			if (limit-- < 0) { break; }
 		}
 		this.previousY = target.y;
 
