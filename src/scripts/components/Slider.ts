@@ -5,6 +5,7 @@ export class Slider extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
 
 	private _value: number;
+	private _prevValue: number;
 	private background: RoundRectangle;
 	private button: Phaser.GameObjects.Ellipse;
 	private maxV: number;
@@ -44,7 +45,7 @@ export class Slider extends Phaser.GameObjects.Container {
 				let y = 0;
 				let size = 0.75 * thinHeight;
 
-				let notch = scene.add.ellipse(x, y, size, size, 0x000000);
+				let notch = scene.add.ellipse(x, y, size, size, 0xFFFFFF);
 				notch.setAlpha(0.25);
 				this.add(notch);
 			}
@@ -61,6 +62,7 @@ export class Slider extends Phaser.GameObjects.Container {
 		this.minV = 0;
 		this.maxV = 1;
 		this._value = 0.5;
+		this._prevValue = 0.5;
 	}
 
 
@@ -73,6 +75,7 @@ export class Slider extends Phaser.GameObjects.Container {
 	set value(value: number) {
 		value = Phaser.Math.Clamp(value, this.minV, this.maxV);
 		this._value = value;
+		this._prevValue = value;
 		this.emit('onChange', this._value);
 
 		let fac = (value - this.minV) / (this.maxV - this.minV);
@@ -109,7 +112,10 @@ export class Slider extends Phaser.GameObjects.Container {
 		let scaledValue = this.minV + baseValue * (this.maxV - this.minV);
 		this._value = scaledValue;
 
-		this.emit('onChange', this._value);
+		if (this._prevValue != this._value) {
+			this.emit('onChange', this._value);
+		}
+		this._prevValue = this._value;
 	}
 
 	lock() {
@@ -121,5 +127,11 @@ export class Slider extends Phaser.GameObjects.Container {
 	update(time: number, delta: number) {
 		// Approach target position gradually
 		this.button.x += 0.5 * (this.targetX - this.button.x);
+	}
+
+	smoothSet(value: number) {
+		let prev = this.button.x;
+		this.value = value;
+		this.button.x = prev;
 	}
 }
