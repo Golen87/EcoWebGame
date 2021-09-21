@@ -1,6 +1,7 @@
 import { BaseScene } from "../scenes/BaseScene";
 import { language } from "../language/LanguageManager";
 import { simulator } from "../simulation/Simulator";
+import { SIMULATION_LENGTH } from "../constants";
 
 export class Graph extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
@@ -30,7 +31,7 @@ export class Graph extends Phaser.GameObjects.Container {
 		this.width = width;
 		this.height = height;
 		this.padding = 0.03 * this.width;
-		this.history = 20;
+		this.history = SIMULATION_LENGTH; // 20
 		this.xstep = 1/8;
 		this.ystep = 6;
 
@@ -71,7 +72,7 @@ export class Graph extends Phaser.GameObjects.Container {
 
 
 		this.xLabels = [];
-		this.createXLabels();
+		// this.createXLabels();
 		this.createYLabels();
 
 		this.drawBackground(0);
@@ -199,7 +200,7 @@ export class Graph extends Phaser.GameObjects.Container {
 
 	draw(time: number) {
 		this.drawBackground(time);
-		this.updateXLabels(time);
+		// this.updateXLabels(time);
 		this.foreground.clear();
 		this.foregroundSelected.clear();
 
