@@ -48,11 +48,11 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 			null,
 			{ weight: w.bold, size: 1, text: "info_data_1" },
 			{ weight: w.regular, text: "info_data_2" },
-			{ weight: w.regular, text: "info_data_3" },
+			// { weight: w.regular, text: "info_data_3" },
 			null,
 			{ weight: w.bold, size: 1, text: "info_who_1" },
 			{ weight: w.regular, text: "info_who_2" },
-			{ weight: w.regular, text: "info_who_3" },
+			// { weight: w.regular, text: "info_who_3" },
 			null,
 			{ weight: w.bold, size: 1, text: "info_model_1" },
 			{ weight: w.regular, text: "info_model_2" },
@@ -91,7 +91,8 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 		qr.setScale(1.3);
 		qr.setOrigin(0, 1.25);
 		this.box.add(qr);
-		let qrText = scene.createText(qx, qy, 0.8*this.fontSize, scene.weights.regular, "#FFF");
+		let qrText = scene.createText(qx, qy, 0.9*this.fontSize, scene.weights.regular, "#FFF");
+		qrText.setWordWrapWidth(0.10 * this.width);
 		language.bind(qrText, "info_qr");
 		this.box.add(qrText);
 
