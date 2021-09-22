@@ -61,6 +61,10 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 	private modeLinkText: Phaser.GameObjects.Text;
 	// private instructionText: Phaser.GameObjects.Text;
 
+	private deselectButton: BaseNode;
+	private deselectBg: RoundRectangle;
+	private deselectText: Phaser.GameObjects.Text;
+
 	private relationGraphics: Phaser.GameObjects.Graphics;
 	private relations: Relation[];
 
@@ -80,24 +84,24 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let WH = scene.H - 3*BORDER;
 		let groupPositions = {
 			// Carnivores
-			1:  new Phaser.Math.Vector2(WX+0.95*WW, WY+0.30*WH),
-			2:  new Phaser.Math.Vector2(WX+0.85*WW, WY+0.70*WH),
+			1:  new Phaser.Math.Vector2(WX+0.95*WW, WY+(1-0.30)*WH),
+			2:  new Phaser.Math.Vector2(WX+0.85*WW, WY+(1-0.70)*WH),
 
 			// Herbivores
-			3:  new Phaser.Math.Vector2(WX+0.50*WW, WY+0.10*WH),
-			4:  new Phaser.Math.Vector2(WX+0.55*WW, WY+0.45*WH),
-			5:  new Phaser.Math.Vector2(WX+0.50*WW, WY+0.70*WH),
-			6:  new Phaser.Math.Vector2(WX+0.60*WW, WY+0.95*WH),
+			3:  new Phaser.Math.Vector2(WX+0.50*WW, WY+(1-0.10)*WH),
+			4:  new Phaser.Math.Vector2(WX+0.55*WW, WY+(1-0.45)*WH),
+			5:  new Phaser.Math.Vector2(WX+0.50*WW, WY+(1-0.70)*WH),
+			6:  new Phaser.Math.Vector2(WX+0.60*WW, WY+(1-0.95)*WH),
 
 			// Plants
-			7:  new Phaser.Math.Vector2(WX+0.10*WW, WY+0.05*WH),
-			8:  new Phaser.Math.Vector2(WX+0.20*WW, WY+0.10*WH),
-			9:  new Phaser.Math.Vector2(WX+0.10*WW, WY+0.30*WH),
-			10: new Phaser.Math.Vector2(WX+0.20*WW, WY+0.30*WH), // 1
-			11: new Phaser.Math.Vector2(WX+0.20*WW, WY+0.55*WH),
-			12: new Phaser.Math.Vector2(WX+0.10*WW, WY+0.55*WH), // 1
-			13: new Phaser.Math.Vector2(WX+0.10*WW, WY+0.80*WH),
-			14: new Phaser.Math.Vector2(WX+0.25*WW, WY+0.95*WH), // 2
+			7:  new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.05)*WH),
+			8:  new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.10)*WH),
+			9:  new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.30)*WH),
+			10: new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.30)*WH), // 1
+			11: new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.55)*WH),
+			12: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.55)*WH), // 1
+			13: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.80)*WH),
+			14: new Phaser.Math.Vector2(WX+0.25*WW, WY+(1-0.95)*WH), // 2
 		};
 		let groupColors = {
 			1: 0xF44336, 2: 0xE91E63, 3: 0x9C27B0, 4: 0x673AB7, 5: 0x3F51B5, 6: 0x2196F3, 7: 0x03A9F4, 8: 0x00BCD4, 9: 0x009688, 10: 0x4CAF50, 11: 0x8BC34A, 12: 0xCDDC39, 13: 0xFFEB3B, 14: 0xFFC107
@@ -177,12 +181,15 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 		this.infoNodeCont.setVisible(this.infoMode == "node");
 		this.infoIucnImageCont.setVisible(this.infoMode == "iucn");
-		this.infoHint.setAlpha(0.6 * (1 - this.infoBox.alpha));
+		this.infoHint.setAlpha(1.0 * (1 - this.infoBox.alpha));
+		this.deselectButton.setAlpha(this.infoBox.alpha);
 
 		this.infoIucnButton.update(time, delta);
 		this.infoIucnButton.setScale(1.0 - 0.1 * this.infoIucnButton.holdSmooth);
 		this.infoGroupButton.update(time, delta);
 		this.infoGroupButton.setScale(1.0 - 0.1 * this.infoGroupButton.holdSmooth);
+		this.deselectButton.update(time, delta);
+		this.deselectButton.setScale(1.0 - 0.1 * this.deselectButton.holdSmooth);
 
 		this.anyNodesSelected = false;
 		this.updateNodes(time, delta);
@@ -277,6 +284,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			node.resetLock();
 		}
 
+		this.clearInfoBox();
 		this.modeSlider.value = 0.5;
 	}
 
@@ -314,9 +322,9 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.buttons = [];
 
 		let chosen = [
-			"lycaon_pictus", // Vildhund
+			// "lycaon_pictus", // Vildhund
+			"loxodonta_africana", // Elefant
 			"panthera_leo", // Lion
-			// "loxodonta_africana", // Elefant
 			"equus_quagga", // Zebra
 			"kobus_ellipsiprymnus", // Vattenbock
 			// "connochaetes_taurinus", // Gnu
@@ -423,6 +431,39 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.modeLinkButton.on("click", () => {
 			this.setInfoLayout("links");
 		}, this);
+
+
+		/* Deselect button */
+
+		const dsSize = 30;
+		let dsy = 0.78 * this.scene.H;
+
+		this.deselectButton = new BaseNode(this.scene, this.scene.CX, dsy - 0.75*dsSize);
+		this.add(this.deselectButton);
+
+		let bg = new RoundRectangle(this.scene, 0, 0, 0, 0, dsSize/2+5, 0, 0.3);
+		this.deselectButton.add(bg);
+		this.deselectButton.bindInteractive(bg);
+
+		this.deselectBg = new RoundRectangle(this.scene, 0, 0, dsSize, dsSize, dsSize/2, 0x6B8B2F, 0.7);
+		this.deselectButton.add(this.deselectBg);
+		this.deselectButton.bindInteractive(this.deselectBg);
+
+		this.deselectText = this.scene.createText(0, 0, dsSize/2, this.scene.weights.regular, "#FFF", "...");
+		this.deselectText.setOrigin(0.5);
+		this.deselectButton.add(this.deselectText);
+
+		language.bind(this.deselectText, "deselect", () => {
+			this.deselectBg.setWidth(this.deselectText.width + 4*this.deselectBg.height);
+			bg.setWidth(this.deselectBg.width + 10);
+
+			// Add padding to button for easier clicking
+			this.deselectBg.input.hitArea.setTo(-20, -20, this.deselectBg.width+2*20, this.deselectBg.height+2*20);
+		});
+
+		this.deselectButton.on("click", () => {
+			this.clearInfoBox();
+		}, this);
 	}
 
 
@@ -441,8 +482,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let x = m + w/2 + 0.16 * this.scene.W;
 		let y = this.scene.H - h/2 - m;
 
-		this.infoBg = new RoundRectangle(this.scene, x, y, w, h, 12, 0X222222);
-		this.infoBg.setAlpha(0.35);
+		this.infoBg = new RoundRectangle(this.scene, x, y, w, h, 12, 0x000000);
+		this.infoBg.setAlpha(0.3);
 		// this.infoBox.add(this.infoBg);
 		this.add(this.infoBg);
 
@@ -562,6 +603,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 	clearInfoBox() {
 		this.infoMode = "";
+		this.unselectNodes();
 	}
 
 	setInfoNode(node) {
@@ -705,9 +747,9 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let text1 = this.scene.createText(leftX - 0.75*dist, topY, 30, this.scene.weights.bold, "#FFF", "Växter");
 		let text2 = this.scene.createText(leftX + dist, topY, 30, this.scene.weights.bold, "#FFF", "Växtätare");
 		let text3 = this.scene.createText(rightX + 0.75*dist, topY, 30, this.scene.weights.bold, "#FFF", "Köttätare");
-		text1.setOrigin(0.5, 1.0);
-		text2.setOrigin(0.5, 1.0);
-		text3.setOrigin(0.5, 1.0);
+		text1.setOrigin(0.5, 1.2);
+		text2.setOrigin(0.5, 1.2);
+		text3.setOrigin(0.5, 1.2);
 		text1.setShadow(0, 0, "#FFF", 15);
 		text2.setShadow(0, 0, "#FFF", 15);
 		text3.setShadow(0, 0, "#FFF", 15);
@@ -859,7 +901,6 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		}
 		this.modeSlider.value = 0.5;
 
-		this.unselectNodes();
 		this.clearInfoBox();
 
 		// this.instructionText.setVisible(!state);
@@ -873,7 +914,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			this.config.centerOffset.set(0, 100);
 		}
 		else {
-			this.config.centerOffset.set(0, 0);
+			this.config.centerOffset.set(0, -20);
 		}
 	}
 }
