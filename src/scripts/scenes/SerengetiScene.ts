@@ -25,7 +25,8 @@ interface NodeSlot {
 
 export class SerengetiScene extends BaseScene {
 	private bg: Phaser.GameObjects.Image;
-	private sidebarBg: RoundRectangle;
+	private grassBg: Phaser.GameObjects.Image;
+	private sidebarBg: Phaser.GameObjects.Rectangle;
 	private titleText: Phaser.GameObjects.Text;
 	private instructionText: Phaser.GameObjects.Text;
 	private storyText1: Phaser.GameObjects.Text;
@@ -133,7 +134,11 @@ export class SerengetiScene extends BaseScene {
 		let sbH = 0.22 * this.H;
 		let sbX = this.CX + 0.13 * this.W;
 		let sbY = this.H - 0.5*sbH;
-		this.sidebarBg = new RoundRectangle(this, this.CX, sbY, sbW, sbH, 10, 0X000000);
+
+		this.grassBg = this.add.image(this.CX, this.H - sbH, 'bg_grass');
+		this.containToScreen(this.grassBg);
+
+		this.sidebarBg = this.add.rectangle(this.CX, sbY, sbW, sbH, 0x001000);
 		this.sidebarBg.setAlpha(0.2);
 
 
@@ -627,6 +632,7 @@ export class SerengetiScene extends BaseScene {
 		}
 
 		if (number == 0) { // Large network
+			this.grassBg.setVisible(true);
 			this.sidebarBg.setVisible(true);
 			this.graph.setVisible(false);
 			this.africa.setVisible(false);
@@ -638,6 +644,7 @@ export class SerengetiScene extends BaseScene {
 			this.bg.setVisible(true);
 		}
 		else if (number > 0) { // Introduction levels
+			this.grassBg.setVisible(true);
 			this.sidebarBg.setVisible(true);
 			this.foodWeb.setVisible(false);
 			this.foodWeb.resetNodes();
@@ -649,6 +656,7 @@ export class SerengetiScene extends BaseScene {
 			this.titleText.setVisible(true);
 		}
 		else {
+			this.grassBg.setVisible(false);
 			this.sidebarBg.setVisible(false);
 			this.foodWeb.setVisible(true);
 			this.foodWeb.resetNodes();
