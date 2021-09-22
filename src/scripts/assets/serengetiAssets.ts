@@ -198,11 +198,13 @@ const nodes: Asset[] = [
 /* Backgrounds */
 
 import bg_serengeti from "../../assets/serengeti/backgrounds/serengeti-blur.png";
+import bg_serengeti_preview from "../../assets/serengeti/backgrounds/serengeti-preview.jpeg";
 import bg_grass from "../../assets/serengeti/backgrounds/grass.png";
 
 const backgrounds: Asset[] = [
-	{ key: "bg_serengeti",	path: bg_serengeti },
-	{ key: "bg_grass",		path: bg_grass },
+	{ key: "bg_serengeti",			path: bg_serengeti },
+	{ key: "bg_serengeti_preview",	path: bg_serengeti_preview },
+	{ key: "bg_grass",				path: bg_grass },
 ];
 
 
