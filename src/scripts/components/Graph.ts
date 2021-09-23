@@ -102,19 +102,26 @@ export class Graph extends Phaser.GameObjects.Container {
 
 	createYLabels() {
 		let fontSize = 14; // Font size
-		let labelX = -0.5 * this.width - 4.9*fontSize + this.padding; // Label left
-		let labelY = -0.5 * this.height; // Label top
+		let xLabelX = 0.5 * this.width - this.padding; // Label left
+		let xLabelY = 0.5 * this.height + this.padding/2; // Label top
+		let yLabelX = -0.5 * this.width - 4.9*fontSize + this.padding; // Label left
+		let yLabelY = -0.5 * this.height; // Label top
 		let texts = ["> 100,000", "> 10,000", "> 1,000", "> 100"];
 
-		let title = this.scene.createText(labelX, labelY-0.5*fontSize, 1.2*fontSize, this.scene.weights.light, "#FFF", "Label");
-		title.setOrigin(0.0, 0.5);
-		language.bind(title, "graph_population");
-		this.add(title);
+		let xAxis = this.scene.createText(xLabelX, xLabelY-0.5*fontSize, 1.2*fontSize, this.scene.weights.normal, "#FFF", "Label");
+		xAxis.setOrigin(0.5, 0.0);
+		language.bind(xAxis, "graph_time");
+		this.add(xAxis);
+
+		let yAxis = this.scene.createText(yLabelX, yLabelY-0.5*fontSize, 1.2*fontSize, this.scene.weights.normal, "#FFF", "Label");
+		yAxis.setOrigin(0.0, 0.5);
+		language.bind(yAxis, "graph_population");
+		this.add(yAxis);
 
 		for (var i = 0; i < 4; i++) {
 			let sep = 2.4 * this.padding;
-			let x = labelX;
-			let y = labelY + (0.0 + 1/3*i) * (this.height - 2*sep) + sep;
+			let x = yLabelX;
+			let y = yLabelY + (0.0 + 1/3*i) * (this.height - 2*sep) + sep;
 			let label = this.scene.createText(x, y, fontSize, this.scene.weights.regular, "#FFF", texts[i]);
 			label.setOrigin(0.0, 0.5);
 			label.setAlpha(0.7);
