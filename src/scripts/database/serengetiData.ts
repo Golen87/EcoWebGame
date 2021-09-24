@@ -6683,13 +6683,13 @@ let serengetiData = JSON.stringify(
 					"node_id": "kobus_ellipsiprymnus"
 				},
 				{
-					"node_id": "lycaon_pictus"
+					"node_id": "crocuta_crocuta"
 				},
 				{
 					"node_id": "madoqua_kirkii"
 				},
 				{
-					"node_id": "panicum_coloratum"
+					"node_id": "eustachys_paspaloides"
 				},
 				{
 					"node_id": "panthera_leo"

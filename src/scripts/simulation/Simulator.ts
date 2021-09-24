@@ -99,7 +99,8 @@ class Simulator {
 		let index = this.species.findIndex(x => x.id == species.id);
 
 		if (active) {
-			this.population[index] = 0.05;
+			this.population[index] = (species.type == 'animal') ? 0.01 : 0.1;
+			this.extraGrowthRate[index] = (species.type == 'plant') ? -0.5 : 0.0;
 		}
 		else {
 			this.population[index] = 0;
@@ -220,7 +221,8 @@ class Simulator {
 			}
 
 			// dPop[i] = this.growthRate[i] * pop[i] * (1 - sum / this.carryingCapacity[i]);
-			dPop[i] = (this.growthRate[i] + this.extraFactor * this.extraGrowthRate[i]) * pop[i] + pop[i] * sum;
+			const r = this.growthRate[i] + this.extraFactor * this.extraGrowthRate[i];
+			dPop[i] = pop[i] * (r + sum);
 		}
 		return dPop;
 	}
