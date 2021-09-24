@@ -16,6 +16,8 @@ import { NODE_SIZE, SIMULATION_LENGTH } from "../constants";
 import { language } from "../language/LanguageManager";
 import { database } from "../database/Database";
 import { BlurPostFilter } from "../pipelines/BlurPostFilter";
+import { Story, storyData } from "../assets/stories";
+
 
 interface NodeSlot {
 	x: number;
@@ -25,17 +27,23 @@ interface NodeSlot {
 
 export class SerengetiScene extends BaseScene {
 	private bg: Phaser.GameObjects.Image;
+	private bgCont: Phaser.GameObjects.Container;
 	private grassBg: Phaser.GameObjects.Image;
 	private sidebarBg: Phaser.GameObjects.Rectangle;
+
 	private titleText: Phaser.GameObjects.Text;
 	private instructionText: Phaser.GameObjects.Text;
 	private storyText1: Phaser.GameObjects.Text;
 	private storyText2: Phaser.GameObjects.Text;
-	private nextButton: RoundRectangle;
-	private nextText: Phaser.GameObjects.Text;
+	private chapterCont: Phaser.GameObjects.Container;
 	private chapterTabs: Phaser.GameObjects.Container[];
 	private africa: Phaser.GameObjects.Image;
 	private africaIcon: Phaser.GameObjects.Image;
+
+	private nextButton: BaseNode;
+	private nextBg: RoundRectangle;
+	private nextBg2: RoundRectangle;
+	private nextText: Phaser.GameObjects.Text;
 
 	private nodes: Node[];
 	private nodeSlots: NodeSlot[];
@@ -47,34 +55,47 @@ export class SerengetiScene extends BaseScene {
 	private foodWeb: FoodWeb;
 	private matrixEditor: MatrixEditor;
 	private tempSlider: Slider;
-	private minimap: Phaser.Cameras.Scene2D.Camera;
+	// private minimap: Phaser.Cameras.Scene2D.Camera;
 
 	private attractionOpen: boolean;
 	private infoOpen: boolean;
 	private blurTween: Phaser.Tweens.Tween;
 
 	private timeStamp: number;
-	private currentStory: number;
-	private roleMap: object;
-	private story1: string[];
-	private story2: string[];
-	private story3: string[];
-	private storyRunning: boolean;
+
+	private mode: string;
+	private currentStory?: Story;
+	private currentChapter: number;
+	// private roleMap: object;
+	// private story1: string[];
+	// private story2: string[];
+	// private story3: string[];
+	// private storyRunning: boolean;
+
+	private infoBox: Phaser.GameObjects.Container;
+	private infoBg: RoundRectangle;
+	private infoImage: Phaser.GameObjects.Image;
+	private infoTitle: Phaser.GameObjects.Text;
+	private infoSubTitle: Phaser.GameObjects.Text;
+	private infoDescription: Phaser.GameObjects.Text;
 
 	constructor() {
 		super({key: 'SerengetiScene'});
 
 		// "Role" is a node's role in the scenario, deciding when it appears in the story
+		/*
 		this.roleMap = {
 			"panthera_leo": "carnivore_1", // Lion
 			"equus_quagga": "herbivore_1", // Plains zebra
 			"heteropogon_contortus": "plant_1", // Heteropogon contortus
 			"madoqua_kirkii": "herbivore_2", // Kirk's dik-dik
 			"allophylus_rubifolius": "plant_2", // Allophylus rubifolius
-			"panicum_coloratum": "plant_3", // Panicum coloratum
+			// "panicum_coloratum": "plant_3", // Panicum coloratum
 			// "a11f07e7-554c-4b0a-ab11-ac34d84b6d85": "plant_2", // Acalypha fruticosa
+			"eustachys_paspaloides": "plant_3", // Digitaria macroblephara
 
-			"lycaon_pictus": "c2", // Vildhund
+			// "lycaon_pictus": "c2", // Vildhund
+			"crocuta_crocuta": "c2", // Hyena
 			"connochaetes_taurinus": "h2", // Gnu
 			"aepyceros_melampus": "h3", // Impala
 			"kobus_ellipsiprymnus": "h4", // Vattenbock
@@ -92,10 +113,12 @@ export class SerengetiScene extends BaseScene {
 		};
 		this.story1 = ["carnivore_1", "herbivore_1", "plant_1"];
 		this.story2 = ["carnivore_1", "herbivore_1", "plant_1", "herbivore_2", "plant_2", "plant_3"];
-		this.story3 = ["carnivore_1", "c2", "herbivore_1", "h2", "h3", "h4", "p1", "plant_1", "p3", "p4"];
+		this.story3 = ["carnivore_1", "c2", "herbivore_1", "h2", "h3", "h4", "p1", "plant_1", "plant_3", "p4"];
+		*/
 		this.timeStamp = 0;
-		this.currentStory = 0;
-		this.storyRunning = false;
+		this.currentChapter = 0;
+		// this.currentStory = 0;
+		// this.storyRunning = false;
 	}
 
 	create(): void {
@@ -132,14 +155,18 @@ export class SerengetiScene extends BaseScene {
 		// let sbY = this.CY;
 		let sbW = this.W;
 		let sbH = 0.22 * this.H;
-		let sbX = this.CX + 0.13 * this.W;
+		let sbX = this.CX + 0 * 0.13 * this.W;
 		let sbY = this.H - 0.5*sbH;
+
+		this.bgCont = this.add.container(0, 0);
 
 		this.grassBg = this.add.image(this.CX, this.H - sbH, 'bg_grass');
 		this.containToScreen(this.grassBg);
+		this.bgCont.add(this.grassBg);
 
 		this.sidebarBg = this.add.rectangle(this.CX, sbY, sbW, sbH, 0x001000);
 		this.sidebarBg.setAlpha(0.2);
+		this.bgCont.add(this.sidebarBg);
 
 
 		// Scenario title
@@ -176,14 +203,35 @@ export class SerengetiScene extends BaseScene {
 		this.storyText2 = this.createText(sbX, sbY-0.12*sbH, 20, this.weights.regular, "#FFF", "Small instruction text");
 		this.storyText2.setOrigin(0.5);
 
-		// let color = 0xa77440;
-		this.nextButton = new RoundRectangle(this, sbX, sbY+0.20*sbH, 200, 44, 22, buttonOrange);
-		this.nextButton.setInteractive({ useHandCursor: true })
-			.on('pointerup', () => { this.startStory(this.currentStory + 1); }
-		);
-		this.nextText = this.createText(sbX, sbY+0.20*sbH, 20, this.weights.bold, "#FFF", "Next");
+
+		/* Next button */
+
+		let nSize = 50;
+
+		this.nextButton = new BaseNode(this, 0.86 * this.W, 0.78 * this.H - 0.8 * nSize);
+		this.nextButton.setDepth(10);
+
+		this.nextBg2 = new RoundRectangle(this, 0, 0, 0, 0, nSize/2+5, 0, 0.5);
+		this.nextButton.add(this.nextBg2);
+		this.nextButton.bindInteractive(this.nextBg2);
+
+		this.nextBg = new RoundRectangle(this, 0, 0, nSize, nSize, nSize/2, 0x6B8B2F, 0.9);
+		this.nextButton.add(this.nextBg);
+		this.nextButton.bindInteractive(this.nextBg);
+
+		this.nextText = this.createText(0, 0, nSize/2, this.weights.bold, "#FFF", "...");
 		this.nextText.setOrigin(0.5);
-		language.bind(this.nextText, "next_button");
+		this.nextButton.add(this.nextText);
+
+		this.nextButton.on("click", () => {
+			if (this.currentStory) {
+				this.setStory(this.currentStory.next);
+			}
+			else if (this.mode == "network") {
+				this.reset();
+				this.setStory("1a");
+			}
+		}, this);
 
 
 		// Sliders
@@ -224,7 +272,7 @@ export class SerengetiScene extends BaseScene {
 				image: 'icon-foodWeb',
 				function: () => {
 					this.reset();
-					this.startStory(1);
+					this.setStory("1a");
 				}
 			},
 			{
@@ -232,7 +280,7 @@ export class SerengetiScene extends BaseScene {
 				image: 'icon-ecoChallenge',
 				function: () => {
 					this.reset();
-					this.startStory(3);
+					this.setStory("2a");
 				}
 			},
 			// {
@@ -245,7 +293,7 @@ export class SerengetiScene extends BaseScene {
 				image: 'icon-ecoWeb',
 				function: () => {
 					this.reset();
-					this.startStory(0);
+					this.setStory("network");
 				}
 			},
 		];
@@ -256,15 +304,18 @@ export class SerengetiScene extends BaseScene {
 		let ctX = this.W;
 		let ctY = this.CY;
 
+		this.chapterCont = this.add.container(0, 0);
+		this.chapterCont.setDepth(100);
+
 		for (let i = 0; i < chapters.length; i++) {
 			let chapter = chapters[i];
 			let x = ctX - ctW/2;
 			let y = ctY + (i-2)*ctH + (i-1)*ctH*0.01;
 
 			let tab = this.add.container(x, y);
-			tab.setDepth(100);
 			tab.setAlpha(0.5);
 			this.chapterTabs.push(tab);
+			this.chapterCont.add(tab);
 
 			let bg = new RoundRectangle(this, 0.5*ctW, 0, 2*ctW, ctH, 10, 0XFFFFFF);
 			bg.setAlpha(0.2);
@@ -297,9 +348,8 @@ export class SerengetiScene extends BaseScene {
 			this.attractionOpen = state;
 
 			this.updateBlur();
-			this.startStory(state ? -1 : 0);
+			this.setStory(state ? "attraction" : "network");
 			this.foodWeb.toggleAttraction(state);
-			this.instructionText.setVisible(!state);
 		}, this);
 
 		this.scene.get('UIScene').events.on('info', (state: boolean) => {
@@ -308,7 +358,7 @@ export class SerengetiScene extends BaseScene {
 		}, this);
 
 		this.scene.get('UIScene').events.on('restart', () => {
-			this.restart();
+			this.reset();
 		}, this);
 
 
@@ -331,6 +381,7 @@ export class SerengetiScene extends BaseScene {
 		// Nodes
 
 		this.nodes = [];
+		/*
 		for (let i = 0; i < simulator.species.length; i++) {
 			const organism = simulator.scenario.species[i];
 
@@ -359,6 +410,7 @@ export class SerengetiScene extends BaseScene {
 				console.error("Organism found in database but not in roleMap:", organism.id);
 			}
 		}
+		*/
 
 
 		/* Large food web */
@@ -366,9 +418,10 @@ export class SerengetiScene extends BaseScene {
 		this.foodWeb = new FoodWeb(this);
 
 
-		// Empty nodes
+		/* Empty nodes */
 
 		this.fakeNodes = new Map();
+		/*
 		this.fakeNodes.set("carnivore_1",	new FakeNode(this, 0.49 * this.W, 0.15 * this.H, "node_carnivore"));
 		this.fakeNodes.set("herbivore_1",	new FakeNode(this, 0.62 * this.W, 0.40 * this.H, "node_herbivore"));
 		this.fakeNodes.set("plant_1",		new FakeNode(this, 0.53 * this.W, 0.65 * this.H, "node_plant"));
@@ -397,43 +450,46 @@ export class SerengetiScene extends BaseScene {
 			// this.nodeMap[key].fake = this.fakeNodes.get(key)!;
 			// this.fakeNodes.get(key)!.node = this.nodeMap[key].fake;
 		}
+		*/
 
 
 		// Paths
 
 		this.paths = [];
-		for (const node of this.nodes) {
-			for (const other of this.nodes) {
-				if (node != other && node.role && other.role) {
-					let relation = database.getNodeRelation(node.species.id, other.species.id);
-					if (relation) {
-						// let amount = relation.preference;
-						let amount = 1.0;
-						// console.log(node.species.name, '->', other.species.name, '=', amount.toFixed(1));
+		// for (const node of this.nodes) {
+		// 	for (const other of this.nodes) {
+		// 		if (node != other && node.role && other.role) {
+		// 			let relation = database.getNodeRelation(node.species.id, other.species.id);
+		// 			if (relation) {
+		// 				// let amount = relation.preference;
+		// 				let amount = 1.0;
+		// 				// console.log(node.species.name, '->', other.species.name, '=', amount.toFixed(1));
 
-						const nodeFake = this.fakeNodes.get(node.role)!;
-						const otherFake = this.fakeNodes.get(other.role)!;
+		// 				const nodeFake = this.fakeNodes.get(node.role)!;
+		// 				const otherFake = this.fakeNodes.get(other.role)!;
 
-						this.addPath(node, other, amount);
-						this.addPath(nodeFake, other, amount);
-						this.addPath(nodeFake, otherFake, amount);
-						this.addPath(node, otherFake, amount);
+		// 				this.addPath(node, other, amount);
+		// 				this.addPath(nodeFake, other, amount);
+		// 				this.addPath(nodeFake, otherFake, amount);
+		// 				this.addPath(node, otherFake, amount);
 
-						node.neighbours.push(other);
-						other.neighbours.push(node);
-					}
-				}
-			}
-		}
+		// 				node.neighbours.push(other);
+		// 				other.neighbours.push(node);
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 
 		// Graph
 
 		this.graph = new Graph(this, 1.6*sbH, 0.75*sbH);
-		this.graph.setPosition(0.32*sbH + 0.5*this.graph.width + 0.16*this.W, sbY + 0.03*this.graph.height);
+		this.graph.setPosition(0.32*sbH + 0.5*this.graph.width + 0.13*this.W, sbY + 0.03*this.graph.height);
 
 
 		// Info text popup
+
+		this.initInfoBox(0.63 * this.W);
 
 		this.infoPopup = new InfoPopup(this);
 
@@ -462,7 +518,7 @@ export class SerengetiScene extends BaseScene {
 		this.add.existing(editSlider);
 		editSlider.setAlpha(0);
 
-		this.tempSlider = new Slider(this, sbX, sbY, 250, 24, 6, 5);
+		this.tempSlider = new Slider(this, sbX, this.nextButton.y, 250, 30, 8, 5);
 		this.tempSlider.setRange(0, 1);
 		this.sliders.push(this.tempSlider);
 		this.add.existing(this.tempSlider);
@@ -482,8 +538,13 @@ export class SerengetiScene extends BaseScene {
 		this.tempSlider.value = 0;
 		this.tempSlider.on('onChange', (value) => {
 			simulator.setTempEffect(value);
+			simulator.population = simulator.sol.at(this.timeStamp);
 			simulator.run(this.timeStamp);
 			this.updatePaths();
+
+			if (this.currentStory && this.currentStory.key == "2a" && value >= 1.0) {
+				this.completeStory();
+			}
 		}, this);
 
 		this.tempSlider.setVisible(false);
@@ -491,25 +552,73 @@ export class SerengetiScene extends BaseScene {
 
 		this.attractionOpen = true;
 		this.infoOpen = false;
-
-		// this.startStory(-1);
 	}
+
+
+	initInfoBox(xOffset: number) {
+		let m = 15;
+		let p = 15;
+		let w = 0.25 * this.W;
+		let h = 0.22 * this.H - 2*m;
+		let x = m + w/2 + xOffset;
+		let y = this.H - h/2 - m;
+
+		this.infoBox = this.add.container(x, y);
+
+		this.infoBg = new RoundRectangle(this, 0, 0, w, h, 12, 0x000000);
+		this.infoBg.setAlpha(0.3);
+		this.infoBox.add(this.infoBg);
+
+		let titleSize = 24;
+		let imgFac = 1.8;
+
+		this.infoTitle = this.createText(-w/2+p, -h/2+p + 1*titleSize/2, titleSize, this.weights.regular, "#FFF", "Title");
+		this.infoTitle.setOrigin(0, 0.5);
+		this.infoTitle.setVisible(false);
+		this.infoBox.add(this.infoTitle);
+
+		this.infoSubTitle = this.createText(-w/2+p, -h/2+p + 1.45*titleSize, 13, this.weights.regular, "#FFF", "Title");
+		this.infoSubTitle.setOrigin(0, 0.5);
+		this.infoSubTitle.setVisible(false);
+		this.infoBox.add(this.infoSubTitle);
+
+		// this.infoDescription = this.createText(-w/2+p, -h/2+p + 2.2*titleSize, 16, this.weights.regular, "#FFF", "Description");
+		this.infoDescription = this.createText(0, 0, 20, this.weights.regular, "#FFF", "Description");
+		this.infoDescription.setOrigin(0.5);
+		this.infoDescription.setWordWrapWidth(w-2*p, true);
+		// this.infoDescription.setLineSpacing(10);
+		this.infoBox.add(this.infoDescription);
+
+		this.infoImage = this.add.image(w/2-p, -h/2+p, "PANLEO");
+		this.infoImage.setData("size", imgFac*titleSize);
+		this.infoImage.setOrigin(1.0, 0.0);
+		this.infoImage.setVisible(false);
+		this.infoBox.add(this.infoImage);
+	}
+
 
 	update(time: number, deltaMs: number): void {
 		let delta = deltaMs / 1000;
 
-		if (this.timeStamp < simulator.time) {
+		if (this.timeStamp < simulator.time && this.currentStory && !this.currentStory.disableSimulation) {
 			let x = (this.timeStamp - (simulator.time - SIMULATION_LENGTH)) / SIMULATION_LENGTH;
 			let fac = 1 - Math.pow(x, 2);
 			this.timeStamp += Math.max(0.05 * fac, 0.01);
 			this.timeStamp = Math.min(this.timeStamp, simulator.time);
 			this.updatePopulations();
 			this.graph.draw(this.timeStamp);
+
+			if (this.currentStory && this.currentStory.key == "1b" && this.timeStamp > 20) {
+				this.completeStory();
+			}
 		}
 
 		this.graph.update(time, delta);
 
 		this.matrixEditor.draw(this.nodes);
+
+		this.nextButton.update(time, delta);
+		this.nextButton.setScale(1.0 - 0.1 * this.nextButton.holdSmooth);
 
 		//console.log(game.input.mousePointer.x, game.input.mousePointer.y);
 
@@ -530,9 +639,8 @@ export class SerengetiScene extends BaseScene {
 		}
 
 
-
 		// Boids
-		if (this.currentStory > 0) {
+		if (this.currentStory) {
 			for (const node of this.nodes) {
 				if (node.inPlay && node.stick) {
 					let cohSum = new Phaser.Math.Vector2();
@@ -564,7 +672,8 @@ export class SerengetiScene extends BaseScene {
 					let goalPos = new Phaser.Math.Vector2(fakeNode.x, fakeNode.y);
 					goalPos.y += 7*Math.sin(time/1500+goalPos.x/400+goalPos.y/1000);
 					goalPos.subtract(node);
-					goalPos.scale(this.storyRunning ? 0 : 0.001);
+					// goalPos.scale(this.currentStory ? 0 : 0.001);
+					goalPos.scale(0.001);
 					node.velocity.add(goalPos);
 
 					// cohSum.scale(1/cohCount);
@@ -605,7 +714,7 @@ export class SerengetiScene extends BaseScene {
 		}
 
 
-		if (this.currentStory <= 0) {
+		if (!this.currentStory) {
 			this.foodWeb.update(time, delta);
 
 			if (this.attractionOpen) {
@@ -615,7 +724,57 @@ export class SerengetiScene extends BaseScene {
 	}
 
 
-	startStory(number: number): void {
+	setStory(storyKey: string): void {
+		if (storyKey == "attraction") {
+			this.mode = storyKey;
+			this.currentStory = undefined;
+
+			this.foodWeb.resetNodes();
+		}
+
+		else if (storyKey == "network") {
+			this.mode = storyKey;
+			this.currentStory = undefined;
+
+			language.bind(this.nextText, "explore_button", this.resizeNextButton.bind(this));
+		}
+
+		else {
+			this.mode = "story";
+			this.currentStory = storyData[storyKey];
+
+			if (this.currentStory.chapter) {
+				this.currentChapter = this.currentStory.chapter;
+			}
+
+			this.foodWeb.resetNodes();
+		}
+
+
+		this.bgCont.setVisible(this.mode != "attraction");
+		this.titleText.setVisible(this.mode != "attraction");
+		this.chapterCont.setVisible(this.mode != "attraction");
+		this.foodWeb.setVisible(this.mode != "story");
+		this.africa.setVisible(this.mode == "story");
+		this.africaIcon.setVisible(this.mode == "story");
+		this.infoBox.setVisible(this.mode == "story");
+		this.nextButton.setVisible(this.mode == "network");
+
+		this.graph.setVisible(this.mode == "story");
+		this.instructionText.setVisible(false);
+		this.storyText1.setVisible(false);
+		this.storyText2.setVisible(false);
+		this.tempSlider.setVisible(false);
+
+		this.chapterTabs[0].setAlpha((this.mode == "story" && this.currentChapter == 1) ? 1.0 : 0.5);
+		this.chapterTabs[1].setAlpha((this.mode == "story" && this.currentChapter == 2) ? 1.0 : 0.5);
+		this.chapterTabs[2].setAlpha((this.mode == "network") ? 1.0 : 0.5);
+
+
+		this.clearStory();
+		this.startStory();
+
+		/*
 		this.dismissInfoPopup();
 
 		let selectedChapter = 0;
@@ -630,51 +789,6 @@ export class SerengetiScene extends BaseScene {
 			this.chapterTabs[i].setAlpha(i == selectedChapter ? 1.0 : 0.5);
 			this.chapterTabs[i].setVisible(number != -1);
 		}
-
-		if (number == 0) { // Large network
-			this.grassBg.setVisible(true);
-			this.sidebarBg.setVisible(true);
-			this.graph.setVisible(false);
-			this.africa.setVisible(false);
-			this.africaIcon.setVisible(false);
-			this.foodWeb.setVisible(true);
-			// this.bg.setTexture('bg_serengeti_2');
-			// this.fitToScreen(this.bg);
-			this.titleText.setVisible(true);
-			this.bg.setVisible(true);
-		}
-		else if (number > 0) { // Introduction levels
-			this.grassBg.setVisible(true);
-			this.sidebarBg.setVisible(true);
-			this.foodWeb.setVisible(false);
-			this.foodWeb.resetNodes();
-			this.graph.setVisible(true);
-			this.africa.setVisible(true);
-			this.africaIcon.setVisible(true);
-			// this.bg.setTexture('bg_serengeti');
-			// this.fitToScreen(this.bg);
-			this.titleText.setVisible(true);
-		}
-		else {
-			this.grassBg.setVisible(false);
-			this.sidebarBg.setVisible(false);
-			this.foodWeb.setVisible(true);
-			this.foodWeb.resetNodes();
-			this.graph.setVisible(false);
-			this.africa.setVisible(false);
-			this.africaIcon.setVisible(false);
-			this.titleText.setVisible(false);
-		}
-
-		this.storyRunning = true;
-		this.currentStory = number;
-
-		this.instructionText.setVisible(true);
-		this.nextButton.setVisible(false);
-		this.nextText.setVisible(false);
-		this.storyText1.setVisible(false);
-		this.storyText2.setVisible(false);
-		this.tempSlider.setVisible(false);
 
 		if (number == 0) {
 			language.bind(this.instructionText, "");
@@ -725,7 +839,7 @@ export class SerengetiScene extends BaseScene {
 			this.fakeNodes.forEach((fakeNode: FakeNode, key: NodeId) => {
 				this.fakeNodes.get(key)!.setVisible(false);
 			});
-			// this.startStory(0);
+			// this.setStory(0);
 			// language.bind(this.instructionText, "instruction_4");
 			// for (const node of this.nodes) {
 			// 	node.setVisible(this.story2.includes(node.role));
@@ -741,14 +855,143 @@ export class SerengetiScene extends BaseScene {
 				this.assignNodeToSlot(node, true);
 			}
 		}
+		*/
+	}
+
+	clearStory() {
+		for (let node of this.nodes) {
+			node.destroy();
+		}
+		this.nodes = [];
+
+		this.fakeNodes.forEach((fakeNode: FakeNode, key: NodeId) => {
+			fakeNode.destroy();
+		});
+		this.fakeNodes.clear();
+
+		for (let path of this.paths) {
+			path.destroy();
+		}
+		this.paths = [];
+
+		for (let i = 0, l = this.nodeSlots.length; i < l; i++) {
+			let slot: NodeSlot = this.nodeSlots[i];
+			slot.taken = false;
+		}
+	}
+
+	startStory() {
+		if (this.currentStory) {
+			language.bind(this.infoDescription, this.currentStory.intro);
+			this.infoDescription.setFontSize(this.currentStory.key == "2a" ? 15 : 20);
+
+			// if (!this.currentStory.persist) {
+			// this.timeStamp = 0;
+			// }
+
+			if (this.currentStory.disableGraph) {
+				this.graph.setVisible(false);
+			}
+			if (this.currentStory.enableSlider) {
+				this.tempSlider.setVisible(true);
+				this.tempSlider.value = 0;
+			}
+
+			// this.nextButton.setVisible(true);
+			// language.bind(this.nextText, "next_button", this.resizeNextButton.bind(this));
+
+			// this.currentStory.disablePlacing
+
+
+			// const activeSpecies = this.currentStory.species.map(s => s.name);
+			// console.log(activeSpecies);
+
+			for (let species of this.currentStory.species) {
+				const organism = simulator.scenario.speciesMap.get(species.name);
+
+				if (organism) {
+					let node = new Node(this, 0, 0, organism);
+					this.nodes.push(node);
+
+					node.on('onEnter', this.onNodeAddOrRemove, this);
+					node.on('onExit', this.onNodeAddOrRemove, this);
+					node.on('onPlusMinus', this.onNodePlusMinus, this);
+					node.on('onDeath', this.onNodeDeath, this);
+					node.on('onDragStart', this.dismissInfoPopup, this);
+					node.on('removeNodeFromSlot', this.removeNodeFromSlot, this);
+					node.on('assignNodeToSlot', this.assignNodeToSlot, this);
+
+					node.simIndex = simulator.species.indexOf(organism);
+
+
+					const fx = species.position.x * this.W;
+					const fy = species.position.y * this.H;
+					let fakeNode = new FakeNode(this, fx, fy, species.fakeKey);
+					fakeNode.addReplacement(node);
+
+					node.role = species.name;
+					this.fakeNodes.set(species.name, fakeNode);
+
+
+					if (species.placed) {
+						node.inPlay = true;
+						node.emit('onEnter', node, true, true);
+						node.goalX = fx;
+						node.goalY = fy;
+						node.stickX = fx;
+						node.stickY = fy;
+						node.x = fx;
+						node.y = fy;
+					}
+					else if (node.requiresSlot()) {
+						this.assignNodeToSlot(node, true);
+					}
+				}
+			}
+
+			for (const node of this.nodes) {
+				for (const other of this.nodes) {
+					if (node != other && node.role && other.role) {
+						let relation = database.getNodeRelation(node.species.id, other.species.id);
+						if (relation) {
+							// let amount = relation.preference;
+							let amount = 1.0;
+							// console.log(node.species.name, '->', other.species.name, '=', amount.toFixed(1));
+
+							const nodeFake = this.fakeNodes.get(node.role)!;
+							const otherFake = this.fakeNodes.get(other.role)!;
+
+							this.addPath(node, other, amount);
+							this.addPath(nodeFake, other, amount);
+							this.addPath(nodeFake, otherFake, amount);
+							this.addPath(node, otherFake, amount);
+
+							node.neighbours.push(other);
+							other.neighbours.push(node);
+						}
+					}
+				}
+			}
+
+			this.updatePaths();
+		}
 	}
 
 	completeStory(): void {
+		if (!this.nextButton.visible) {
+			this.nextButton.setVisible(true);
+
+			if (this.currentStory && this.currentStory.outro) {
+				language.bind(this.infoDescription, this.currentStory.outro);
+				this.infoDescription.setFontSize(20); // Temp
+			}
+			language.bind(this.nextText, "next_button", this.resizeNextButton.bind(this));
+		}
+
+		/*
 		this.storyRunning = false;
 
 		this.instructionText.setVisible(false);
-		this.nextButton.setVisible(true);
-		this.nextText.setVisible(true);
 		this.storyText1.setVisible(true);
 		this.storyText2.setVisible(true);
 
@@ -765,14 +1008,17 @@ export class SerengetiScene extends BaseScene {
 		else if (this.currentStory == 3) {
 			this.tempSlider.setVisible(true);
 		}
+		*/
 	}
 
+	resizeNextButton() {
+		this.nextBg.setWidth(this.nextText.width + 2*this.nextBg.height);
+		this.nextBg2.setWidth(this.nextBg.width + 10);
 
-	restart(): void {
-		this.reset();
-		this.startStory(1);
-		this.flash(500, 0x000000);
+		// Add padding to button for easier clicking
+		this.nextBg.input.hitArea.setTo(-20, -20, this.nextBg.width+2*20, this.nextBg.height+2*20);
 	}
+
 
 	reset(): void {
 		for (const node of this.nodes) {
@@ -834,9 +1080,9 @@ export class SerengetiScene extends BaseScene {
 	}
 
 	onNodeDeath(node: Node): void {
-		if (this.storyRunning) {
-			this.showInfoPopup(node.x, node.y, "popup_1");
-		}
+		// if (this.storyRunning) {
+			// this.showInfoPopup(node.x, node.y, "popup_1");
+		// }
 	}
 
 	showInfoPopup(x: number, y: number, key: string): void {
@@ -889,17 +1135,33 @@ export class SerengetiScene extends BaseScene {
 		// Causes an ugly jump
 		// this.timeStamp = simulator.time;
 
-		simulator.population = simulator.sol.at(this.timeStamp);
-		simulator.addOrRemoveSpecies(node.species, active);
+		if (this.currentStory && !this.currentStory.disableSimulation) {
+			simulator.population = simulator.sol.at(this.timeStamp);
+			simulator.addOrRemoveSpecies(node.species, active);
 
-		if (manually) {
-			simulator.run(this.timeStamp);
-			this.updatePaths();
+			if (manually) {
+				simulator.run(this.timeStamp);
+				this.updatePaths();
+			}
+			this.updatePopulations();
 		}
-		this.updatePopulations();
 
-		if (this.storyRunning) {
-			let success = true;
+		if (this.currentStory) {
+			const allInPlay = this.nodes.every(node => node.inPlay);
+
+			if (this.currentStory.key == "1a" && allInPlay) {
+				this.completeStory();
+			}
+
+			if (this.currentStory.key == "1c" && !allInPlay) {
+				this.completeStory();
+			}
+
+			if (this.currentStory.key == "1d" && allInPlay) {
+				this.completeStory();
+			}
+
+			/*
 			for (const node of this.nodes) {
 				if ( (this.currentStory == 1 && this.story1.includes(node.role))
 					|| (this.currentStory == 2 && this.story2.includes(node.role))
@@ -910,12 +1172,7 @@ export class SerengetiScene extends BaseScene {
 					}
 				}
 			}
-			// if (this.currentStory > 2) {
-				// success = false;
-			// }
-			if (success) {
-				this.completeStory();
-			}
+			*/
 		}
 	}
 

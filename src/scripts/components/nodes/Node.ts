@@ -59,7 +59,7 @@ export class Node extends BaseNode {
 		this.species = species;
 		scene.add.existing(this);
 
-		this.population = 0;
+		this.population = 1;
 		this.neighbours = [];
 
 		this.goalX = x;
@@ -81,6 +81,8 @@ export class Node extends BaseNode {
 		this.limitTop = NODE_SIZE/2;
 		this.limitRight = this.scene.W - NODE_SIZE/2;
 		this.limitBottom = this.scene.H - 0.2 * this.scene.H - NODE_SIZE/2;
+
+		this.velocity = new Phaser.Math.Vector2(0, 0);
 
 
 		// ...
