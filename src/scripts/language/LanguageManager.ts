@@ -101,6 +101,12 @@ class LanguageManager {
 		if (this.boundObjects.has(textObject)) {
 			let blob = this.boundObjects.get(textObject)!;
 
+			if (textObject.scene === undefined) {
+				console.warn("Attempting to update destroyed object:", blob.key);
+				this.unbind(textObject);
+				return;
+			}
+
 			// Check that the text remains the same.
 			let phraseCheck = (blob.previous == "" || blob.previous == textObject.text);
 			console.assert(phraseCheck, `Phrase has changed since last bind. '${blob.key}': '${blob.previous}' != '${textObject.text}'`);
