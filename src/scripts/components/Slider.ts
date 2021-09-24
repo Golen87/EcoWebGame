@@ -45,7 +45,7 @@ export class Slider extends Phaser.GameObjects.Container {
 				let y = 0;
 				let size = 0.75 * thinHeight;
 
-				let notch = scene.add.ellipse(x, y, size, size, 0xFFFFFF);
+				let notch = scene.add.ellipse(x, y, 0.75*size, 0.75*size, 0x333333);
 				notch.setAlpha(0.25);
 				this.add(notch);
 			}
