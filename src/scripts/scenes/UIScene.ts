@@ -53,12 +53,12 @@ export class UIScene extends BaseScene {
 		let tbY = this.H - sbH/2;
 
 		const toolButtons = [
+			// {
+				// image: "icon-bookmark-saved",
+				// function: this.bookmarkButton
+			// },
 			{
-				image: "icon-bookmark-saved",
-				function: this.bookmarkButton
-			},
-			{
-				image: "icon-info",
+				image: "icon-info-dot",
 				function: this.infoButton
 			},
 			{
@@ -137,8 +137,8 @@ export class UIScene extends BaseScene {
 		}
 	}
 
-	bookmarkButton() {
-	}
+	// bookmarkButton() {
+	// }
 
 	infoButton() {
 		if (this.infoWindow.isClosed) {
@@ -170,12 +170,12 @@ export class UIScene extends BaseScene {
 		if (this.language == "Swedish") {
 			this.language = "English";
 			language.setLanguage("English");
-			this.toolButtons[3].setTexture("icon-menu-flag-se");
+			this.toolButtons[2].setTexture("icon-menu-flag-se");
 		}
 		else {
 			this.language = "Swedish";
 			language.setLanguage("Swedish");
-			this.toolButtons[3].setTexture("icon-menu-flag-en");
+			this.toolButtons[2].setTexture("icon-menu-flag-en");
 		}
 	}
 

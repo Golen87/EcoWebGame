@@ -649,7 +649,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		language.bind(this.infoDescription, "network_desc");
 		language.bind(this.infoDescription, "network_" + mode);
 
-		const modeImage = (mode == "groups") ? "icon-foodWeb" : "icon-ecoWeb";
+		const modeImage = (mode == "groups") ? "icon-food-web" : "icon-eco-web";
 		const sliderValue = (mode == "groups") ? 0.0 : 1.0;
 
 		this.setInfoImage(modeImage);
