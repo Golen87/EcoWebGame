@@ -1,5 +1,6 @@
 import { BaseScene } from "./BaseScene";
 import { InfoWindow } from "../components/InfoWindow";
+import { StoryWindow } from "../components/StoryWindow";
 import { ToolboxButton } from "../components/ToolboxButton";
 import { AttractionView } from "../components/AttractionView";
 import { language } from "../language/LanguageManager";
@@ -12,6 +13,7 @@ export class UIScene extends BaseScene {
 	private fader: Phaser.GameObjects.Rectangle;
 
 	private infoWindow: InfoWindow;
+	private storyWindow: StoryWindow;
 	private toolButtons: ToolboxButton[];
 	private language: string;
 
@@ -40,8 +42,16 @@ export class UIScene extends BaseScene {
 		/* Info window (clicking info-button) */
 
 		this.infoWindow = new InfoWindow(this);
-		this.infoWindow.on("closeInfo", () => {
+		this.infoWindow.on("close", () => {
 			this.events.emit("info", false);
+		}, this);
+
+
+		/* Story window */
+
+		this.storyWindow = new StoryWindow(this);
+		this.storyWindow.on("close", () => {
+			this.events.emit("story", false);
 		}, this);
 
 
@@ -74,7 +84,8 @@ export class UIScene extends BaseScene {
 		this.toolButtons = [];
 		for (let i = 0; i < toolButtons.length; i++) {
 			let button = toolButtons[i];
-			let size = 0.024 * this.H;
+			// let size = 0.024 * this.H;
+			let size = 0.028 * this.H;
 			let x = tbX;
 			let y = tbY + (i - (toolButtons.length-1)/2) * 1.75*size;
 
@@ -102,11 +113,21 @@ export class UIScene extends BaseScene {
 
 		this.input.on("pointerdown", () => { if (this.idleTimer > 0) this.idleTimer = 0; }, this);
 		this.input.on("pointerup", () => { if (this.idleTimer > 0) this.idleTimer = 0; }, this);
+
+
+		/* From game */
+		this.scene.get('SerengetiScene').events.on('openStory', (story: number) => {
+			if (this.infoWindow.isClosed && this.storyWindow.isClosed) {
+				this.events.emit("story", true);
+				this.storyWindow.show(story);
+			}
+		}, this);
 	}
 
 	update(time: number, delta: number): void {
 		this.attractionView.update(time, delta);
 		this.infoWindow.update(time, delta);
+		this.storyWindow.update(time, delta);
 
 		this.attractionView.alpha *= (1 - 0.99 * this.infoWindow.alpha);
 
@@ -141,7 +162,7 @@ export class UIScene extends BaseScene {
 	// }
 
 	infoButton() {
-		if (this.infoWindow.isClosed) {
+		if (this.infoWindow.isClosed && this.storyWindow.isClosed) {
 			this.events.emit("info", true);
 			this.infoWindow.show();
 		}
@@ -154,11 +175,13 @@ export class UIScene extends BaseScene {
 	restartButton() {
 		if (!this.attractionView.visible || this.infoWindow.isOpen) {
 			this.infoWindow.hide();
+			this.storyWindow.hide();
 			this.attractionView.show();
 
 			this.events.emit("restart");
 			this.events.emit("attraction", true);
 			this.events.emit("info", false);
+			this.events.emit("story", false);
 		}
 
 		if (this.language == "English") {
