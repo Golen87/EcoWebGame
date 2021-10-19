@@ -74,6 +74,10 @@ export class Slider extends Phaser.GameObjects.Container {
 
 	set value(value: number) {
 		value = Phaser.Math.Clamp(value, this.minV, this.maxV);
+		if (this.steps > 0) {
+			value = Math.round(value * (this.steps-1)) / (this.steps-1);
+		}
+
 		this._value = value;
 		this._prevValue = value;
 		this.emit('onChange', this._value);
