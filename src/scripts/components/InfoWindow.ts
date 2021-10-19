@@ -72,7 +72,7 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 				let x = -this.width / 2 + this.pad;
 				let text = scene.createText(x, y, this.fontSize * size, weight, color);
 				// text.setLineSpacing(10);
-				text.setWordWrapWidth(0.85*this.width-2*this.pad, true);
+				text.setWordWrapWidth(0.85*this.width-2*this.pad);
 				language.bind(text, line);
 				this.lines.push(text);
 				this.box.add(text);
@@ -87,7 +87,7 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 
 		let qx = 0.35 * this.width;
 		let qy = -0.20 * this.height;
-		let qr = scene.add.image(qx, qy, "qr");
+		let qr = scene.add.image(qx, qy, "qr-code");
 		qr.setScale(1.3);
 		qr.setOrigin(0, 1.25);
 		this.box.add(qr);
@@ -130,7 +130,7 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 
 	hide() {
 		this.alphaGoal = 0;
-		this.emit("closeInfo");
+		this.emit("close");
 	}
 
 	get isOpen(): boolean {

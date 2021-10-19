@@ -140,8 +140,8 @@ export class FoodWebNode extends BaseNode {
 		this.velocity.add(towardGroup);
 
 		// Movement
+		this.arbitraryLockTimer -= delta;
 		if (this.locked) {
-			this.arbitraryLockTimer -= delta;
 			this.velocity.reset();
 		}
 		else if (this._dragged) {
@@ -166,21 +166,27 @@ export class FoodWebNode extends BaseNode {
 		}
 
 		// Keep within border
-		if (this.x < this.config.borderLeft) {
-			this.x = this.config.borderLeft;
-			// this.velocity.x *= -1;
-		}
-		if (this.y < this.config.borderTop) {
-			this.y = this.config.borderTop;
-			// this.velocity.y *= -1;
-		}
-		if (this.x > this.config.borderRight) {
-			this.x = this.config.borderRight;
-			// this.velocity.x *= -1;
-		}
-		if (this.y > this.config.borderBottom) {
-			this.y = this.config.borderBottom;
-			// this.velocity.y *= -1;
+		if (!this.config.attractionMode && !this.locked) {
+			if (this.x < this.config.borderLeft) {
+				this.velocity.x += 0.1 * (this.config.borderLeft - this.x);
+				// this.x = this.config.borderLeft;
+				// this.velocity.x *= -1;
+			}
+			if (this.y < this.config.borderTop) {
+				this.velocity.y += 0.1 * (this.config.borderTop - this.y);
+				// this.y = this.config.borderTop;
+				// this.velocity.y *= -1;
+			}
+			if (this.x > this.config.borderRight) {
+				this.velocity.x -= 0.1 * (this.x - this.config.borderRight);
+				// this.x = this.config.borderRight;
+				// this.velocity.x *= -1;
+			}
+			if (this.y > this.config.borderBottom) {
+				this.velocity.y -= 0.1 * (this.y - this.config.borderBottom);
+				// this.y = this.config.borderBottom;
+				// this.velocity.y *= -1;
+			}
 		}
 
 
@@ -192,8 +198,13 @@ export class FoodWebNode extends BaseNode {
 		if (!this.hasImage) {
 			this.image.setTint(this.selected || this.subselected ? 0x000000 : 0xFFFFFF);
 		}
+
 		this.nameBg.setVisible(this.selected && !this.config.attractionMode);
 		this.nameText.setVisible(this.selected && !this.config.attractionMode);
+		if (this.selected && !this.config.attractionMode) {
+			this.nameBg.y = (-this.size/2 - 24) * (this.y > 100 ? 1 : -1);
+			this.nameText.y = this.nameBg.y;
+		}
 
 		// this.alpha += 0.1 * (this.alphaGoal - this.alpha);
 		this.alpha += Phaser.Math.Clamp(this.alphaGoal - this.alpha, -4*delta, 4*delta);
@@ -255,16 +266,18 @@ export class FoodWebNode extends BaseNode {
 		if (this._visibilityCache) {
 			return this._visibilityCache * this.alpha;
 		}
-		let borderMinDistance = Math.min(
-			this.x - this.config.borderLeft,
-			this.y - this.config.borderTop,
-			this.config.borderRight - this.x,
-			this.config.borderBottom - this.y
-		);
+		// let borderMinDistance = Math.min(
+			// this.x - this.config.borderLeft,
+			// this.y - this.config.borderTop,
+			// this.y - (-100),
+			// this.config.borderRight - this.x,
+			// this.config.borderBottom - this.y
+		// );
 		// when 0, it's 0/200 = 0
 		// when 200, it's 200/200 = 1
-		let visibility = Phaser.Math.Clamp((borderMinDistance - 150) / 100, 0, 1);
-		if (visibility == 1) {
+		// let visibility = Phaser.Math.Clamp((borderMinDistance - 150) / 100, 0, 1);
+		let visibility = Phaser.Math.Clamp(-this.arbitraryLockTimer, 0, 1);
+		if (visibility >= 1) {
 			this._visibilityCache = 1;
 		}
 		return visibility * this.alpha;

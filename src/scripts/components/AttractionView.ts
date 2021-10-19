@@ -52,7 +52,7 @@ export class AttractionView extends Phaser.GameObjects.Container {
 
 			let text = this.scene.createText(0, 0, 60, this.scene.weights.regular, textColor, "Question?");
 			text.setVisible(false);
-			// text.setWordWrapWidth(0.45*scene.W, true);
+			// text.setWordWrapWidth(0.45*scene.W);
 			text.setOrigin(0.5);
 			text.setPadding(30);
 			text.setShadow(0, 0, "#FFF", 15);

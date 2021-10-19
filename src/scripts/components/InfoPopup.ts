@@ -27,7 +27,7 @@ export class InfoPopup extends Phaser.GameObjects.Container {
 		this.text = this.scene.createText(0, 0, 20, this.scene.weights.bold, "#FFF", "Warning text");
 		this.text.setOrigin(0.5);
 		this.text.setLineSpacing(10);
-		this.text.setWordWrapWidth(0.15*this.scene.W, true);
+		this.text.setWordWrapWidth(0.15*this.scene.W);
 		language.bind(this.text, "popup_1");
 		this.add(this.text);
 	}
