@@ -10,6 +10,7 @@ const config: Phaser.Types.Core.GameConfig = {
 	// height: 9*70*1.5,
 	width: 1920,
 	height: 1080,
+	disableContextMenu: true,
 	scale: {
 		mode: Phaser.Scale.FIT
 		// mode: Phaser.Scale.RESIZE
