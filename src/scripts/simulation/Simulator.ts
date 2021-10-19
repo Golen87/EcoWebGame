@@ -52,7 +52,8 @@ class Simulator {
 		for (let i = 0; i < L; i++) {
 			this.population[i] = 0;
 
-			this.growthRate[i] = (this.species[i].type == 'animal') ? -0.1 : 1;
+			// this.growthRate[i] = (this.species[i].type == 'animal') ? -0.1 : 1;
+			this.growthRate[i] = [1.0, -0.1, -0.02][this.species[i].category]
 			this.extraGrowthRate[i] = 0;
 
 			// this.carryingCapacity[i] = (this.species[i].type == 'plant') ? 2 : 1;
@@ -95,12 +96,14 @@ class Simulator {
 		return 0;
 	}
 
-	addOrRemoveSpecies(species: Organism, active: boolean): void {
+	addOrRemoveSpecies(species: Organism, active: boolean, growthChange: number): void {
 		let index = this.species.findIndex(x => x.id == species.id);
 
 		if (active) {
-			this.population[index] = (species.type == 'animal') ? 0.01 : 0.1;
-			this.extraGrowthRate[index] = (species.type == 'plant') ? -0.5 : 0.0;
+			// this.population[index] = (species.type == 'animal') ? 0.01 : 0.1;
+			this.population[index] = DEATH_THRESHOLD;
+			// this.extraGrowthRate[index] = (species.type == 'plant') ? -0.5 : 0.0;
+			this.extraGrowthRate[index] = growthChange ?? 0.0;
 		}
 		else {
 			this.population[index] = 0;

@@ -14,6 +14,8 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 	private pad: number;
 	private alphaGoal: number;
 
+	private descriptions: string[];
+
 	private chapterText: Phaser.GameObjects.Text;
 	private titleText: Phaser.GameObjects.Text;
 	private descText: Phaser.GameObjects.Text;
@@ -23,7 +25,7 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 	private okText: Phaser.GameObjects.Text;
 
 	constructor(scene) {
-		super(scene, scene.CX, scene.CY);
+		super(scene, scene.CX, 0.95*scene.CY);
 		this.scene = scene;
 		scene.add.existing(this);
 
@@ -32,8 +34,8 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 		this.setVisible(false);
 
 		this.width = 0.6 * scene.W;
-		this.height = 0.65 * scene.H;
-		this.fontSize = 24;
+		this.height = 0.6 * scene.H;
+		this.fontSize = 30;
 		this.sep = 1 * this.fontSize;
 		this.pad = 2 * this.fontSize;
 
@@ -43,7 +45,7 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 		this.box = this.scene.add.container(0, 0);
 		this.add(this.box);
 
-		let bg = new RoundRectangle(scene, 0, 0, this.width, this.height, 10, 0x120B03, 0.5);
+		let bg = new RoundRectangle(scene, 0, 0, this.width, this.height, 10, 0x120B03, 0.6);
 		this.box.add(bg);
 
 		let y = -this.height / 2 + this.pad;
@@ -60,17 +62,17 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 
 		this.descText = scene.createText(0, y, this.fontSize, scene.weights.regular, "#FFFFFF");
 		this.descText.setOrigin(0.5, 0.0);
-		this.descText.setWordWrapWidth(0.85*this.width-2*this.pad, true);
+		this.descText.setWordWrapWidth(0.85*this.width-2*this.pad);
 		this.box.add(this.descText);
 
 
-		let bSize = 60;
+		let bSize = 50;
 		let bY = this.height / 2 - this.pad - bSize / 2;
 
 		this.okButton = new BaseNode(this.scene, 0, bY);
 		this.box.add(this.okButton);
 
-		this.okBg = new RoundRectangle(this.scene, 0, 0, 3*bSize, bSize, bSize/2, 0x6B8B2F, 1.0);
+		this.okBg = new RoundRectangle(this.scene, 0, 0, 4*bSize, bSize, bSize/2, 0x6B8B2F, 1.0);
 		this.okButton.add(this.okBg);
 		this.okButton.bindInteractive(this.okBg);
 
@@ -80,10 +82,13 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 
 		this.okButton.on("click", () => {
 			if (this.isOpen) {
-				this.hide();
+				this.nextPage();
 			}
 		}, this);
 
+
+		// Prevent inside from closing
+		// bg.setInteractive();
 
 		// Dismiss on any clicks
 		outside.setInteractive({ useHandCursor: true })
@@ -95,17 +100,18 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 	}
 
 
-	show(story: number) {
+	show(chapter) {
 		this.alphaGoal = 1;
 
-		const num = story.toString();
+		this.descriptions = [...chapter.descriptions];
 
-		language.bind(this.titleText, "challenge_title_" + num);
-		language.bind(this.descText, "challenge_desc_" + num);
+		language.bind(this.titleText, chapter.title);
 		language.bind(this.chapterText, "chapter", () => {
-			this.chapterText.setText(`${this.chapterText.text} ${num}`);
+			this.chapterText.setText(`${this.chapterText.text} ${chapter.number}`);
 			language.unbind(this.chapterText); // Hack to prevent error check
 		});
+
+		this.nextPage();
 
 		// "challenge_title_1"
 		// "challenge_title_2"
@@ -119,6 +125,19 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 		// "challenge_desc_3"
 		// "challenge_desc_4"
 		// "challenge_desc_5"
+	}
+
+	nextPage() {
+		let desc = this.descriptions.shift();
+
+		if (desc) {
+			language.bind(this.descText, desc);
+		}
+		else {
+			this.hide();
+		}
+
+		language.bind(this.okText, this.descriptions.length > 0 ? "next" : "ok");
 	}
 
 	hide() {

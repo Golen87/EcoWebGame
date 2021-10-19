@@ -205,6 +205,8 @@ export class Organism {
 	isAnimal() { return false; }
 	isHerbivore() { return false; }
 	isCarnivore() { return false; }
+
+	get category(): number { return this.isPlant() ? 0 : this.isHerbivore() ? 1 : 2; }
 }
 
 
@@ -287,7 +289,7 @@ export class Abiotic extends Organism {
 
 
 export class Service extends Organism {
-	private category: ServiceCategory;
+	// private category: ServiceCategory;
 
 	constructor(node, actor) {
 		super(node, actor);

@@ -424,22 +424,22 @@ export class EcowebScene extends BaseScene {
 		// Empty nodes
 
 		this.fakeNodes = new Map();
-		this.fakeNodes.set("carnivore_1",	new FakeNode(this, 0.49 * this.W, 0.15 * this.H, "node_carnivore"));
-		this.fakeNodes.set("herbivore_1",	new FakeNode(this, 0.62 * this.W, 0.40 * this.H, "node_herbivore"));
-		this.fakeNodes.set("plant_1",		new FakeNode(this, 0.53 * this.W, 0.65 * this.H, "node_plant"));
+		this.fakeNodes.set("carnivore_1",	new FakeNode(this, 0.49 * this.W, 0.15 * this.H, 2));
+		this.fakeNodes.set("herbivore_1",	new FakeNode(this, 0.62 * this.W, 0.40 * this.H, 1));
+		this.fakeNodes.set("plant_1",		new FakeNode(this, 0.53 * this.W, 0.65 * this.H, 0));
 
-		this.fakeNodes.set("carnivore_2",	new FakeNode(this, 0.32 * this.W, 0.15 * this.H, "node_carnivore"));
-		this.fakeNodes.set("herbivore_2",	new FakeNode(this, 0.38 * this.W, 0.40 * this.H, "node_herbivore"));
-		this.fakeNodes.set("plant_2",		new FakeNode(this, 0.27 * this.W, 0.65 * this.H, "node_plant"));
-		this.fakeNodes.set("plant_3",		new FakeNode(this, 0.75 * this.W, 0.65 * this.H, "node_plant"));
+		this.fakeNodes.set("carnivore_2",	new FakeNode(this, 0.32 * this.W, 0.15 * this.H, 2));
+		this.fakeNodes.set("herbivore_2",	new FakeNode(this, 0.38 * this.W, 0.40 * this.H, 1));
+		this.fakeNodes.set("plant_2",		new FakeNode(this, 0.27 * this.W, 0.65 * this.H, 0));
+		this.fakeNodes.set("plant_3",		new FakeNode(this, 0.75 * this.W, 0.65 * this.H, 0));
 
-		this.fakeNodes.set("c2",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_carnivore"));
-		this.fakeNodes.set("h2",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_herbivore"));
-		this.fakeNodes.set("h3",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_herbivore"));
-		this.fakeNodes.set("h4",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_herbivore"));
-		this.fakeNodes.set("p1",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_plant"));
-		this.fakeNodes.set("p3",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_plant"));
-		this.fakeNodes.set("p4",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, "node_plant"));
+		this.fakeNodes.set("c2",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, 2));
+		this.fakeNodes.set("h2",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, 1));
+		this.fakeNodes.set("h3",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, 1));
+		this.fakeNodes.set("h4",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, 1));
+		this.fakeNodes.set("p1",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, 0));
+		this.fakeNodes.set("p3",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, 0));
+		this.fakeNodes.set("p4",			new FakeNode(this, 0.50 * this.W, 0.50 * this.H, 0));
 
 
 		// Node-fake relations
@@ -837,7 +837,7 @@ export class EcowebScene extends BaseScene {
 		// this.timeStamp = simulator.time;
 
 		simulator.population = simulator.sol.at(this.timeStamp);
-		simulator.addOrRemoveSpecies(node.species, active);
+		simulator.addOrRemoveSpecies(node.species, active, 0.0);
 
 		if (manually) {
 			simulator.run(this.timeStamp);
@@ -901,7 +901,7 @@ export class EcowebScene extends BaseScene {
 						let value = simulator.getInteractionStrength(this.nodes[i].simIndex, this.nodes[j].simIndex);
 						// console.log(this.nodes[i].species.name, '->', this.nodes[j].species.name, value);
 						path.lineThickness = (this.nodes[j].species.isPlant() ? 3 : 2) * value;
-						path.dotDensity = this.nodes[j].species.isPlant() ? 1.1 : 0.6;
+						// path.dotDensity = this.nodes[j].species.isPlant() ? 1.1 : 0.6;
 					}
 				}
 			}
