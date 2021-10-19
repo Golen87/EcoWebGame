@@ -57,7 +57,7 @@ export class RoundRectangle extends Phaser.GameObjects.Container {
 	}
 
 	updatePolygon() {
-		let points:any=[], t=8;
+		let points:any=[], t=16;
 		for (let j = 0; j < 4; j++) {
 			let sx = Math.sign(Math.cos(j*Math.PI/2+0.1));
 			let sy = Math.sign(Math.sin(j*Math.PI/2+0.1));

@@ -1,7 +1,7 @@
 import { DataScenario } from "../database/Interfaces";
 import { Scenario } from "./Scenario";
 import { Organism } from "./Organism";
-import { SIMULATION_LENGTH } from "../constants";
+import { SIMULATION_LENGTH, DEATH_THRESHOLD, MIN_POPULATION } from "../constants";
 import * as numeric from "numeric";
 
 interface DataHistory {
@@ -20,6 +20,7 @@ class Simulator {
 	public history: DataHistory;
 	public time: number;
 	public sol: numeric.Dopri;
+	public maxCatValues: any;
 
 	private growthRate: number[];
 	private interactionMatrix: number[][];
@@ -129,6 +130,7 @@ class Simulator {
 	reset(): void {
 		this.time = 0;
 		this.history = {x:[], y:[]};
+		this.maxCatValues = {0:0.5, 1:0.5, 2:0.5};
 
 		for (let i = 0; i < this.species.length; i++) {
 			this.population[i] = 0;
@@ -158,7 +160,7 @@ class Simulator {
 			if (true || this.population[i] > 0) {
 
 				// Points to distribute
-				let weights = [1.0, 0.4, 0.2];
+				let weights = [1.0, 0.5, 0.25];
 
 				for (const rel of this.relationMap[i]) {
 					let j = rel.index;
@@ -174,8 +176,8 @@ class Simulator {
 						this.interactionMatrix[j][i] -= value;
 					}
 					else if (this.population[j] <= 0) {
-						this.interactionMatrix[i][j] += 0.5;
-						this.interactionMatrix[j][i] -= 0.5;
+						this.interactionMatrix[i][j] += 1.0;
+						this.interactionMatrix[j][i] -= 1.0;
 					}
 				}
 			}
@@ -208,6 +210,14 @@ class Simulator {
 
 		this.history.x = this.history.x.concat(this.sol.x);
 		this.history.y = this.history.y.concat(this.sol.y);
+
+		this.maxCatValues = {0:0.5, 1:0.5, 2:0.5};
+		for (let i = 0; i < this.history.x.length; i++) {
+			for (let s = 0; s < this.species.length; s++) {
+				let cat = this.species[s].category;
+				this.maxCatValues[cat] = Math.max(this.maxCatValues[cat], this.history.y[i][s]);
+			}
+		}
 	}
 
 	// Lotka-Volterra equation (classical model for predator-prey interaction)
@@ -223,8 +233,10 @@ class Simulator {
 				sum += this.interactionMatrix[i][j] * pop[j];
 			}
 
+			let g = this.growthRate[i];
+			// let g = (sum > 0 || this.growthRate[i] > 0) ? this.growthRate[i] : -0.2;
+			const r = g + this.extraFactor * this.extraGrowthRate[i];
 			// dPop[i] = this.growthRate[i] * pop[i] * (1 - sum / this.carryingCapacity[i]);
-			const r = this.growthRate[i] + this.extraFactor * this.extraGrowthRate[i];
 			dPop[i] = pop[i] * (r + sum);
 		}
 		return dPop;

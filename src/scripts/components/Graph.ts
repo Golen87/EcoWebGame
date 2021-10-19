@@ -1,7 +1,8 @@
 import { BaseScene } from "../scenes/BaseScene";
 import { language } from "../language/LanguageManager";
 import { simulator } from "../simulation/Simulator";
-import { SIMULATION_LENGTH } from "../constants";
+import { colorToNumber, interpolateColor } from "../utils";
+import { SIMULATION_LENGTH, DEATH_THRESHOLD, MIN_POPULATION } from "../constants";
 
 export class Graph extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
@@ -15,6 +16,8 @@ export class Graph extends Phaser.GameObjects.Container {
 	public width: number;
 	public height: number;
 	public padding: number;
+	public splitSep: number;
+	public splitHeight: number;
 	public history: number;
 	public xstep: number;
 	public ystep: number;
@@ -30,10 +33,12 @@ export class Graph extends Phaser.GameObjects.Container {
 		this.scene = scene;
 		this.width = width;
 		this.height = height;
-		this.padding = 0.03 * this.width;
+		this.padding = 0.02 * this.width;
+		this.splitSep = 0.025 * this.width;
+		this.splitHeight = (this.height - 2*this.padding - 2*this.splitSep) / 3;
 		this.history = SIMULATION_LENGTH; // 20
 		this.xstep = 1/8;
-		this.ystep = 6;
+		this.ystep = 4;
 
 
 		// this.setDepth(100);
@@ -47,11 +52,11 @@ export class Graph extends Phaser.GameObjects.Container {
 		this.add(this.foregroundSelected);
 
 
-		this.gridSize = 0.75;
+		this.gridSize = 0.9;
 		// this.stepSize = 1.0;
-		this.axisSize = 1.5;
+		this.axisSize = 1.9;
 		this.lineSize = 2.5;
-		this.nodeSize = 24;
+		this.nodeSize = 22;
 
 		this.images = [];
 		for (const species of simulator.species) {
@@ -61,7 +66,7 @@ export class Graph extends Phaser.GameObjects.Container {
 			this.images.push(cont);
 
 			let size = this.nodeSize + 2*this.lineSize;
-			let color = Phaser.Display.Color.HexStringToColor(species.color).color;
+			let color = colorToNumber(species.color);
 			let circle = this.scene.add.ellipse(0, 0, size, size, color);
 			cont.add(circle);
 
@@ -101,32 +106,50 @@ export class Graph extends Phaser.GameObjects.Container {
 	}
 
 	createYLabels() {
-		let fontSize = 14; // Font size
-		let xLabelX = 0.5 * this.width - this.padding; // Label left
-		let xLabelY = 0.5 * this.height + this.padding/2; // Label top
+		let fontSize = 12; // Font size
+		let xLabelX = 0.5 * this.width - 0*this.padding + 1.0*fontSize; // Label left
+		let xLabelY = 0.5 * this.height - this.padding; // Label top
 		let yLabelX = -0.5 * this.width - 4.9*fontSize + this.padding; // Label left
-		let yLabelY = -0.5 * this.height; // Label top
+		let yLabelY = -0.5 * this.height - 0.5*fontSize; // Label top
 		let texts = ["> 100,000", "> 10,000", "> 1,000", "> 100"];
 
-		let xAxis = this.scene.createText(xLabelX, xLabelY-0.5*fontSize, 1.2*fontSize, this.scene.weights.normal, "#FFF", "Label");
-		xAxis.setOrigin(0.5, 0.0);
+		let xAxis = this.scene.createText(xLabelX, xLabelY, 1.2*fontSize, this.scene.weights.normal, "#FFF", "Label");
+		xAxis.setOrigin(0.0, 0.5);
 		language.bind(xAxis, "graph_time");
+		xAxis.setVisible(false);
 		this.add(xAxis);
 
-		let yAxis = this.scene.createText(yLabelX, yLabelY-0.5*fontSize, 1.2*fontSize, this.scene.weights.normal, "#FFF", "Label");
-		yAxis.setOrigin(0.0, 0.5);
+		let yAxis = this.scene.createText(yLabelX, yLabelY, 1.2*fontSize, this.scene.weights.normal, "#FFF", "Label");
+		yAxis.setOrigin(-0.47, 0.5);
 		language.bind(yAxis, "graph_population");
 		this.add(yAxis);
 
-		for (var i = 0; i < 4; i++) {
-			let sep = 2.4 * this.padding;
-			let x = yLabelX;
-			let y = yLabelY + (0.0 + 1/3*i) * (this.height - 2*sep) + sep;
-			let label = this.scene.createText(x, y, fontSize, this.scene.weights.regular, "#FFF", texts[i]);
-			label.setOrigin(0.0, 0.5);
-			label.setAlpha(0.7);
+		// for (var i = 0; i < 4; i++) {
+		// 	let sep = 2.4 * this.padding;
+		// 	let x = yLabelX;
+		// 	let y = yLabelY + (0.0 + 1/3*i) * (this.height - 2*sep) + sep;
+		// 	let label = this.scene.createText(x, y, fontSize, this.scene.weights.regular, "#FFF", texts[i]);
+		// 	label.setOrigin(0.0, 0.5);
+		// 	label.setAlpha(0.7);
 
-			this.add(label);
+		// 	this.add(label);
+		// }
+
+		for (let k = 0; k < 3; k++) {
+
+			let x = -0.5 * this.width - 2*this.padding;
+			let y = -0.5 * this.height + this.padding + (k+0.5) * this.splitHeight + k * this.splitSep;
+			let key = ["icon-plant-soil", "icon-leaf", "icon-meat"][k];
+			let color = [0x34A853, 0xFBBC05, 0xEA4335][k];
+			let size = 1.2 * this.nodeSize;
+
+			let circle = this.scene.add.ellipse(x, y, size, size, color);
+			this.add(circle);
+
+			let image = this.scene.add.image(x, y, key);
+			image.setScale(0.8 * size / image.height);
+			image.setTint(0);
+			this.add(image);
 		}
 	}
 
@@ -165,26 +188,30 @@ export class Graph extends Phaser.GameObjects.Container {
 
 	drawBackground(time: number) {
 		this.background.clear();
-		// this.background.fillStyle(0x666666, 1.0);
-		// this.background.fillRect(0, 0, this.width, this.height);
-		// this.background.fillStyle(0x222222, 1.0);
-		// this.background.fillRect(2.5, 2.5, this.width-5, this.height-5);
 
-		let right = Math.max(time, this.history);
-		let left = right - this.history;
+		const left = this.padding;
+		const right = this.width - this.padding;
 
-		right /= this.history;
-		left /= this.history;
+		let offset = (Math.max(time, this.history) - this.history) / this.history; // right - left
 
 		// Help grid
-		this.background.lineStyle(this.gridSize, 0xa77440, 0.5);
-		for (let i = 0; i <= 1; i += this.xstep) {
-			const vx = this.padding + Math.min(i+this.xstep - left%this.xstep, 1) * (this.width - 2*this.padding);
-			this.background.lineBetween(vx, this.padding, vx, this.height-this.padding);
-		}
-		for (let i = 0; i <= this.ystep; i++) {
-			const hy = this.padding + i / this.ystep * (this.height - 2*this.padding);
-			this.background.lineBetween(this.padding, hy, this.width-this.padding, hy);
+		this.background.lineStyle(this.gridSize, 0xA77440, 0.5);
+		this.background.fillStyle(0xA77440, 0.05);
+		for (let k = 0; k < 3; k++) {
+
+			let top = this.padding + k * this.splitHeight + k * this.splitSep;
+			let bot = this.padding + (k+1) * this.splitHeight + k * this.splitSep;
+
+			this.background.fillRect(left, top, right-left, bot-top);
+
+			for (let i = 0; i <= 1; i += this.xstep) {
+				const vx = left + Math.min(i+this.xstep - offset%this.xstep, 1) * (right - left);
+				this.background.lineBetween(vx, top, vx, bot);
+			}
+			for (let i = 0; i <= this.ystep; i++) {
+				const hy = top + i / this.ystep * (bot - top);
+				this.background.lineBetween(left, hy, right, hy);
+			}
 		}
 
 		// Axis steps
@@ -200,9 +227,18 @@ export class Graph extends Phaser.GameObjects.Container {
 		// }
 
 		// Axises
-		this.background.lineStyle(this.axisSize, 0xffffff, 1.0);
-		this.background.strokePoints([{x:this.padding, y:this.padding},{x:this.padding, y:this.height-this.padding}]);
-		this.background.strokePoints([{x:this.padding, y:this.height-this.padding},{x:this.width-this.padding, y:this.height-this.padding}]);
+		this.background.lineStyle(this.axisSize, 0xFFFFFF);
+		this.background.fillStyle(0xFFFFFF);
+		for (let k = 0; k < 3; k++) {
+			let top = this.padding + k * this.splitHeight + k * this.splitSep;
+			let bot = this.padding + (k+1) * this.splitHeight + k * this.splitSep;
+			this.background.strokePoints([{x:left, y:top},{x:left, y:bot}]);
+			this.background.strokePoints([{x:left, y:bot},{x:right, y:bot}]);
+
+			this.background.fillCircle(left, bot, 1.2*this.axisSize);
+			this.background.fillCircle(left, top, 1.2*this.axisSize);
+			this.background.fillCircle(right, bot, 1.2*this.axisSize);
+		}
 	}
 
 	draw(time: number) {
@@ -263,33 +299,43 @@ export class Graph extends Phaser.GameObjects.Container {
 
 			// let populations = simulator.getPopulationAt(time);
 			let points: any = [];
+			let wasAlive = false;
 			let alive = false;
 
 			for (var i = 0; i < data.length; i++) {
 				let x = data[i].x;
 				let y = data[i].y[s];
+				let cat = species.category;
 
-				y *= species.populationModifier;
+				y = Math.max(y, MIN_POPULATION);
+				// y *= species.populationModifier;
+				y /= simulator.maxCatValues[cat];
+
 				// y = Math.max(y, 1);
 				// y = Math.log10(y) / Math.log10(10000);
+				// y = (Math.log10(y) - Math.log10(0.001)) / (Math.log10(1.0) - Math.log10(0.001));
+				// y *= 10;
 
-				alive = alive || y > 0;
+				alive = y > DEATH_THRESHOLD;
+				wasAlive = wasAlive || alive;
 				x = (x - left) / (right - left);
 				y = 1 - y;
 
+				let top = this.padding + cat * (this.splitHeight + this.splitSep);
 
 				points.push({
 					x: this.padding + x * (this.width - 2*this.padding),
-					y: this.padding + y * (this.height - 2*this.padding),
+					// y: this.padding + y * (this.height - 2*this.padding),
+					y: top + y * this.splitHeight,
 					// alpha: Phaser.Math.Clamp((1-y)*5, 0, 1)
 				});
 			}
 
-			const color = Phaser.Display.Color.HexStringToColor(species.color).color;
+			const color = colorToNumber(species.color);
 			const last = points[points.length-1] ?? {x:0, y:0};
 
-			if (alive) { // species.showGraph
-				this.foreground.lineStyle(this.lineSize, color);
+			if (wasAlive) { // species.showGraph
+				this.foreground.lineStyle(this.lineSize, colorToNumber(species.color));
 				this.foreground.strokePoints(points, false, false);
 
 				// Display data points as circles
@@ -299,8 +345,12 @@ export class Graph extends Phaser.GameObjects.Container {
 				// }
 			}
 
-			this.images[s].setPosition(last.x + this.foreground.x, last.y + this.foreground.y);
-			this.images[s].setVisible(alive);
+			if (wasAlive) {
+				this.foreground.fillStyle(color);
+				this.foreground.fillCircle(last.x, last.y, 1.4*this.lineSize);
+				this.images[s].setPosition(last.x + this.foreground.x + 0*(this.nodeSize + 2*this.lineSize)/2, last.y + this.foreground.y);
+			}
+			this.images[s].setVisible(wasAlive);
 			// this.images[s].setAlpha(last.alpha);
 
 			// if (this.scene.selectedNode) {

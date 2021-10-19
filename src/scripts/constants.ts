@@ -1,7 +1,8 @@
 const NODE_SIZE: number = 90;
 // const NODE_SIZE: number = 120;
 const DEATH_THRESHOLD: number = 0.02;
-const SIMULATION_LENGTH: number = 30;
+const MIN_POPULATION: number = 0.01;
+const SIMULATION_LENGTH: number = 40;
 
 const DATABASE_VERSION = 4;
 const DATABASE_LOCKED = true;
@@ -12,9 +13,12 @@ const IDLE_TIME = 120;
 const IDLE_FADE = 10;
 const QUESTION_TIME = 12;
 
+const PARTICLE_COUNT = 500;
+
 export {
 	NODE_SIZE,
 	DEATH_THRESHOLD,
+	MIN_POPULATION,
 	SIMULATION_LENGTH,
 	DATABASE_VERSION,
 	DATABASE_LOCKED,
@@ -22,4 +26,5 @@ export {
 	IDLE_TIME,
 	IDLE_FADE,
 	QUESTION_TIME,
+	PARTICLE_COUNT,
 };

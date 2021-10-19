@@ -1089,7 +1089,7 @@ let serengetiData = JSON.stringify(
 					"type": "node",
 					"node_id": "eustachys_paspaloides",
 					"interaction": "herbivory",
-					"preference": 100
+					"preference": 300
 				},
 				{
 					"type": "node",
@@ -1206,7 +1206,7 @@ let serengetiData = JSON.stringify(
 					"type": "node",
 					"node_id": "aepyceros_melampus",
 					"interaction": "predation",
-					"preference": 100
+					"preference": 300
 				},
 				{
 					"type": "node",
@@ -1248,7 +1248,7 @@ let serengetiData = JSON.stringify(
 					"type": "node",
 					"node_id": "kobus_ellipsiprymnus",
 					"interaction": "predation",
-					"preference": 100
+					"preference": 200
 				},
 				{
 					"type": "node",
@@ -1750,7 +1750,7 @@ let serengetiData = JSON.stringify(
 					"type": "node",
 					"node_id": "heteropogon_contortus",
 					"interaction": "herbivory",
-					"preference": 100
+					"preference": 300
 				},
 				{
 					"type": "node",
@@ -3248,7 +3248,7 @@ let serengetiData = JSON.stringify(
 					"type": "node",
 					"node_id": "acacia_tortilis",
 					"interaction": "herbivory",
-					"preference": 100
+					"preference": 300
 				},
 				{
 					"type": "node",
@@ -3284,7 +3284,7 @@ let serengetiData = JSON.stringify(
 					"type": "node",
 					"node_id": "heteropogon_contortus",
 					"interaction": "herbivory",
-					"preference": 100
+					"preference": 200
 				},
 				{
 					"type": "node",
@@ -4148,7 +4148,7 @@ let serengetiData = JSON.stringify(
 					"type": "node",
 					"node_id": "connochaetes_taurinus",
 					"interaction": "predation",
-					"preference": 100
+					"preference": 1000
 				},
 				{
 					"type": "node",
