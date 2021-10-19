@@ -116,10 +116,10 @@ export class UIScene extends BaseScene {
 
 
 		/* From game */
-		this.scene.get('SerengetiScene').events.on('openStory', (story: number) => {
+		this.scene.get('SerengetiScene').events.on('openStory', (chapter) => {
 			if (this.infoWindow.isClosed && this.storyWindow.isClosed) {
 				this.events.emit("story", true);
-				this.storyWindow.show(story);
+				this.storyWindow.show(chapter);
 			}
 		}, this);
 	}

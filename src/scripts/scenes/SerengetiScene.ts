@@ -5,19 +5,20 @@ import { BaseNode } from "../components/nodes/BaseNode";
 import { Node } from "../components/nodes/Node";
 import { FakeNode } from "../components/nodes/FakeNode";
 import { Path } from "../components/Path";
+import { PathParticle } from "../components/PathParticle";
 import { FoodWeb } from "../components/foodweb/FoodWeb";
 import { InfoPopup } from "../components/InfoPopup";
 import { Graph } from "../components/Graph";
 import { Slider } from "../components/Slider";
 import { NextButton } from "../components/NextButton";
 import { RoundRectangle } from "../components/RoundRectangle";
-import { MatrixEditor } from "../components/MatrixEditor";
-import { HSVToRGB, colorToString } from "../utils";
-import { NODE_SIZE, SIMULATION_LENGTH } from "../constants";
+// import { MatrixEditor } from "../components/MatrixEditor";
+import { HSVToRGB, colorToString, interpolateColor } from "../utils";
+import { NODE_SIZE, MIN_POPULATION, SIMULATION_LENGTH, PARTICLE_COUNT } from "../constants";
 import { language } from "../language/LanguageManager";
 import { database } from "../database/Database";
 import { BlurPostFilter } from "../pipelines/BlurPostFilter";
-import { Story, storyData } from "../assets/stories";
+import { Story, storyData, chapterData } from "../assets/stories";
 
 
 interface NodeSlot {
@@ -48,15 +49,20 @@ export class SerengetiScene extends BaseScene {
 
 	private nodes: Node[];
 	private nodeSlots: NodeSlot[];
+	private anySlotTaken: Boolean;
 	private fakeNodes: Map<NodeId, FakeNode>;
 	private paths: Path[];
 	private sliders: Slider[];
 	private graph: Graph;
 	private infoPopup: InfoPopup;
 	private foodWeb: FoodWeb;
-	private matrixEditor: MatrixEditor;
+	// private matrixEditor: MatrixEditor;
 	private tempSlider: Slider;
 	// private minimap: Phaser.Cameras.Scene2D.Camera;
+
+	private particleCont: Phaser.GameObjects.Container;
+	private particles: PathParticle[];
+	private particleIndex: number;
 
 	private attractionOpen: boolean;
 	private infoWindowOpen: boolean;
@@ -81,6 +87,8 @@ export class SerengetiScene extends BaseScene {
 	private infoTitle: Phaser.GameObjects.Text;
 	private infoSubTitle: Phaser.GameObjects.Text;
 	private infoDescription: Phaser.GameObjects.Text;
+
+	// private debugText: Phaser.GameObjects.Text;
 
 	constructor() {
 		super({key: 'SerengetiScene'});
@@ -124,6 +132,7 @@ export class SerengetiScene extends BaseScene {
 				this.foodWeb.clearInfoBox();
 			}, this);
 
+
 		// const spotlight = this.make.sprite({
 		// 	x: 300,
 		// 	y: 300,
@@ -161,6 +170,7 @@ export class SerengetiScene extends BaseScene {
 		this.bgCont = this.add.container(0, 0);
 
 		this.grassBg = this.add.image(this.CX, this.H - sbH, 'bg_grass');
+		this.grassBg.setBlendMode(Phaser.BlendModes.SCREEN);
 		this.containToScreen(this.grassBg);
 		this.bgCont.add(this.grassBg);
 
@@ -208,10 +218,10 @@ export class SerengetiScene extends BaseScene {
 
 		let nSize = 50;
 
-		this.exploreButton = new NextButton(this, 0.87 * this.W, 0.78 * this.H - 0.8 * nSize, nSize, 0x6B8B2F);
-		this.nextButton = new NextButton(this, 0.82 * this.W, 0.78 * this.H - 0.8 * 0.75*nSize, 0.75*nSize, 0x6B8B2F);
-		this.prevButton = new NextButton(this, 0.695 * this.W, 0.78 * this.H - 0.8 * 0.75*nSize, 0.75*nSize, 0);
-		this.storyButton = new NextButton(this, 0.1 * this.W, 0.78 * this.H - 0.8 * 0.75*nSize, 0.75*nSize, 0);
+		this.exploreButton = new NextButton(this, 0.87 * this.W, 0.978 * this.H - 0.8 * nSize, nSize, 0x6B8B2F);
+		this.nextButton = new NextButton(this, 0.82 * this.W, 0.978 * this.H - 0.8 * 0.75*nSize, 0.75*nSize, 0x6B8B2F);
+		this.prevButton = new NextButton(this, 0.695 * this.W, 0.978 * this.H - 0.8 * 0.75*nSize, 0.75*nSize, 0);
+		this.storyButton = new NextButton(this, 0.1 * this.W, 0.978 * this.H - 0.8 * 0.75*nSize, 0.75*nSize, 0);
 		this.exploreButton.setText("explore_button");
 		this.nextButton.setText("next_button");
 		this.prevButton.setText("prev_button");
@@ -244,7 +254,7 @@ export class SerengetiScene extends BaseScene {
 
 		this.storyButton.on("click", () => {
 			if (this.currentStory) {
-				this.events.emit("openStory", this.currentStory.chapter-1);
+				this.events.emit("openStory", chapterData[this.currentStory.chapter]);
 			}
 		}, this);
 
@@ -388,11 +398,24 @@ export class SerengetiScene extends BaseScene {
 		// Node slots
 
 		this.nodeSlots = [];
-		let order = [3,4,2,5,1,0,6,7,8,9];
+		this.anySlotTaken = false;
+		let order = [
+			{x: 0,	y: 0},
+			{x: 2,	y: 0},
+			{x: -2,	y: 0},
+			{x: 1,	y: -1},
+			{x: -1,	y: -1},
+			{x: 1,	y: 1},
+			{x: -1,	y: 1},
+			{x: 3,	y: -1},
+			{x: -3,	y: -1},
+			{x: 3,	y: 1},
+			{x: -3,	y: 1},
+		];
 
-		for (let i = 0; i < 10; i++) {
-			let x = sbX + 1.3 * NODE_SIZE * (order[i]-3);
-			let y = sbY;
+		for (let i = 0; i < order.length; i++) {
+			let x = sbX + 0.65 * NODE_SIZE * order[i].x;
+			let y = sbY + 0.6 * NODE_SIZE * order[i].y;
 			this.nodeSlots.push({
 				x,
 				y,
@@ -414,76 +437,95 @@ export class SerengetiScene extends BaseScene {
 		this.paths = [];
 
 		// Graph
-
-		this.graph = new Graph(this, 1.6*sbH, 0.75*sbH);
-		this.graph.setPosition(0.32*sbH + 0.5*this.graph.width + 0.13*this.W, sbY + 0.03*this.graph.height);
-
+		this.graph = new Graph(this, 1.8*sbH, 0.90*sbH);
+		this.graph.setPosition(0.32*sbH + 0.5*this.graph.width + 0.10*this.W, sbY + 0.03*this.graph.height);
 
 		// Info text popup
-
 		this.initInfoBox(0.63 * this.W);
-
 		this.infoPopup = new InfoPopup(this);
+
+		// Particles
+		this.initParticles();
 
 
 		// Editor
-		this.matrixEditor = new MatrixEditor(this);
-		this.matrixEditor.setDepth(1000);
-		this.matrixEditor.on("change", () => {
-			simulator.run(this.timeStamp);
-			this.updatePaths();
-		});
+		// this.matrixEditor = new MatrixEditor(this);
+		// this.matrixEditor.setDepth(1000);
+		// this.matrixEditor.on("change", () => {
+		// 	simulator.run(this.timeStamp);
+		// });
 
-		let editSlider = new Slider(this, this.W-50, 40, 1.5*24, 24, 0.75*24, 2);
-		editSlider.on("onChange", (value: number) => {
-			if (value == 0) {
-				this.matrixEditor.setVisible(!!value);
-				for (const path of this.paths) {
-					path.setVisible(!value);
-				}
-			}
-			// this.minimap.setVisible(!this.minimap.visible);
-		});
-		editSlider.setRange(0, 1);
-		editSlider.value = 0;
-		this.sliders.push(editSlider);
-		this.add.existing(editSlider);
-		editSlider.setAlpha(0);
+		// let editSlider = new Slider(this, this.W-50, 40, 1.5*24, 24, 0.75*24, 2);
+		// editSlider.on("onChange", (value: number) => {
+		// 	if (value == 0) {
+		// 		// this.matrixEditor.setVisible(!!value);
+		// 		for (const path of this.paths) {
+		// 			path.setVisible(!value);
+		// 		}
+		// 	}
+		// 	// this.minimap.setVisible(!this.minimap.visible);
+		// });
+		// editSlider.setRange(0, 1);
+		// editSlider.value = 0;
+		// this.sliders.push(editSlider);
+		// this.add.existing(editSlider);
+		// editSlider.setAlpha(0);
 
-		this.tempSlider = new Slider(this, sbX, this.nextButton.y, 250, 30, 8, 5);
+		let tempOffset = 15;
+		this.tempSlider = new Slider(this, sbX, sbY+tempOffset, 250, 30, 8, 9);
 		this.tempSlider.setRange(0, 1);
 		this.sliders.push(this.tempSlider);
 		this.add.existing(this.tempSlider);
 
-		let tempSep = 1.5 * this.tempSlider.height;
-		let tempLeftText = this.createText(- this.tempSlider.width/2 - tempSep, 0, 20, this.weights.bold);
-		let tempRightText = this.createText(this.tempSlider.width/2 + tempSep, 0, 20, this.weights.bold);
-		tempLeftText.setOrigin(1, 0.5);
-		tempRightText.setOrigin(0, 0.5);
-		this.tempSlider.add(tempLeftText);
-		this.tempSlider.add(tempRightText);
-		// language.bind(tempLeftText, "slider_groups");
-		// language.bind(tempRightText, "slider_links");
-		tempLeftText.setText("Ingen påverkan");
-		tempRightText.setText("Stor påverkan");
+		let tempSep = 2.0 * this.tempSlider.height;
+		let tempTopText = this.createText(0, -40, 24, this.weights.bold);
+		// let tempLeftText = this.createText(- this.tempSlider.width/2 - tempSep, 0, 20, this.weights.bold);
+		// let tempRightText = this.createText(this.tempSlider.width/2 + tempSep, 0, 20, this.weights.bold);
+		tempTopText.setOrigin(0.5, 1.0);
+		// tempLeftText.setOrigin(1, 0.5);
+		// tempRightText.setOrigin(0, 0.5);
+		this.tempSlider.add(tempTopText);
+		// this.tempSlider.add(tempLeftText);
+		// this.tempSlider.add(tempRightText);
+		language.bind(tempTopText, "temperature_slider");
+		// tempTopText.setText("Klimatpåverkan");
+		// tempLeftText.setText("Liten");
+		// tempRightText.setText("Stor");
+
+		let tempLeftImage = this.add.image(- this.tempSlider.width/2 - tempSep, -tempOffset, "icon-plant-rain");
+		tempLeftImage.setScale(60 / tempLeftImage.width);
+		this.tempSlider.add(tempLeftImage);
+		let tempRightImage = this.add.image(this.tempSlider.width/2 + tempSep, -tempOffset, "icon-plant-sun");
+		tempRightImage.setScale(60 / tempRightImage.width);
+		this.tempSlider.add(tempRightImage);
+
+		let tempBg = new RoundRectangle(this, 0, -tempOffset, this.tempSlider.width + 2*tempSep + tempLeftImage.width + 30, this.tempSlider.height + 2*40 + 50, 12, 0x000000);
+		tempBg.setAlpha(0.3);
+		this.tempSlider.add(tempBg);
+		this.tempSlider.sendToBack(tempBg);
 
 		this.tempSlider.value = 0;
 		this.tempSlider.on('onChange', (value) => {
 			simulator.setTempEffect(value);
 			simulator.population = simulator.sol.at(this.timeStamp);
 			simulator.run(this.timeStamp);
-			this.updatePaths();
 
-			if (this.currentStory && this.currentStory.key == "2a" && value >= 1.0) {
+			// Tint grass background to yellow
+			let badColor = (this.currentStory && this.currentStory.key == "2b" ? 0xFFAAFF : 0xFF66FF)
+			this.grassBg.setTint(interpolateColor(0xFFFFFF, badColor, value));
+
+			if (this.currentStory && this.currentStory.key == "2b" && value >= 1.0) {
+				this.completeStory();
+			}
+			if (this.currentStory && this.currentStory.key == "2c" && value >= 1.0) {
 				this.completeStory();
 			}
 		}, this);
 
 		this.tempSlider.setVisible(false);
 
-
-		this.attractionOpen = true;
-		this.infoOpen = false;
+		// this.debugText = this.createText(this.W-100, 20, 15, this.weights.regular);
+		// this.debugText.setOrigin(1, 0);
 	}
 
 
@@ -517,7 +559,7 @@ export class SerengetiScene extends BaseScene {
 		// this.infoDescription = this.createText(-w/2+p, -h/2+p + 2.2*titleSize, 16, this.weights.regular, "#FFF", "Description");
 		this.infoDescription = this.createText(0, 0, 20, this.weights.regular, "#FFF", "Description");
 		this.infoDescription.setOrigin(0.5);
-		this.infoDescription.setWordWrapWidth(w-2*p, true);
+		this.infoDescription.setWordWrapWidth(w-2*p);
 		// this.infoDescription.setLineSpacing(10);
 		this.infoBox.add(this.infoDescription);
 
@@ -530,11 +572,20 @@ export class SerengetiScene extends BaseScene {
 
 
 	update(time: number, deltaMs: number): void {
+		// const touchEnabled = ('ontouchstart' in document.documentElement || (navigator.maxTouchPoints && navigator.maxTouchPoints >= 1)) && this.game.config.inputTouch;
+		// this.debugText.setText( `ontouchstart: ${'ontouchstart' in document.documentElement}\nmaxTouchPoints:${navigator.maxTouchPoints}\ninputTouch: ${this.game.config.inputTouch}\n________________\n${touchEnabled ? "TOUCH WORKS" : "NO TOUCH"}` );
+
 		let delta = deltaMs / 1000;
 
-		if (this.timeStamp < simulator.time && this.currentStory && !this.currentStory.disableSimulation) {
+		if (this.timeStamp < simulator.time &&
+			this.currentStory &&
+			!this.currentStory.disableSimulation &&
+			!this.attractionOpen &&
+			!this.infoWindowOpen &&
+			!this.storyWindowOpen) {
+
 			let x = (this.timeStamp - (simulator.time - SIMULATION_LENGTH)) / SIMULATION_LENGTH;
-			let fac = 1 - Math.pow(x, 2);
+			let fac = 1 - Math.pow(x, 3);
 			this.timeStamp += Math.max(0.05 * fac, 0.01);
 			this.timeStamp = Math.min(this.timeStamp, simulator.time);
 			this.updatePopulations();
@@ -547,7 +598,7 @@ export class SerengetiScene extends BaseScene {
 
 		this.graph.update(time, delta);
 
-		this.matrixEditor.draw(this.nodes);
+		// this.matrixEditor.draw(this.nodes);
 
 		this.exploreButton.update(time, delta);
 		this.nextButton.update(time, delta);
@@ -565,11 +616,30 @@ export class SerengetiScene extends BaseScene {
 		});
 
 		for (const path of this.paths) {
+			this.updatePath(path);
 			path.update(time, delta);
+
+			let t = path.getData("test");
+			path.setData("test", t + delta * (path.isGrounded ? 3 : 1));
+			if (t > (1.15 - path.alpha)*3) {
+				this.spawnParticle(path);
+				path.setData("test", 0);
+			}
 		}
 
 		for (const slider of this.sliders) {
 			slider.update(time, delta);
+		}
+
+		for (let i = 0; i < PARTICLE_COUNT; i++) {
+			const p = this.particles[i];
+			if (p.visible) {
+				p.update(time, delta);
+			}
+		}
+
+		if (this.currentStory && this.currentStory.enableSlider) {
+			this.tempSlider.setVisible(!this.anySlotTaken);
 		}
 
 
@@ -596,7 +666,7 @@ export class SerengetiScene extends BaseScene {
 							if (dist < sepRad) {
 								let temp = new Phaser.Math.Vector2(node.x, node.y);
 								temp.subtract(other);
-								temp.scale(Math.pow((sepRad - dist) / sepRad, 1.1));
+								temp.scale(Math.pow((sepRad - dist) / sepRad, 0.7));
 								sepSum.add(temp);
 							}
 						}
@@ -615,7 +685,8 @@ export class SerengetiScene extends BaseScene {
 					// cohSum.scale(0.01);
 					// node.velocity.add(cohSum);
 
-					sepSum.scale(0.02);
+					// sepSum.scale(0.05);
+					sepSum.limit(1);
 					node.velocity.add(sepSum);
 
 					node.velocity.scale(0.95);
@@ -675,7 +746,7 @@ export class SerengetiScene extends BaseScene {
 			this.mode = "story";
 			this.currentStory = storyData[storyKey];
 
-			if (this.currentStory.chapter) {
+			if (this.currentStory.chapter != undefined) {
 				this.currentChapter = this.currentStory.chapter;
 			}
 
@@ -694,6 +765,7 @@ export class SerengetiScene extends BaseScene {
 		this.nextButton.setVisible(this.mode == "story");
 		this.prevButton.setVisible(this.mode == "story");
 		this.storyButton.setVisible(this.mode == "story");
+		this.particleCont.setVisible(this.mode == "story");
 
 		this.graph.setVisible(this.mode == "story");
 		this.instructionText.setVisible(false);
@@ -712,6 +784,7 @@ export class SerengetiScene extends BaseScene {
 
 	clearStory() {
 		for (let node of this.nodes) {
+			this.onNodeAddOrRemove(node, false, false);
 			node.destroy();
 		}
 		this.nodes = [];
@@ -730,27 +803,45 @@ export class SerengetiScene extends BaseScene {
 			let slot: NodeSlot = this.nodeSlots[i];
 			slot.taken = false;
 		}
+
+		this.clearParticles();
+
+		this.grassBg.setTint(0xFFFFFF);
+
+		this.nextButton.enabled = false;
 	}
 
 	startStory() {
 		if (this.currentStory) {
 			language.bind(this.infoDescription, this.currentStory.intro);
-			this.infoDescription.setFontSize(this.currentStory.key == "2a" ? 15 : 20);
+			// this.infoDescription.setFontSize(this.currentStory.key == "2a" ? 15 : 20);
+
+			// this.storyButton.setVisible(this.currentStory.chapter == 2);
+
+			if (this.currentStory.key == "1a" && !this.completedStories.has("1a")) {
+				// this.events.emit("openStory", chapterData[1]);
+			}
+			else if (this.currentStory.key == "2a" && !this.completedStories.has("2a")) {
+				this.events.emit("openStory", chapterData[2]);
+			}
 
 			// if (!this.currentStory.persist) {
 			// this.timeStamp = 0;
 			// }
 
-			if (this.currentStory.disableGraph) {
-				this.graph.setVisible(false);
-			}
+			this.graph.setAlpha(this.currentStory.disableGraph ? 0.5 : 1.0);
+			// if (this.currentStory.disableGraph) {
+				// this.graph.setVisible(false);
+			// }
 			if (this.currentStory.enableSlider) {
 				this.tempSlider.setVisible(true);
 				this.tempSlider.value = 0;
 			}
+			simulator.setTempEffect(0);
 
-			// this.nextButton.setVisible(true);
-			// language.bind(this.nextText, "next_button", this.resizeNextButton.bind(this));
+			if (this.completedStories.has(this.currentStory.key)) {
+				this.nextButton.enabled = true;
+			}
 
 			// this.currentStory.disablePlacing
 
@@ -758,8 +849,8 @@ export class SerengetiScene extends BaseScene {
 			// const activeSpecies = this.currentStory.species.map(s => s.name);
 			// console.log(activeSpecies);
 
-			for (let species of this.currentStory.species) {
-				const organism = simulator.scenario.speciesMap.get(species.name);
+			for (let storySpecies of this.currentStory.species) {
+				const organism = simulator.scenario.speciesMap.get(storySpecies.name);
 
 				if (organism) {
 					let node = new Node(this, 0, 0, organism);
@@ -767,27 +858,39 @@ export class SerengetiScene extends BaseScene {
 
 					node.on('onEnter', this.onNodeAddOrRemove, this);
 					node.on('onExit', this.onNodeAddOrRemove, this);
-					node.on('onPlusMinus', this.onNodePlusMinus, this);
 					node.on('onDeath', this.onNodeDeath, this);
 					node.on('onDragStart', this.dismissInfoPopup, this);
 					node.on('removeNodeFromSlot', this.removeNodeFromSlot, this);
 					node.on('assignNodeToSlot', this.assignNodeToSlot, this);
 
 					node.simIndex = simulator.species.indexOf(organism);
+					node.simGrowthChange = storySpecies.growthChange ?? 0.0;
 
-
-					const fx = species.position.x * this.W;
-					const fy = species.position.y * this.H;
-					let fakeNode = new FakeNode(this, fx, fy, species.fakeKey);
+					const fx = storySpecies.position.x * this.W;
+					const fy = storySpecies.position.y * this.H;
+					let fakeNode = new FakeNode(this, fx, fy, storySpecies.category);
 					fakeNode.addReplacement(node);
 
-					node.role = species.name;
-					this.fakeNodes.set(species.name, fakeNode);
+					node.role = storySpecies.name;
+					this.fakeNodes.set(node.role, fakeNode);
+
+					// Plant to ground path
+					if (organism.isPlant()) {
+						for (let i = 0; i <= 0; i++) {
+							const fx = storySpecies.position.x * this.W + i * 0.5 * NODE_SIZE;
+							const fy = 0.78 * this.H + NODE_SIZE/2;
+							// let groundNode = new FakeNode(this, fx, fy, storySpecies.category);
+							// groundNode.setVisible(false);
+							// this.fakeNodes.set(node.role + "ground" + i.toString(), groundNode);
+							let path = this.addPath(node, node, 1.0, true);
+							path.setVisible(false);
+						}
+					}
 
 
-					if (species.placed) {
+					if (storySpecies.placed) {
 						node.inPlay = true;
-						node.emit('onEnter', node, true, true);
+						node.emit('onEnter', node, true, false);
 						node.goalX = fx;
 						node.goalY = fy;
 						node.stickX = fx;
@@ -814,9 +917,11 @@ export class SerengetiScene extends BaseScene {
 							const otherFake = this.fakeNodes.get(other.role)!;
 
 							this.addPath(node, other, amount);
-							this.addPath(nodeFake, other, amount);
-							this.addPath(nodeFake, otherFake, amount);
-							this.addPath(node, otherFake, amount);
+							if (this.currentStory.key == "1a") {
+								this.addPath(nodeFake, other, amount);
+								this.addPath(nodeFake, otherFake, amount);
+								this.addPath(node, otherFake, amount);
+							}
 
 							node.neighbours.push(other);
 							other.neighbours.push(node);
@@ -825,13 +930,13 @@ export class SerengetiScene extends BaseScene {
 				}
 			}
 
-			this.updatePaths();
+			simulator.run(this.timeStamp);
 		}
 	}
 
 	completeStory(): void {
-		if (!this.nextButton.visible) {
-			this.nextButton.setVisible(true);
+		if (!this.nextButton.enabled) {
+			this.nextButton.enabled = true;
 
 			if (this.currentStory && this.currentStory.outro) {
 				language.bind(this.infoDescription, this.currentStory.outro);
@@ -855,53 +960,7 @@ export class SerengetiScene extends BaseScene {
 
 		simulator.reset();
 		simulator.run(0);
-		this.updatePaths();
 		this.dismissInfoPopup(false);
-	}
-
-	onNodePlusMinus(node: Node, value: number): void {
-		this.timeStamp = simulator.time;
-		simulator.changeGrowthRate(node.species, value);
-		simulator.run(this.timeStamp);
-		this.updatePaths();
-
-		/*
-		this.explored = [];
-		this.queue = [[startNode, startValue, 0]];
-		let maxDelay = 0;
-
-		while (this.queue.length > 0) {
-			let item = this.queue.shift();
-			let node = item[0];
-			let value = item[1];
-			let delay = item[2];
-			maxDelay = Math.max(maxDelay, delay);
-
-			if (!this.explored.includes(node) && node.isInsidePlayingField()) {
-				this.explored.push(node);
-
-				if (node.size > -4) {
-					this.updateSize(node, value, delay);
-					for (let item of node.neighbours) {
-						this.queue.push([item.node, value * item.value, delay+1]);
-					}
-				}
-			}
-		}
-
-		this.time.addEvent({
-			delay: 500 + 150*maxDelay,
-			callbackScope: this,
-			callback: function() {
-				for (const node of this.nodes) {
-					if (node.size <= -3) {
-						this.updateSize(node, -node.size);
-						node.resetPosition();
-					}
-				}
-			}
-		});
-		*/
 	}
 
 	onNodeDeath(node: Node): void {
@@ -923,6 +982,7 @@ export class SerengetiScene extends BaseScene {
 			let slot: NodeSlot = this.nodeSlots[i];
 
 			if (!slot.taken) {
+				this.anySlotTaken = true;
 				slot.taken = true;
 				node.assignSlot(slot.x, slot.y, i, forceMove);
 				break;
@@ -932,6 +992,7 @@ export class SerengetiScene extends BaseScene {
 
 	removeNodeFromSlot(node: Node, index: number): void {
 		this.nodeSlots[index].taken = false;
+		this.anySlotTaken = (this.nodeSlots.filter(slot => slot.taken).length > 0);
 	}
 
 	onNodeAddOrRemove(node: Node, active: boolean, manually: boolean): void {
@@ -939,17 +1000,22 @@ export class SerengetiScene extends BaseScene {
 		// this.timeStamp = simulator.time;
 
 		if (this.currentStory && !this.currentStory.disableSimulation) {
-			simulator.population = simulator.sol.at(this.timeStamp);
-			simulator.addOrRemoveSpecies(node.species, active);
+			if (manually) {
+				// DEATH_THRESHOLD
+				let pop = simulator.sol.at(this.timeStamp);
+				pop = pop.map(p => p > 0 ? Math.max(p, MIN_POPULATION) : 0);
+				simulator.population = pop;
+			}
+
+			simulator.addOrRemoveSpecies(node.species, active, node.simGrowthChange);
 
 			if (manually) {
 				simulator.run(this.timeStamp);
-				this.updatePaths();
 			}
 			this.updatePopulations();
 		}
 
-		if (this.currentStory) {
+		if (this.currentStory && manually) {
 			const allInPlay = this.nodes.every(node => node.inPlay);
 
 			if (this.currentStory.key == "1a" && allInPlay) {
@@ -961,6 +1027,10 @@ export class SerengetiScene extends BaseScene {
 			}
 
 			if (this.currentStory.key == "1d" && allInPlay) {
+				this.completeStory();
+			}
+
+			if (this.currentStory.key == "2a" && allInPlay) {
 				this.completeStory();
 			}
 		}
@@ -985,27 +1055,37 @@ export class SerengetiScene extends BaseScene {
 		}
 	}
 
-	addPath(node1: BaseNode, node2: BaseNode, amount: number): void {
-		let path = new Path(this, node1, node2, amount);
+	addPath(node1: BaseNode, node2: BaseNode, amount: number, isGrounded: boolean=false): Path {
+		let path = new Path(this, node1, node2, amount, isGrounded);
 		this.paths.push(path);
+		return path;
 		// node1.neighbours.push({node:node2, value:amount});
 		// node2.neighbours.push({node:node1, value:-amount});
 	}
 
-	updatePaths(): void {
-		// TODO: Very inefficient
-		for (let i in this.nodes) {
-			for (let j in this.nodes) {
+	updatePath(path: Path): void {
+		const node1 = path.node1;
+		const node2 = path.node2;
 
-				// Update path thickness
-				for (const path of this.paths) {
-					if (path.node1 == this.nodes[i] && path.node2 == this.nodes[j]) {
-						let value = simulator.getInteractionStrength(this.nodes[i].simIndex, this.nodes[j].simIndex);
-						path.lineThickness = (this.nodes[j].species.isPlant() ? 3 : 2) * value;
-						path.dotDensity = this.nodes[j].species.isPlant() ? 1.1 : 0.6;
-					}
-				}
+		if (node1 instanceof Node && node2 instanceof Node && this.currentStory && !this.currentStory.disableSimulation) {
+			if (node1.inPlay && node2.inPlay) {
+				let value = path.isGrounded ? 1.0 : simulator.getInteractionStrength(node1.simIndex, node2.simIndex);
+				value *= (0.1 + node1.population * node2.population);
+
+				// path.lineThickness = (node2.species.isPlant() ? 3 : 2) * value;
+				// path.dotDensity = node2.species.isPlant() ? 1.1 : 0.6;
+				path.lineThickness = 0 + 12*value;
+				// path.dotDensity = 0 + 6*value;
 			}
+			else {
+				path.lineThickness = 1.0;
+			}
+		}
+		else {
+			// let value = simulator.getInteractionStrength(node1.simIndex, node2.simIndex);
+			// value *= node1.population * node2.population;
+			path.lineThickness = 2.0;
+			// path.dotDensity = 0.01;
 		}
 	}
 
@@ -1060,5 +1140,39 @@ export class SerengetiScene extends BaseScene {
 		// sliderTitle.setText(name);
 		slider.setRange(minValue, maxValue);
 		return slider;
+	}
+
+
+	initParticles() {
+		this.particleCont = this.add.container(0, 0);
+		this.particles = [];
+		this.particleIndex = 0;
+
+		for (let i = 0; i < PARTICLE_COUNT; i++) {
+			// let x = 100 + (this.W - 200) * Math.random();
+			// let y = 100 + (this.H - 400) * Math.random();
+			// let tex = Phaser.Math.RND.pick(["icon-water", "icon-sun", "icon-leaf", "icon-meat"]);
+			// this.particles[i] = this.add.image(x, y, tex);
+			this.particles[i] = new PathParticle(this);
+			this.particles[i].setVisible(false);
+			this.particleCont.add(this.particles[i]);
+		}
+	}
+
+	spawnParticle(path: Path) {
+		let p = this.particles[this.particleIndex];
+		console.assert(!p.visible, "Too busy");
+
+		if (!p.visible && path.isReal() && !path.anyHeld) {
+			p.activate(path, path.node1.category);
+		}
+		this.particleIndex = (this.particleIndex + 1) % PARTICLE_COUNT;
+		// console.log(this.particleIndex);
+	}
+
+	clearParticles() {
+		for (let i = 0; i < PARTICLE_COUNT; i++) {
+			this.particles[i].setVisible(false);
+		}
 	}
 }
