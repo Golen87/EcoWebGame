@@ -4,22 +4,18 @@ import { RoundRectangle } from "../RoundRectangle";
 import { Organism } from "../../simulation/Organism";
 import { language } from "../../language/LanguageManager";
 import { NODE_SIZE, DEATH_THRESHOLD } from "../../constants";
-import { colorToNumber } from "../../utils";
+import { colorToNumber, interpolateColor } from "../../utils";
 import { GrayScalePostFilter } from "../../pipelines/GrayScalePostFilter";
-
-interface EnergyDot {
-	angle: number;
-	radius: number;
-};
 
 export class Node extends BaseNode {
 	public species: Organism;
 
 	public simIndex: number; // Scene
+	public simGrowthChange: number; // Scene
 	public role: string; // Scene
 	private slotIndex: number | null;
 
-	private population: number;
+	public population: number;
 	private hasImage: boolean;
 	public limitBottom: number;
 	public limitLeft: number;
@@ -42,17 +38,14 @@ export class Node extends BaseNode {
 	public neighbours: Node[];
 
 	private circleCont: Phaser.GameObjects.Container;
-	private circleOuterBg: Phaser.GameObjects.Ellipse;
-	private circleMiddleBg: Phaser.GameObjects.Ellipse;
+	// private circleOuterBg: Phaser.GameObjects.Ellipse;
+	private circleMiddleBg: RoundRectangle;
 	private circleBg: Phaser.GameObjects.Ellipse;
-	private circleShadow: Phaser.GameObjects.Ellipse;
+	private circleShadow: RoundRectangle;
 	private circleImage: Phaser.GameObjects.Image;
 	private nameCont: Phaser.GameObjects.Container;
 	private nameBg: RoundRectangle;
 	private nameText: Phaser.GameObjects.Text;
-	private energyGraphics: Phaser.GameObjects.Graphics;
-	private energyDots: EnergyDot[];
-	private energyPrevTime: number;
 
 	constructor(scene, x, y, species) {
 		super(scene, x, y);
@@ -75,6 +68,8 @@ export class Node extends BaseNode {
 		this.popScale = 1;
 
 		this.hasImage = !species.image.startsWith('icon');
+
+		this.category = species.category;
 
 
 		this.limitLeft = NODE_SIZE/2;
@@ -116,26 +111,32 @@ export class Node extends BaseNode {
 		let groupColors = {
 			1: 0xF44336, 2: 0xE91E63, 3: 0x9C27B0, 4: 0x673AB7, 5: 0x3F51B5, 6: 0x2196F3, 7: 0x03A9F4, 8: 0x00BCD4, 9: 0x009688, 10: 0x4CAF50, 11: 0x8BC34A, 12: 0xCDDC39, 13: 0xFFEB3B, 14: 0xFFC107
 		};
+		let borderColor = interpolateColor(colorToNumber(this.species.color), 0x000000, 0.2);
+
 
 		this.circleCont = this.scene.add.container(0, 0);
 		this.add(this.circleCont);
 
 		// Colored background circle
-		this.circleShadow = this.scene.add.ellipse(0, 0, NODE_SIZE, NODE_SIZE, 0x000000);
-		this.circleShadow.setAlpha(0.0);
+		// this.circleShadow = this.scene.add.ellipse(0, 0, NODE_SIZE, NODE_SIZE, 0x000000);
+		this.circleShadow = new RoundRectangle(this.scene, 0, 0, 0, NODE_SIZE+6+1+8, (NODE_SIZE+6+1)/2, 0x000000, 0.5)
+		// this.circleShadow.setAlpha(0.0);
+		this.circleShadow.setOrigin(0.5, this.circleShadow.width / this.circleShadow.height / 2);
 		this.circleCont.add(this.circleShadow);
 
 		// Colored background circle
-		this.circleOuterBg = this.scene.add.ellipse(0, 0, NODE_SIZE+2*6, NODE_SIZE+2*6, 0xF1C28F);
-		this.circleOuterBg.setVisible(false);
+		// this.circleOuterBg = this.scene.add.ellipse(0, 0, NODE_SIZE+2*4, NODE_SIZE+2*4, 0xF1C28F);
+		// this.circleOuterBg.setVisible(false);
 		// this.circleOuterBg.setAlpha(0.4);
-		this.circleCont.add(this.circleOuterBg);
+		// this.circleCont.add(this.circleOuterBg);
 
 		// Colored background circle
-		this.circleMiddleBg = this.scene.add.ellipse(0, 0, NODE_SIZE+6, NODE_SIZE+6, groupColors[species.group]);
-		this.circleMiddleBg.fillColor = colorToNumber(this.species.color);
+		this.circleMiddleBg = new RoundRectangle(this.scene, 0, 0, 0, NODE_SIZE+6, (NODE_SIZE+6)/2, borderColor, 1.0)
+		this.circleMiddleBg.setData("color", borderColor);
+		this.circleMiddleBg.setOrigin(0.5, this.circleMiddleBg.width / this.circleMiddleBg.height / 2);
+		// this.circleMiddleBg = this.scene.add.ellipse(0, 0, NODE_SIZE+4, NODE_SIZE+4, borderColor);
 		// this.circleMiddleBg.setVisible(false);
-		this.circleMiddleBg.setAlpha(0.5);
+		// this.circleMiddleBg.setAlpha(0.5);
 		this.circleCont.add(this.circleMiddleBg);
 
 		// Colored background circle
@@ -167,16 +168,6 @@ export class Node extends BaseNode {
 			this.nameBg.setWidth(this.nameText.width + this.nameBg.height);
 			// this.nameText.x = this.nameBg.x + this.nameBg.width/2;
 		});
-
-
-		// Plant energy
-		this.energyGraphics = scene.add.graphics();
-		this.energyGraphics.setBlendMode(Phaser.BlendModes.ADD);
-		this.add(this.energyGraphics);
-		this.sendToBack(this.energyGraphics);
-
-		this.energyDots = [];
-		this.energyPrevTime = 0;
 	}
 
 
@@ -200,7 +191,7 @@ export class Node extends BaseNode {
 			let max = this.maxPopThreshold;
 			let factor = (Math.max(this.population, DEATH_THRESHOLD) - min) / (max - min);
 			// let factor = this.population;
-			this.popScale = 0.5 + 0.9 * factor;
+			this.popScale = 0.5 + 1.0 * Math.pow(factor, 1.1);
 		}
 		else {
 			this.popScale = 1.0;
@@ -214,21 +205,33 @@ export class Node extends BaseNode {
 		this.x += (this.goalX - this.x) / 2.0;
 		this.y += (this.goalY - this.y) / 2.0;
 
-		if (this.stick && this.hold) {
-			this.x += (this.stickX - this.x) / 1.5;
-			this.y += (this.stickY - this.y) / 1.5;
+		if (this.hold) {
+			if (this.stick) {
+				this.x += (this.stickX - this.x) / 1.5;
+				this.y += (this.stickY - this.y) / 1.5;
 
-			const minDragDist = this.isInsidePlayingField() ? NODE_SIZE/4 : NODE_SIZE;
-			if (Phaser.Math.Distance.Between(this.goalX, this.goalY, this.stickX, this.stickY) > minDragDist) {
-				this.stick = false;
-				this.scene.tweens.add({
-					targets: this,
-					liftSmooth: { from: this.liftSmooth, to: 1 },
-					ease: 'Cubic',
-					duration: 200
-				});
+				const minDragDist = this.isInsidePlayingField() ? NODE_SIZE/4 : NODE_SIZE;
+				if (Phaser.Math.Distance.Between(this.goalX, this.goalY, this.stickX, this.stickY) > minDragDist) {
+					this.stick = false;
+					this.scene.tweens.add({
+						targets: this,
+						liftSmooth: { from: this.liftSmooth, to: 1 },
+						ease: 'Cubic',
+						duration: 200
+					});
+				}
+			}
+			// Swish and flick
+			else {
+				this.velocity.x = (this.goalX - this.x) * 0.7;
+				this.velocity.y = (this.goalY - this.y) * 0.7;
 			}
 		}
+
+
+		const duration = 1.0;
+		this.aliveValue += Phaser.Math.Clamp((this.alive ? 1 : 0) - this.aliveValue, -delta/duration, delta/duration);
+
 
 		// let withinDistance = Phaser.Math.Distance.BetweenPoints(this, this.scene.input) < NODE_SIZE;
 		// let showButtons = withinDistance && !this.hold && this.isInsidePlayingField();
@@ -240,54 +243,20 @@ export class Node extends BaseNode {
 		this.circleCont.setScale(liftScale * this.popScale);
 		// this.circleCont.setAlpha(this.hold ? 0.7 : 1.0);
 		// this.circleShadow.setScale(1 - 0.15 * this.liftSmooth);
-		this.circleShadow.x = 10 / this.circleCont.scaleX * (0.25 + 0.75*this.liftSmooth);
-		this.circleShadow.y = 10 / this.circleCont.scaleX * (0.25 + 0.75*this.liftSmooth);
-		this.circleMiddleBg.setScale((this.circleCont.scaleX * NODE_SIZE + 4) / this.circleMiddleBg.width / this.circleCont.scaleX);
+		// this.circleShadow.x = 10 / this.circleCont.scaleX * (0.25 + 0.75*this.liftSmooth);
+		// this.circleShadow.y = 10 / this.circleCont.scaleX * (0.25 + 0.75*this.liftSmooth);
+		// this.circleMiddleBg.setScale((this.circleCont.scaleX * NODE_SIZE + 4) / this.circleMiddleBg.width / this.circleCont.scaleX);
 		// (2*this.circleCont.width) / this.circleMiddleBg.width
+
+		const borderColor = interpolateColor(colorToNumber(this.species.color), 0x000000, 0.6 - 0.4 * Math.pow(this.population, 0.5));
+		this.circleMiddleBg.setColor(interpolateColor(borderColor, 0xFFFFFF, this.holdSmooth));
+		// this.circleMiddleBg.getData("color")
 
 		// Show name when holding the node
 		this.nameCont.setAlpha(this.liftSmooth);
 
-		this.energyGraphics.clear();
-		if (this.inPlay && this.alive && this.species.isPlant()) {
-			this.drawEnergy(time, delta);
-		}
-
 		// Hack to place above other nodes
 		this.setDepth(1 + this.liftSmooth);
-	}
-
-	drawEnergy(time, delta) {
-		let count = 10;
-		let radius = 6;
-		let speed = 6000;
-		let offset = (time / speed) % (1/count);
-
-		for (var i = this.energyDots.length - 1; i >= 0; i--) {
-			let dot = this.energyDots[i];
-
-			let alpha = 0.5 * (1 - 2*Math.abs(0.5 - dot.radius));
-			this.energyGraphics.fillStyle(0xFFFFFF, alpha);
-			this.energyGraphics.fillCircle(
-				NODE_SIZE*this.popScale * dot.radius * Math.cos(dot.angle),
-				NODE_SIZE*this.popScale * dot.radius * Math.sin(dot.angle),
-				radius
-			);
-
-			dot.radius -= 0.5*delta;
-			if (dot.radius <= 0) {
-				this.energyDots.splice(i, 1);
-			}
-		}
-
-		if (time > this.energyPrevTime + 600 - 500*this.population) {
-			this.energyDots.push({
-				angle: (0.2 + 0.6 * Math.random())*Math.PI,
-				// angle: (0.2 + time/1000 % 0.6)*Math.PI,
-				radius: 1
-			});
-			this.energyPrevTime = time;
-		}
 	}
 
 	isInsidePlayingField() {

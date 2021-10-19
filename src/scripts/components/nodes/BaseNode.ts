@@ -7,6 +7,8 @@ export class BaseNode extends Phaser.GameObjects.Container {
 	private _hold: boolean;
 	public liftSmooth: number;
 	public holdSmooth: number;
+	public category: number;
+	public aliveValue: number;
 	private tween: Phaser.Tweens.Tween;
 
 	constructor(scene: BaseScene, x: number, y: number) {
@@ -19,6 +21,7 @@ export class BaseNode extends Phaser.GameObjects.Container {
 
 		this.liftSmooth = 0;
 		this.holdSmooth = 0;
+		this.aliveValue = 0;
 	}
 
 	bindInteractive(gameObject, draggable=false) {

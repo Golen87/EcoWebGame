@@ -10,13 +10,15 @@ export class FakeNode extends BaseNode {
 	private text: Phaser.GameObjects.Text;
 	private alphaGoal: number;
 
-	constructor(scene: BaseScene, x: number, y: number, name: string) {
+	constructor(scene: BaseScene, x: number, y: number, category: number) {
 		super(scene, x, y);
 		scene.add.existing(this);
 
 		this.replacements = [];
 		this.alphaGoal = 0;
 		this.alpha = 0;
+		this.category = category;
+		this.aliveValue = 1;
 
 		this.graphics = scene.add.graphics({x: 0, y: 0});
 		this.graphics.lineStyle(2.0, 0xffffff, 1.0);
@@ -30,12 +32,10 @@ export class FakeNode extends BaseNode {
 		}
 		this.add(this.graphics);
 
-		this.text = this.scene.createText(0, 0, 30, this.scene.weights.bold, "#FFF", name);
+		this.text = this.scene.createText(0, 0, 30, this.scene.weights.bold, "#FFF", "");
 		this.text.setOrigin(0.5);
 		this.text.setScale(0.5);
-		// Can lead to size issues...
-		language.bind(this.text, name);
-		// this.text.setScale(Math.min(0.75 * NODE_SIZE / this.text.width, 1));
+		language.bind(this.text, ["node_plant", "node_herbivore", "node_carnivore"][category]);
 		this.add(this.text);
 	}
 
@@ -44,6 +44,8 @@ export class FakeNode extends BaseNode {
 
 		let anyInside = this.replacements.some(node => node.isInsidePlayingField() || !node.stick);
 		let anyActive = this.replacements.some(node => node.inPlay || Phaser.Math.Distance.BetweenPoints(node, this) < NODE_SIZE*2);
+
+		this.graphics.setRotation(time/6000);
 
 		// 0.0 if any node is active
 		// 0.5 if any node is held, not yet active
