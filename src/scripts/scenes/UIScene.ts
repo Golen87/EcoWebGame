@@ -1,10 +1,12 @@
+
 import { BaseScene } from "./BaseScene";
 import { InfoWindow } from "../components/InfoWindow";
-import { StoryWindow } from "../components/StoryWindow";
+// import { StoryWindow } from "../components/StoryWindow";
 import { ToolboxButton } from "../components/ToolboxButton";
 import { AttractionView } from "../components/AttractionView";
 import { language } from "../language/LanguageManager";
-import { IDLE_TIME, IDLE_FADE } from "../constants";
+import { VERSION, IDLE_TIME, IDLE_FADE } from "../constants";
+import { RoundRectangle } from "../components/RoundRectangle";
 
 export class UIScene extends BaseScene {
 	private attractionMode: boolean;
@@ -13,7 +15,7 @@ export class UIScene extends BaseScene {
 	private fader: Phaser.GameObjects.Rectangle;
 
 	private infoWindow: InfoWindow;
-	private storyWindow: StoryWindow;
+	// private storyWindow: StoryWindow;
 	private toolButtons: ToolboxButton[];
 	private language: string;
 
@@ -49,15 +51,15 @@ export class UIScene extends BaseScene {
 
 		/* Story window */
 
-		this.storyWindow = new StoryWindow(this);
-		this.storyWindow.on("close", () => {
-			this.events.emit("story", false);
-		}, this);
+		// this.storyWindow = new StoryWindow(this);
+		// this.storyWindow.on("close", () => {
+		//	// this.events.emit("story", false);
+		// }, this);
 
 
 		/* Toolbar */
 
-		let ctW = 0.03 * this.W;
+		let ctW = 0.04 * this.W;
 		let sbH = 0.22 * this.H;
 		let tbX = this.W - ctW/2;
 		let tbY = this.H - sbH/2;
@@ -85,7 +87,7 @@ export class UIScene extends BaseScene {
 		for (let i = 0; i < toolButtons.length; i++) {
 			let button = toolButtons[i];
 			// let size = 0.024 * this.H;
-			let size = 0.028 * this.H;
+			let size = 0.03 * this.H;
 			let x = tbX;
 			let y = tbY + (i - (toolButtons.length-1)/2) * 1.75*size;
 
@@ -116,18 +118,24 @@ export class UIScene extends BaseScene {
 
 
 		/* From game */
-		this.scene.get('SerengetiScene').events.on('openStory', (chapter) => {
-			if (this.infoWindow.isClosed && this.storyWindow.isClosed) {
-				this.events.emit("story", true);
-				this.storyWindow.show(chapter);
-			}
-		}, this);
+		//this.scene.get('SerengetiScene').events.on('openStory', (chapter) => {
+		//	if (this.infoWindow.isClosed && this.storyWindow.isClosed) {
+		//		// this.events.emit("story", true);
+		//		this.storyWindow.show(chapter);
+		//	}
+		//}, this);
+
+
+		/* Debug */
+
+		// this.createText(this.W-8, 8, 24, this.weights.light, "#FCB061", VERSION)
+			// .setOrigin(1, 0);
 	}
 
 	update(time: number, delta: number): void {
 		this.attractionView.update(time, delta);
 		this.infoWindow.update(time, delta);
-		this.storyWindow.update(time, delta);
+		// this.storyWindow.update(time, delta);
 
 		this.attractionView.alpha *= (1 - 0.99 * this.infoWindow.alpha);
 
@@ -162,7 +170,7 @@ export class UIScene extends BaseScene {
 	// }
 
 	infoButton() {
-		if (this.infoWindow.isClosed && this.storyWindow.isClosed) {
+		if (this.infoWindow.isClosed /*&& this.storyWindow.isClosed*/) {
 			this.events.emit("info", true);
 			this.infoWindow.show();
 		}
@@ -175,13 +183,13 @@ export class UIScene extends BaseScene {
 	restartButton() {
 		if (!this.attractionView.visible || this.infoWindow.isOpen) {
 			this.infoWindow.hide();
-			this.storyWindow.hide();
+			// this.storyWindow.hide();
 			this.attractionView.show();
 
 			this.events.emit("restart");
 			this.events.emit("attraction", true);
 			this.events.emit("info", false);
-			this.events.emit("story", false);
+			// this.events.emit("story", false);
 		}
 
 		if (this.language == "English") {

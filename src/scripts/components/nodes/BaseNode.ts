@@ -5,6 +5,7 @@ export class BaseNode extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
 	// private hover: boolean;
 	private _hold: boolean;
+	protected blocked: boolean;
 	public liftSmooth: number;
 	public holdSmooth: number;
 	public category: number;
@@ -18,6 +19,7 @@ export class BaseNode extends Phaser.GameObjects.Container {
 
 		// this.hover = false;
 		this._hold = false;
+		this.blocked = false;
 
 		this.liftSmooth = 0;
 		this.holdSmooth = 0;
@@ -72,7 +74,6 @@ export class BaseNode extends Phaser.GameObjects.Container {
 	onOut(pointer: Phaser.Input.Pointer, event: Phaser.Types.Input.EventData) {
 		// this.hover = false;
 		this.hold = false;
-
 	}
 
 	onOver(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
@@ -81,10 +82,11 @@ export class BaseNode extends Phaser.GameObjects.Container {
 
 	onDown(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
 		this.hold = true;
+		this.blocked = false;
 	}
 
 	onUp(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
-		if (this.hold) {
+		if (this.hold && !this.blocked) {
 			this.hold = false;
 			this.emit('click');
 		}
@@ -107,5 +109,9 @@ export class BaseNode extends Phaser.GameObjects.Container {
 
 	getWidth(): number {
 		return NODE_SIZE;
+	}
+
+	block() {
+		this.blocked = true;
 	}
 }

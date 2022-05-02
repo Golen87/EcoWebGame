@@ -16,6 +16,8 @@ export class Path extends Phaser.GameObjects.Container {
 	private amount: number;
 	private speed: number;
 	private alphaValue: number;
+	private particleTimer: number;
+	private particleType: number;
 
 	constructor(scene: BaseScene, node1: BaseNode, node2: BaseNode, amount: number, isGrounded: boolean=true) {
 		super(scene, 0, 0);
@@ -29,6 +31,8 @@ export class Path extends Phaser.GameObjects.Container {
 		this.speed = (1300 - 600 * this.amount) * 6;
 		this.speed = 6000;
 		this.isGrounded = isGrounded;
+		this.particleTimer = 0;
+		this.particleType = 0;
 
 		// this.middle = new Phaser.Math.Vector2(
 		// 	(node1.x + node2.x) / 2,
@@ -124,7 +128,7 @@ export class Path extends Phaser.GameObjects.Container {
 		// }
 	}
 
-	update(time: number, delta: number) {
+	update(time: number, delta: number, tempFac: number=0) {
 		this.updateCurvePosition();
 
 		let alive = Math.min(this.node1.aliveValue, this.node2.aliveValue);
@@ -146,6 +150,44 @@ export class Path extends Phaser.GameObjects.Container {
 		if (this.alpha > 0) {
 			this.drawBezier(time);
 		}
+
+
+		// Spawning particles
+
+		this.particleTimer += delta * (this.isGrounded ? 2 : 1);
+
+		if (this.particleTimer > (1.15 - this.alpha)*3) {
+			this.particleTimer = 0;
+
+			if (this.node1.category == 0) {
+				// Pretty hacky
+				if (tempFac > 0 && this.particleType == 0 && Math.random() < 0.5*tempFac) {
+					this.particleType = 1;
+				}
+
+				if (this.particleType == 0)
+					this.emit("particle", "icon-water", 0x99BBFF);
+				else if (this.particleType == 1)
+					this.emit("particle", "icon-sun", 0xFFDD55);
+				else if (this.particleType == 2)
+					this.emit("particle", "icon-co2-text", 0xDDCCCC); // "icon-co2-cloud", "icon-co2-text"
+
+				this.particleType = (this.particleType + 1) % 3;
+			}
+			else if (this.node1.category == 1) {
+				this.emit("particle", "icon-leaf", 0xAAFF99);
+			}
+			else if (this.node1.category == 2) {
+				this.emit("particle", "icon-meat", 0xFF9977);
+			}
+		}
+
+		// if (this.particleTimer2 > (1.15 - this.alpha - simulator.extraFactor)*3) {
+		// 	this.particleTimer2 = 0;
+		// 	if (this.node1.category == 0) {
+		// 		this.emit("particle", "icon-sun", 0xFFDD55);
+		// 	}
+		// }
 	}
 
 
@@ -154,7 +196,7 @@ export class Path extends Phaser.GameObjects.Container {
 			let x = this.node1.x;
 			let t = this.node1.y + 0.45 * this.node1.getWidth();
 			let m = (this.scene.CX + 9*x) / 10;
-			let b = 0.78 * this.scene.H;
+			let b = 0.78 * this.scene.H + NODE_SIZE/2;
 			let h = Math.abs(b - t);
 
 			this.curve.p0.set(x, t);

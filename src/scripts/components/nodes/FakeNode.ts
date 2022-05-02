@@ -10,6 +10,10 @@ export class FakeNode extends BaseNode {
 	private text: Phaser.GameObjects.Text;
 	private alphaGoal: number;
 
+	public origX: number;
+	public goalX: number;
+	public goalY: number;
+
 	constructor(scene: BaseScene, x: number, y: number, category: number) {
 		super(scene, x, y);
 		scene.add.existing(this);
@@ -19,6 +23,10 @@ export class FakeNode extends BaseNode {
 		this.alpha = 0;
 		this.category = category;
 		this.aliveValue = 1;
+
+		this.origX = x;
+		this.goalX = x;
+		this.goalY = y;
 
 		this.graphics = scene.add.graphics({x: 0, y: 0});
 		this.graphics.lineStyle(2.0, 0xffffff, 1.0);
@@ -41,6 +49,9 @@ export class FakeNode extends BaseNode {
 
 	update(time: number, delta: number) {
 		super.update(time, delta);
+
+		this.x += (this.goalX - this.x) * (1 - Math.pow(0.95, 60*delta));
+		this.y += (this.goalY - this.y) * (1 - Math.pow(0.95, 60*delta));
 
 		let anyInside = this.replacements.some(node => node.isInsidePlayingField() || !node.stick);
 		let anyActive = this.replacements.some(node => node.inPlay || Phaser.Math.Distance.BetweenPoints(node, this) < NODE_SIZE*2);

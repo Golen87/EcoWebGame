@@ -29,7 +29,7 @@ class Simulator {
 
 	private extraGrowthRate: number[];
 	private extraInteractionMatrix: number[][];
-	private extraFactor: number;
+	public extraFactor: number;
 
 	constructor() {}
 
@@ -49,13 +49,39 @@ class Simulator {
 
 		const L = this.species.length;
 
+		const startGrowthRates = {
+			// "Panthera leo":				-0.0118777465941384,
+			// "Lycaon pictus":			-0.0111552747692913,
+			// "Equus quagga":				-0.0843684256915003,
+			// "Connochaetes taurinus":	-0.0892325781099498,
+			// "Aepyceros melampus":		-0.117677059145644,
+			// "Kobus ellipsiprymnus":		-0.108981936275959,
+			// "Themeda triandra":			1.04446520907804,
+			// "Heteropogon contortus":	0.9352956995368,
+			// "Digitaria scalarum":		0.961436246801168,
+			// "Acacia tortilis":			1.19369790041819,
+			// "Digitaria macroblephara":	0.465630878647789,
+		};
+
+		// Allophylus rubifolius
+		// Madoqua kirkii
+		// Eustachys paspaloides
+
 		// Init arrays for x, r, alpha
 		for (let i = 0; i < L; i++) {
 			this.population[i] = 0;
 
 			// this.growthRate[i] = (this.species[i].type == 'animal') ? -0.1 : 1;
-			this.growthRate[i] = [1.0, -0.1, -0.02][this.species[i].category]
+			this.growthRate[i] = [1.0, -0.1, -0.1][this.species[i].category]
 			this.extraGrowthRate[i] = 0;
+
+			// Anna
+			if (startGrowthRates[this.species[i].name]) {
+				this.growthRate[i] = startGrowthRates[this.species[i].name];
+			}
+			// else {
+				// console.error(this.species[i].name, "BAD");
+			// }
 
 			// this.carryingCapacity[i] = (this.species[i].type == 'plant') ? 2 : 1;
 			// this.carryingCapacity[i] = 1;
@@ -166,7 +192,7 @@ class Simulator {
 					let j = rel.index;
 
 					// Stop lions from eating themselves
-					if (i == j) {
+					if (i == j || this.species[i].category == this.species[j].category) {
 						continue;
 					}
 
@@ -179,6 +205,10 @@ class Simulator {
 						this.interactionMatrix[i][j] += 1.0;
 						this.interactionMatrix[j][i] -= 1.0;
 					}
+
+					// Anna
+					// this.interactionMatrix[i][j] += 0.1;
+					// this.interactionMatrix[j][i] -= 1.0;
 				}
 			}
 		}
@@ -230,7 +260,26 @@ class Simulator {
 			// Sum of all interactions on species i
 			let sum = 0;
 			for (let j = 0; j < pop.length; j++) {
-				sum += this.interactionMatrix[i][j] * pop[j];
+				if (i == j && this.interactionMatrix[i][j] <= 0) {
+					sum += this.interactionMatrix[i][j] * pop[j];
+				}
+				else {
+					let N = Math.max(Math.min(pop[j], 1), 0);
+					let a = (this.species[i].category == 1) ? 0.05 : 0.10; // 90% hunting efficiency at prey=1
+					let fr3 = N*N / (a + N*N); // Functional response, Type 3
+					sum += this.interactionMatrix[i][j] * fr3;
+
+					/*
+					if (this.species[i].category == 1) {
+						let fr2 = N / (a + N); // Functional response, Type 2
+						sum += this.interactionMatrix[i][j] * fr2;
+					}
+					else {
+						let fr3 = N*N / (a + N*N); // Functional response, Type 3
+						sum += this.interactionMatrix[i][j] * fr3;
+					}
+					*/
+				}
 			}
 
 			let g = this.growthRate[i];

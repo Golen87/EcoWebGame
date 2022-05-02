@@ -87,7 +87,7 @@ export class EcowebScene extends BaseScene {
 			simulator.loadScenario(ecowebData);
 		}
 
-		this.input.addPointer(3);
+		this.input.addPointer(8); // Default, max 10
 
 		// this.minimap = this.cameras.add(0, 0, this.W, this.H).setZoom(1.0).setName('mini');
 		// this.minimap.setBackgroundColor(0x000000);
