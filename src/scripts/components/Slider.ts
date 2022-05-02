@@ -130,7 +130,7 @@ export class Slider extends Phaser.GameObjects.Container {
 
 	update(time: number, delta: number) {
 		// Approach target position gradually
-		this.button.x += 0.5 * (this.targetX - this.button.x);
+		this.button.x += (this.targetX - this.button.x) * (1 - Math.pow(0.5, 60*delta));
 	}
 
 	smoothSet(value: number) {

@@ -8,8 +8,9 @@ export class RoundRectangle extends Phaser.GameObjects.Container {
 	private radius: number;
 	private color: number;
 	private origin: Phaser.Math.Vector2;
+	private corners: boolean[];
 
-	constructor(scene: BaseScene, x: number, y: number, width: number, height: number, radius: number, color: number, alpha: number=1.0) {
+	constructor(scene: BaseScene, x: number, y: number, width: number, height: number, radius: number, color: number, alpha: number=1.0, br: boolean=true, bl: boolean=true, tl: boolean=true, tr: boolean=true) {
 		super(scene, x, y);
 		scene.add.existing(this);
 
@@ -18,6 +19,7 @@ export class RoundRectangle extends Phaser.GameObjects.Container {
 		this.width = Math.max(width, 2*radius);
 		this.height = Math.max(height, 2*radius);
 		this.color = color;
+		this.corners = [br, bl, tl, tr];
 		this.origin = new Phaser.Math.Vector2(0.5, 0.5);
 		this.setAlpha(alpha);
 
@@ -61,12 +63,20 @@ export class RoundRectangle extends Phaser.GameObjects.Container {
 		for (let j = 0; j < 4; j++) {
 			let sx = Math.sign(Math.cos(j*Math.PI/2+0.1));
 			let sy = Math.sign(Math.sin(j*Math.PI/2+0.1));
-			for (let i = 0; i < t; i++) {
-				let px = Math.cos(j*Math.PI/2 + i/(t-1)*Math.PI/2);
-				let py = Math.sin(j*Math.PI/2 + i/(t-1)*Math.PI/2);
+			if (this.corners[j]) {
+				for (let i = 0; i < t; i++) {
+					let px = Math.cos(j*Math.PI/2 + i/(t-1)*Math.PI/2);
+					let py = Math.sin(j*Math.PI/2 + i/(t-1)*Math.PI/2);
+					points.push({
+						x: ((0.5 - this.origin.x) * this.width) + sx * (this.width/2-this.radius) + this.radius*px,
+						y: ((0.5 - this.origin.y) * this.height) + sy * (this.height/2-this.radius) + this.radius*py
+					});
+				}
+			}
+			else {
 				points.push({
-					x: ((0.5 - this.origin.x) * this.width) + sx * (this.width/2-this.radius) + this.radius*px,
-					y: ((0.5 - this.origin.y) * this.height) + sy * (this.height/2-this.radius) + this.radius*py
+					x: ((0.5 - this.origin.x) * this.width) + sx * this.width/2,
+					y: ((0.5 - this.origin.y) * this.height) + sy * this.height/2
 				});
 			}
 		}

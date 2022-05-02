@@ -2,6 +2,7 @@ import { BaseScene } from "../scenes/BaseScene";
 import { BaseNode } from "./nodes/BaseNode";
 import { RoundRectangle } from "./RoundRectangle";
 import { language } from "../language/LanguageManager";
+import { interpolateColor } from "../utils";
 
 export class NextButton extends BaseNode {
 	public scene: BaseScene;
@@ -9,10 +10,12 @@ export class NextButton extends BaseNode {
 	private bgOuter: RoundRectangle;
 	private bgInner: RoundRectangle;
 	private text: Phaser.GameObjects.Text;
+	private color: number;
 
 	constructor(scene: BaseScene, x: number, y: number, size: number, color: number) {
 		super(scene, x, y);
 		this.scene = scene;
+		this.color = color;
 		scene.add.existing(this);
 
 		this.bgOuter = new RoundRectangle(scene, 0, 0, 0, 0, size/2+5, 0, color > 0 ? 0.5 : 0.01);
@@ -35,6 +38,11 @@ export class NextButton extends BaseNode {
 		language.bind(this.text, key, this.resize.bind(this));
 	}
 
+	badSetText(text: string) {
+		this.text.setText(text);
+		this.resize();
+	}
+
 	resize() {
 		this.bgInner.setWidth(this.text.width + 2*this.bgInner.height);
 		this.bgOuter.setWidth(this.bgInner.width + 10);
@@ -50,6 +58,7 @@ export class NextButton extends BaseNode {
 	set enabled(value: boolean) {
 		this.text.setAlpha(value ? 1.0 : 0.5);
 		this.bgInner.setAlpha(value ? 1.0 : 0.5);
+		this.bgInner.setColor(interpolateColor(0x444444, this.color, value ? 1 : 0.7));
 		this.bgInner.input.enabled = value;
 	}
 }
