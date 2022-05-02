@@ -4,6 +4,7 @@ import { BaseNode } from "../nodes/BaseNode";
 import { language } from "../../language/LanguageManager";
 import { Organism } from "../../simulation/Organism";
 import { RoundRectangle } from "../RoundRectangle";
+import { speciesMap, iconsMap } from "../../assets/assetMaps";
 
 export class FoodWebNode extends BaseNode {
 	public scene: BaseScene;
@@ -13,6 +14,7 @@ export class FoodWebNode extends BaseNode {
 	public hyperLink: FoodWebButton;
 	public _selected: boolean;
 	public subselected: boolean;
+	public importance: number;
 
 	private config: any;
 
@@ -57,7 +59,10 @@ export class FoodWebNode extends BaseNode {
 		this.add(this.circle);
 
 		// Image of species (or icon if missing)
-		this.image = scene.add.image(0, 0, species.image);
+		if (this.hasImage)
+			this.image = scene.add.image(0, 0, "species", speciesMap[species.image]);
+		else
+			this.image = scene.add.image(0, 0, "icons", iconsMap[species.image]);
 		this.image.setAlpha(this.hasImage ? 1.0 : 0.75);
 		this.image.setScale((this.hasImage ? 1.0 : 0.8) * this.size / this.image.width);
 		this.add(this.image);
@@ -82,12 +87,19 @@ export class FoodWebNode extends BaseNode {
 		this._selected = false;
 		this._dragged = false;
 		this.subselected = false;
+		this.importance = 0;
 
 		this.bindInteractive(this.circle, true);
 	}
 
+
+	onDown(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
+		super.onDown(pointer, localX, localY, event);
+		this.emit("hold");
+	}
+
 	onUp(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
-		if (this.hold) {
+		if (this.hold && !this.blocked) {
 			this.selected = !this._selected;
 			this.hold = false;
 		}
@@ -161,7 +173,7 @@ export class FoodWebNode extends BaseNode {
 				this.velocity.scale((maxVel-maxVel*Math.exp(-vel/maxVel))/vel);
 				this.x += this.velocity.x;
 				this.y += this.velocity.y;
-				this.velocity.scale(this.config.friction);
+				this.velocity.scale(Math.pow(this.config.friction, 60*delta));
 			}
 		}
 
@@ -212,6 +224,7 @@ export class FoodWebNode extends BaseNode {
 		if (this.hyperLink) {
 			this.hyperLink.updateCircle(
 				this._selected ? 1.0 : 0.4,
+				this.selected ? 1.0 : 0.4,
 				this.selected ? 0xFFFFFF : this.config.groupColors[this.species.group]
 			);
 		}
@@ -249,7 +262,7 @@ export class FoodWebNode extends BaseNode {
 
 
 	get selected(): boolean {
-		return this._selected || this._dragged || this.hold;
+		return this._selected || this._dragged || this.hold || (this.hyperLink && this.hyperLink.hold);
 	}
 
 	set selected(value: boolean) {

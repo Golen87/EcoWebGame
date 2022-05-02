@@ -1,4 +1,4 @@
-import { nodes as uniNodes, icons as uniIcons } from "../assets/serengetiAssets";
+// import { nodes as uniNodes, icons as uniIcons } from "../assets/serengetiAssets";
 
 
 /* Interface */
@@ -106,7 +106,8 @@ const videos: Asset[] = [
 
 /* Export */
 
-const images: Asset[] = nodes.concat(backgrounds, uniNodes, uniIcons);
+// const images: Asset[] = nodes.concat(backgrounds, uniNodes, uniIcons);
+const images: Asset[] = nodes.concat(backgrounds);
 
 export {
 	images,

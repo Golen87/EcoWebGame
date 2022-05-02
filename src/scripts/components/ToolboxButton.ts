@@ -1,4 +1,5 @@
 import { BaseNode } from "./nodes/BaseNode";
+import { iconsMap } from "../assets/assetMaps";
 
 export class ToolboxButton extends BaseNode {
 	private image: Phaser.GameObjects.Image;
@@ -8,7 +9,7 @@ export class ToolboxButton extends BaseNode {
 		super(scene, x, y);
 		this.size = size;
 
-		this.image = scene.add.image(0, 0, image);
+		this.image = scene.add.image(0, 0, "icons", iconsMap[image]);
 		this.image.setScale(size / this.image.height);
 		this.image.setAlpha(0.65);
 		this.add(this.image);
@@ -23,7 +24,7 @@ export class ToolboxButton extends BaseNode {
 	}
 
 	setTexture(key: string) {
-		this.image.setTexture(key);
+		this.image.setTexture("icons", iconsMap[key]);
 		let sep = 0.75/2;
 	}
 }

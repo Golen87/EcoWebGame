@@ -6,6 +6,7 @@ import { language } from "../../language/LanguageManager";
 import { NODE_SIZE, DEATH_THRESHOLD } from "../../constants";
 import { colorToNumber, interpolateColor } from "../../utils";
 import { GrayScalePostFilter } from "../../pipelines/GrayScalePostFilter";
+import { speciesMap } from "../../assets/assetMaps";
 
 export class Node extends BaseNode {
 	public species: Organism;
@@ -146,7 +147,7 @@ export class Node extends BaseNode {
 		this.circleCont.add(this.circleBg);
 
 		// Image of species (or icon if missing)
-		this.circleImage = this.scene.add.image(0, 0, species.image);
+		this.circleImage = this.scene.add.image(0, 0, "species", speciesMap[species.image]);
 		// this.circleImage.setAlpha(this.hasImage ? 1.0 : 0.75);
 		this.circleImage.setScale((this.hasImage ? 1.0 : 0.8) * NODE_SIZE / this.circleImage.width);
 		this.circleCont.add(this.circleImage);
@@ -195,6 +196,7 @@ export class Node extends BaseNode {
 		}
 		else {
 			this.popScale = 1.0;
+			this.circleImage.setTint(0xFFFFFF);
 		}
 	}
 
@@ -202,15 +204,15 @@ export class Node extends BaseNode {
 	update(time, delta) {
 		super.update(time, delta);
 
-		this.x += (this.goalX - this.x) / 2.0;
-		this.y += (this.goalY - this.y) / 2.0;
+		this.x += (this.goalX - this.x) * (1 - Math.pow(0.5, 60*delta));
+		this.y += (this.goalY - this.y) * (1 - Math.pow(0.5, 60*delta));
 
 		if (this.hold) {
 			if (this.stick) {
 				this.x += (this.stickX - this.x) / 1.5;
 				this.y += (this.stickY - this.y) / 1.5;
 
-				const minDragDist = this.isInsidePlayingField() ? NODE_SIZE/4 : NODE_SIZE;
+				const minDragDist = this.isInsidePlayingField() ? NODE_SIZE/12 : NODE_SIZE/12;
 				if (Phaser.Math.Distance.Between(this.goalX, this.goalY, this.stickX, this.stickY) > minDragDist) {
 					this.stick = false;
 					this.scene.tweens.add({
@@ -248,24 +250,41 @@ export class Node extends BaseNode {
 		// this.circleMiddleBg.setScale((this.circleCont.scaleX * NODE_SIZE + 4) / this.circleMiddleBg.width / this.circleCont.scaleX);
 		// (2*this.circleCont.width) / this.circleMiddleBg.width
 
-		const borderColor = interpolateColor(colorToNumber(this.species.color), 0x000000, 0.6 - 0.4 * Math.pow(this.population, 0.5));
+
+		let P = Math.pow(Phaser.Math.Clamp(this.population, 0, 1), 0.2);
+
+		const borderColor = interpolateColor(colorToNumber(this.species.color), 0x000000, 0.6 - 0.4 * P);
 		this.circleMiddleBg.setColor(interpolateColor(borderColor, 0xFFFFFF, this.holdSmooth));
 		// this.circleMiddleBg.getData("color")
 
+		// let amp = (1-P) / 2;
+		// let blink = 1 - amp + amp * Math.sin(4 * time/1000);
+		this.circleImage.setTint(interpolateColor(0xFFCCAA, 0xFFFFFF, P));
+
+
 		// Show name when holding the node
-		this.nameCont.setAlpha(this.liftSmooth);
+		this.nameCont.setAlpha(this.holdSmooth*1.1 - 0.1);
 
 		// Hack to place above other nodes
 		this.setDepth(1 + this.liftSmooth);
 	}
 
-	isInsidePlayingField() {
+	isInsidePlayingField(addVel: boolean=false) {
 		if (!this.visible) {
 			return false;
 		}
-		if (this.goalX < this.limitLeft || this.goalX > this.limitRight)
+		let x = this.goalX;
+		let y = this.goalY;
+
+		// Geometric sum of 0.95^t is 20, meaning object will travel 20*vel
+		if (addVel && !this.inPlay) {
+			let vel = Phaser.Math.Clamp(this.velocity.y, -20, 0);
+			y += 10 * vel;
+		}
+
+		if (x < this.limitLeft || x > this.limitRight)
 			return false;
-		if (this.goalY < this.limitTop || this.goalY > this.limitBottom)
+		if (y < this.limitTop || y > this.limitBottom)
 			return false;
 		return true;
 	}
@@ -297,7 +316,7 @@ export class Node extends BaseNode {
 		}
 		this.stick = true;
 
-		if (!this.isInsidePlayingField()) {
+		if (!this.isInsidePlayingField(true)) {
 			this.resetPosition();
 		}
 		else {
@@ -349,6 +368,7 @@ export class Node extends BaseNode {
 
 		if (this.inPlay) {
 			this.inPlay = false;
+			this.velocity.reset();
 			this.emit('onExit', this, false, manually);
 		}
 

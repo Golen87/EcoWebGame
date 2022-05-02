@@ -8,6 +8,7 @@ import { language } from "../../language/LanguageManager";
 import { Scenario } from "../../simulation/Scenario";
 import { database } from "../../database/Database";
 import { jiggle, HSVToRGB } from "../../utils";
+import { speciesMap, iconsMap } from "../../assets/assetMaps";
 
 interface Relation {
 	pred: FoodWebNode;
@@ -50,6 +51,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 	private nodeContainer: Phaser.GameObjects.Container;
 	private nodes: FoodWebNode[];
 	private anyNodesSelected: boolean;
+	private multiNodesSelected: boolean;
 
 	private buttons: FoodWebButton[];
 	private modeSlider: Slider;
@@ -198,6 +200,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		// this.deselectButton.setScale(1.0 - 0.1 * this.deselectButton.holdSmooth);
 
 		this.anyNodesSelected = false;
+		this.multiNodesSelected = false;
 		this.updateNodes(time, delta);
 		this.drawRelations(time, delta);
 
@@ -278,6 +281,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 					this.clearInfoBox();
 				}
 			});
+
+			node.on('hold', this.blockClicks, this);
 		}
 	}
 
@@ -346,7 +351,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			// "themeda_triandra", // Kängrugräs
 			// "digitaria_scalarum", // Fingerhirs
 		];
-		let cx = this.scene.CX + 0.14 * this.scene.W;
+		let cx = this.scene.CX - 0.14 * this.scene.W;
 		let cy = 0.86 * this.scene.H;
 		let size = 66;
 
@@ -365,7 +370,10 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 					obj.on('click', () => {
 						node.selected = !node._selected;
+						// node.hold = false;
 					}, this);
+
+					obj.on('hold', this.blockClicks, this);
 				}
 			}
 		}
@@ -388,6 +396,16 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.modeSlider.value = this.config.mode;
 		this.modeSlider.on('onChange', (value) => {
 			this.config.mode = value;
+
+			// Open layout info if slider is moved to the ends
+			if (this.infoMode == "") {
+				if (value == 0) {
+					this.setInfoLayout("groups");
+				}
+				else if (value == 1) {
+					this.setInfoLayout("links");
+				}
+			}
 		}, this);
 
 
@@ -487,7 +505,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let p = 15;
 		let w = 0.25 * this.scene.W;
 		let h = 0.22 * this.scene.H - 2*m;
-		let x = m + w/2 + 0.16 * this.scene.W;
+		// let x = m + w/2 + 0.16 * this.scene.W;
+		let x = 0.84 * this.scene.W - m - w/2;
 		let y = this.scene.H - h/2 - m;
 
 		this.infoBg = new RoundRectangle(this.scene, x, y, w, h, 12, 0x000000);
@@ -513,7 +532,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.infoSubTitle.setOrigin(0, 0.5);
 		this.infoNodeCont.add(this.infoSubTitle);
 
-		this.infoDescription = this.scene.createText(-w/2+p, -h/2+p + 2.2*titleSize, 16, this.scene.weights.regular, "#FFF", "Description");
+		this.infoDescription = this.scene.createText(-w/2+p, -h/2+p + 2.2*titleSize, 15, this.scene.weights.regular, "#FFF", "Description");
 		this.infoDescription.setOrigin(0);
 		this.infoDescription.setWordWrapWidth(w-2*p);
 		// this.infoDescription.setLineSpacing(10);
@@ -601,10 +620,11 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 		/* Extra */
 
-		this.infoHint = this.scene.createText(x, y, 20, this.scene.weights.regular, "#FFF", "Instruction text");
+		this.infoHint = this.scene.createText(x, y, 22, this.scene.weights.regular, "#FFF", "Instruction text");
 		this.infoHint.setOrigin(0.5);
 		this.add(this.infoHint);
 		language.bind(this.infoHint, "instruction_0");
+		this.infoHint.setWordWrapWidth(w-2*p);
 
 		this.infoBox.bringToTop(this.infoImage);
 
@@ -626,16 +646,16 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		const latin = (node.species.name == this.infoTitle.text) ? "" : node.species.name;
 		const iucnName = node.species.iucn ? "iucn_" + node.species.iucn : "";
 		const groupName = "group_name_" + node.species.group;
-		// const groupDesc = "group_desc_" + node.species.group;
-		const desc = `Här kommer det att stå mer information om ${latin}...`;
-		// const desc = "Oxdjur som tillhör \"The big five\". Lever i hjordar och föredrar tätare vegetation så som busklandskap. Kan äta längre gräs och buffelhjordarna skapar på så sätt förutsättningar för de växtätare som kräver kortare gräs som föda.";
+
+		language.unbind(this.infoDescription);
 
 		this.infoSubTitle.setText(latin);
-		language.bind(this.infoTitle, name);
+		language.bind(this.infoTitle, name, () => {
+			this.infoDescription.setText(this.getNodeDesc(node));
+			this.resizeInfoDescription(90);
+		});
 		language.bind(this.infoIucnText, iucnName, this.resizeInfoIucn.bind(this));
 		language.bind(this.infoGroupText, groupName, this.resizeInfoGroup.bind(this));
-		// language.bind(this.infoDescription, desc);
-		this.infoDescription.setText(desc);
 
 		this.setInfoImage(node.species.image);
 
@@ -644,6 +664,29 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 		this.infoGroupText.setColor(this.config.groupTextColors[node.species.group]);
 		this.infoGroupBg.setColor(this.config.groupColors[node.species.group]);
+	}
+
+	getNodeDesc(node) {
+		if (node.species.isAnimal()) {
+			return language.get("species_" + node.species.id, false);
+		}
+		else if (node.species.isPlant()) {
+			let desc = "";
+			desc += language.get("species_plant_size_" + node.species.size, false) + "\n";
+			desc += language.get("species_plant_age_" + node.species.age, false) + "\n";
+			desc += language.get("species_plant_stem_" + node.species.stem, false);
+			return desc;
+		}
+		return "";
+	}
+
+	resizeInfoDescription(height: number) {
+		let size = 18;
+		this.infoDescription.setFontSize(size);
+		while (this.infoDescription.height > height) {
+			size -= 0.1;
+			this.infoDescription.setFontSize(size);
+		}
 	}
 
 	setInfoLayout(mode: string) {
@@ -660,8 +703,9 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.infoMode = mode;
 
 		language.bind(this.infoTitle, "slider_" + mode);
-		language.bind(this.infoDescription, "network_desc");
+		// language.bind(this.infoDescription, "network_desc");
 		language.bind(this.infoDescription, "network_" + mode);
+		this.resizeInfoDescription(110);
 
 		const modeImage = (mode == "groups") ? "icon-food-web" : "icon-eco-web";
 		const sliderValue = (mode == "groups") ? 0.0 : 1.0;
@@ -680,6 +724,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 		language.bind(this.infoTitle, groupName);
 		language.bind(this.infoDescription, groupDesc);
+		this.resizeInfoDescription(90);
 
 		// this.infoIucnImageText.setText(this.infoGroupSelected.toString());
 		// this.infoIucnImageText.setColor(this.config.groupTextColors[this.infoGroupSelected]);
@@ -698,6 +743,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 		language.bind(this.infoTitle, iucnName);
 		language.bind(this.infoDescription, iucnDesc);
+		this.resizeInfoDescription(90);
 
 		this.infoIucnImageText.setText(this.infoIucnSelected);
 		this.infoIucnImageText.setColor(this.config.iucnTextColors[this.infoIucnSelected]);
@@ -709,8 +755,11 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 	setInfoImage(key: string, scale: number=1.0, tint: number=0xFFFFFF) {
 		if (key) {
+			let tex = (key in speciesMap) ? "species" : "icons";
+			let map = (key in speciesMap) ? speciesMap : iconsMap;
+
 			this.infoImage.setVisible(true);
-			this.infoImage.setTexture(key);
+			this.infoImage.setTexture(tex, map[key]);
 			this.infoImage.setTint(tint);
 			this.infoImage.setScale(scale * this.infoImage.getData("size") / this.infoImage.width);
 		}
@@ -783,11 +832,14 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let n = this.nodes.length;
 		let sx = 0, sy = 0;
 
+		let selectedNodes = this.nodes.filter(node => node.selected);
+		this.anyNodesSelected = (selectedNodes.length > 0);
+		this.multiNodesSelected = (selectedNodes.length > 1);
+
 		for (let i = 0; i < n; i++) {
 			node1 = this.nodes[i];
 			sx += node1.x;
 			sy += node1.y;
-			this.anyNodesSelected = this.anyNodesSelected || node1.selected;
 		}
 		sx = (sx / n - this.config.center.x - this.config.centerOffset.x) * this.config.centering * this.config.mode;
 		sy = (sy / n - this.config.center.y - this.config.centerOffset.y) * this.config.centering * this.config.mode;
@@ -800,6 +852,9 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			if ((this.infoMode == "iucn" && this.infoIucnSelected == node1.species.iucn) || (this.infoMode == "group" && this.infoGroupSelected == node1.species.group)) {
 				node1.setAlphaGoal(1.0);
 				node1.subselected = true;
+			}
+			if (node1.selected) {
+				node1.setAlphaGoal(1.0);
 			}
 		}
 
@@ -865,6 +920,29 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 				node2.velocity.y += 1 * dy * sepFac;
 			}
 		}
+
+		for (let i = 0; i < n; i++) {
+			node1 = this.nodes[i];
+
+			node1.importance = 0;
+			if (node1.selected) {
+				node1.importance = 1;
+			}
+			else if (this.anyNodesSelected) {
+				for (let j = 0; j < selectedNodes.length; j++) {
+					let other = selectedNodes[j];
+					if (node1.neighbours.includes(other)) {
+						node1.importance += 1 / selectedNodes.length;
+						// node1.importance = 0.5;
+					}
+				}
+				node1.importance *= node1.importance;
+			}
+
+			if (node1.importance > 0.99 && this.infoMode != "iucn" && this.infoMode != "group") {
+				node1.setAlphaGoal(1.0);
+			}
+		}
 	}
 
 	drawRelations(time, delta) {
@@ -904,9 +982,9 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			relation.line.draw(this.relationGraphics);
 
 
-			if (this.anyNodesSelected && selected > 0) {
-				relation.pred.setAlphaGoal(1.0);
-				relation.prey.setAlphaGoal(1.0);
+			if (this.anyNodesSelected && selected > 0 && !this.multiNodesSelected && this.infoMode != "iucn" && this.infoMode != "group") {
+				relation.pred.setAlphaGoal(1);
+				relation.prey.setAlphaGoal(1);
 			}
 		}
 	}
@@ -915,6 +993,20 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 	unselectNodes() {
 		for (const node of this.nodes) {
 			node._selected = false;
+		}
+	}
+
+	blockClicks() {
+		let numberHeld = this.nodes.filter(node => node.hold).length;
+		numberHeld += this.buttons.filter(button => button.hold).length;
+
+		if (numberHeld > 1) {
+			for (const button of this.buttons) {
+				button.block();
+			}
+			for (const node of this.nodes) {
+				node.block();
+			}
 		}
 	}
 

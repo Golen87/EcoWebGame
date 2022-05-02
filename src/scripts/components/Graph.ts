@@ -3,6 +3,7 @@ import { language } from "../language/LanguageManager";
 import { simulator } from "../simulation/Simulator";
 import { colorToNumber, interpolateColor } from "../utils";
 import { SIMULATION_LENGTH, DEATH_THRESHOLD, MIN_POPULATION } from "../constants";
+import { speciesMap, iconsMap } from "../assets/assetMaps";
 
 export class Graph extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
@@ -18,7 +19,6 @@ export class Graph extends Phaser.GameObjects.Container {
 	public padding: number;
 	public splitSep: number;
 	public splitHeight: number;
-	public history: number;
 	public xstep: number;
 	public ystep: number;
 	public gridSize: number;
@@ -36,7 +36,6 @@ export class Graph extends Phaser.GameObjects.Container {
 		this.padding = 0.02 * this.width;
 		this.splitSep = 0.025 * this.width;
 		this.splitHeight = (this.height - 2*this.padding - 2*this.splitSep) / 3;
-		this.history = SIMULATION_LENGTH; // 20
 		this.xstep = 1/8;
 		this.ystep = 4;
 
@@ -70,7 +69,7 @@ export class Graph extends Phaser.GameObjects.Container {
 			let circle = this.scene.add.ellipse(0, 0, size, size, color);
 			cont.add(circle);
 
-			let image = this.scene.add.image(0, 0, species.image);
+			let image = this.scene.add.image(0, 0, "species", speciesMap[species.image]);
 			image.setScale(this.nodeSize / image.height);
 			cont.add(image);
 		}
@@ -146,7 +145,7 @@ export class Graph extends Phaser.GameObjects.Container {
 			let circle = this.scene.add.ellipse(x, y, size, size, color);
 			this.add(circle);
 
-			let image = this.scene.add.image(x, y, key);
+			let image = this.scene.add.image(x, y, "icons", iconsMap[key]);
 			image.setScale(0.8 * size / image.height);
 			image.setTint(0);
 			this.add(image);
@@ -155,9 +154,9 @@ export class Graph extends Phaser.GameObjects.Container {
 
 
 	updateXLabels(time: number) {
-		let right = Math.max(time, this.history);
-		let left = right - this.history;
-		let pos = left / this.history;
+		let right = Math.max(time, SIMULATION_LENGTH);
+		let left = right - SIMULATION_LENGTH;
+		let pos = left / SIMULATION_LENGTH;
 		let index = Math.floor(pos / this.xstep);
 
 		for (var i = this.xLabels.length - 1; i >= 0; i--) {
@@ -192,7 +191,7 @@ export class Graph extends Phaser.GameObjects.Container {
 		const left = this.padding;
 		const right = this.width - this.padding;
 
-		let offset = (Math.max(time, this.history) - this.history) / this.history; // right - left
+		let offset = (Math.max(time, SIMULATION_LENGTH) - SIMULATION_LENGTH) / SIMULATION_LENGTH; // right - left
 
 		// Help grid
 		this.background.lineStyle(this.gridSize, 0xA77440, 0.5);
@@ -241,6 +240,13 @@ export class Graph extends Phaser.GameObjects.Container {
 		}
 	}
 
+	clear() {
+		for (let s = 0; s < simulator.species.length; s++) {
+			this.images[s].setVisible(false);
+		}
+		this.draw(0);
+	}
+
 	draw(time: number) {
 		this.drawBackground(time);
 		// this.updateXLabels(time);
@@ -250,8 +256,8 @@ export class Graph extends Phaser.GameObjects.Container {
 
 		/* Data */
 
-		let right = Math.max(time, this.history);
-		let left = right - this.history;
+		let right = Math.max(time, SIMULATION_LENGTH);
+		let left = right - SIMULATION_LENGTH;
 
 		let data: any = [];
 
@@ -265,7 +271,7 @@ export class Graph extends Phaser.GameObjects.Container {
 			}
 
 			if (x < time) {
-				if (x > time - this.history) {
+				if (x > time - SIMULATION_LENGTH) {
 					let y = simulator.history.y[i];
 
 					// Snap leftmost data point to 0 to prevent overlap
@@ -363,15 +369,5 @@ export class Graph extends Phaser.GameObjects.Container {
 			// 	}
 			// }
 		}
-	}
-
-	update(time: number, delta: number) {
-		// if (this.scene.selectedNode) {
-		// 	const showGraph = this.scene.selectedNode.species.showGraph;
-		// 	this.foregroundSelected.setAlpha(0.5 + (0.25 + 0.25 * showGraph) * Math.sin(time/200));
-		// }
-		// else {
-		// 	this.foregroundSelected.setAlpha(0);
-		// }
 	}
 }

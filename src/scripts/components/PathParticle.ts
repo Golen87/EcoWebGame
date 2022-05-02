@@ -2,6 +2,7 @@ import { BaseScene } from "../scenes/BaseScene";
 import { Node } from "./nodes/Node";
 import { Path } from "./Path";
 import { NODE_SIZE } from "../constants";
+import { iconsMap } from "../assets/assetMaps";
 
 export class PathParticle extends Phaser.GameObjects.Image {
 	public scene: BaseScene;
@@ -16,7 +17,7 @@ export class PathParticle extends Phaser.GameObjects.Image {
 	private baseScale: number;
 
 	constructor(scene: BaseScene) {
-		super(scene, 0, 0, "icon-sun");
+		super(scene, 0, 0, "icons", iconsMap["icon-sun"]);
 		this.scene = scene;
 		scene.add.existing(this);
 
@@ -26,36 +27,38 @@ export class PathParticle extends Phaser.GameObjects.Image {
 		this.setScale(this.baseScale);
 	}
 
-	activate(path: Path, category: number) {
+	activate(path: Path, texture: string, tint: number) {
 		this.setVisible(true);
 		this.path = path;
 		this.duration = Phaser.Math.Clamp(path.curve.getLength(), 100, (this.path.isGrounded ? 200 : 500)) / (70 + 10 * Math.random());
 
 		this.progress = 0;
 
-		let x = this.scene.time.now/1000 * (this.path.isGrounded ? 5.0 : 1.7);
-		let f = Math.sin(x);
-		let v = Math.sign(f) * Math.pow(Math.abs(f), (this.path.isGrounded ? 1.0 : 0.5))
-		let w = this.path.isGrounded ? NODE_SIZE : 16;
-		this.offsetDist = w * v;
+		if (this.path.isGrounded) {
+			let x = this.scene.time.now/1000 * 4.0;
+			let f = NODE_SIZE/4 * Math.sin(x);
+			if (texture == "icon-sun") {
+				f -= 3/4*NODE_SIZE;
+			}
+			if (texture == "icon-co2-text") {
+				f += 3/4*NODE_SIZE;
+			}
+			// let w = NODE_SIZE;
+			// let flip = texture == "icon-sun" ? -1 : 1;
+			let flip = 1;
+			// this.offsetDist = w * f * flip;
+			this.offsetDist = f * flip;
+		}
+		else {
+			let x = this.scene.time.now/1000 * 1.7;
+			let f = Math.sin(x);
+			let v = Math.sign(f) * Math.pow(Math.abs(f), 0.5);
+			let w = 16;
+			this.offsetDist = w * v;
+		}
 
-		if (path.node1.category == 0) {
-			// let index = Math.floor(2 * Math.random());
-			// let textures = ["icon-sun", "icon-water"];
-			// let colors = [0xFFFF88, 0x99BBFF];
-			// this.setTexture(textures[index]);
-			// this.setTint(colors[index]);
-			this.setTint(0x99BBFF);
-			this.setTexture("icon-water");
-		}
-		else if (path.node1.category == 1) {
-			this.setTint(0xAAFF99);
-			this.setTexture("icon-leaf");
-		}
-		else if (path.node1.category == 2) {
-			this.setTint(0xFFAA99);
-			this.setTexture("icon-meat");
-		}
+		this.setFrame(iconsMap[texture]);
+		this.setTint(tint);
 
 		this.updatePosition(0, 0);
 	}
@@ -79,7 +82,7 @@ export class PathParticle extends Phaser.GameObjects.Image {
 
 		if (this.path.isGrounded) {
 			// Follow line with horizontal offset
-			this.offset.set(this.offsetDist * (1-0.8*this.progress), 0);
+			this.offset.set(this.offsetDist * (1-0.5*this.progress), 0);
 		}
 		else {
 			// Follow tangent with sideway offset
@@ -93,7 +96,7 @@ export class PathParticle extends Phaser.GameObjects.Image {
 
 		// this.offset.rotate(6*delta);
 
-		let pathAlpha = this.path.alpha * (this.path.isGrounded ? 0.7 : 1.0);
+		let pathAlpha = this.path.alpha * (this.path.isGrounded ? 0.9 : 1.0);
 		let easing = this.getEasing();// * (this.path.isGrounded ? this.progress : 1.0);
 		// if (this.path.isGrounded) {
 			// pathAlpha = Math.min(this.path.node1.aliveValue, this.path.node2.aliveValue);
@@ -108,7 +111,7 @@ export class PathParticle extends Phaser.GameObjects.Image {
 
 	getEasing() {
 		const x = Math.pow(this.progress, this.path.isGrounded ? 2 : 1);
-		const l = this.path.isGrounded ? 0.8 : 0.2;
+		const l = this.path.isGrounded ? 0.6 : 0.2;
 		const r = 0.2;
 
 		if (x <= 0 || x >= 1) {

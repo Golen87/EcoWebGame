@@ -1,7 +1,7 @@
 import { BaseScene } from "./BaseScene";
 // import { images as uniImages, videos as uniVideos } from "../assets/serengetiAssets";
 // import { images as ecoImages, videos as ecoVideos } from "../assets/ecowebAssets";
-import { images, videos } from "../assets/serengetiAssets";
+import { images, spritesheets, videos } from "../assets/serengetiAssets";
 // import { images, videos } from "../assets/ecowebAssets";
 import { language } from "../language/LanguageManager";
 import { GrayScalePostFilter } from "../pipelines/GrayScalePostFilter";
@@ -46,6 +46,10 @@ export class PreloadScene extends BaseScene {
 
 		for (let image of images) {
 			this.load.image(image.key, image.path);
+		}
+
+		for (let image of spritesheets) {
+			this.load.spritesheet(image.key, image.path, { frameWidth: image.width, frameHeight: image.height });
 		}
 
 		for (let video of videos) {
