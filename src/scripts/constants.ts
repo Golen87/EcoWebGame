@@ -1,3 +1,5 @@
+const VERSION: string = "v1.0.11";
+
 const NODE_SIZE: number = 90;
 // const NODE_SIZE: number = 120;
 const DEATH_THRESHOLD: number = 0.02;
@@ -16,6 +18,7 @@ const QUESTION_TIME = 12;
 const PARTICLE_COUNT = 500;
 
 export {
+	VERSION,
 	NODE_SIZE,
 	DEATH_THRESHOLD,
 	MIN_POPULATION,

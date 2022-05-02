@@ -1,6 +1,6 @@
 {
   "name": "EcoWebGame",
-  "version": "1.0.5",
+  "version": "1.0.11",
   "description": "Håll ekosystemet i balans.",
   "main": "build/main.js",
   "scripts": {
