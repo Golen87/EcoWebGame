@@ -1,4 +1,4 @@
-import { NodeType, AnimalFood, AnimalSize, PlantLayer, PlantShade, ServiceCategory, RelationInteraction, ActorVisibility, ActionType, EffectMethod } from "./Enums";
+import { NodeType, AnimalFood, AnimalSize, PlantSize, PlantStem, PlantAge, ServiceCategory, RelationInteraction, ActorVisibility, ActionType, EffectMethod } from "./Enums";
 import { NodeId, EventId, ScenarioId, Point } from "./Types";
 
 
@@ -43,6 +43,12 @@ export interface DataNodeAnimal {
 	weight: number;
 	age: number;
 	offspring: number;
+}
+
+export interface DataNodePlant {
+	size: PlantSize;
+	stem: PlantStem;
+	age: PlantAge;
 }
 
 export interface DataNodeService {

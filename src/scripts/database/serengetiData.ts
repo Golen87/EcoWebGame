@@ -13,8 +13,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-herb",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -29,8 +31,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -45,8 +49,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-tree",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "tree",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -61,8 +67,10 @@ let serengetiData = JSON.stringify(
 			"image": "ACASEN",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -77,8 +85,10 @@ let serengetiData = JSON.stringify(
 			"image": "ACASEY",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -93,8 +103,10 @@ let serengetiData = JSON.stringify(
 			"image": "ACATOR",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "tree",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -109,8 +121,10 @@ let serengetiData = JSON.stringify(
 			"image": "ACAXAN",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "tree",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -125,8 +139,10 @@ let serengetiData = JSON.stringify(
 			"image": "ACHASP",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -361,8 +377,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -377,8 +395,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-herb",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -536,8 +556,10 @@ let serengetiData = JSON.stringify(
 			"image": "ALLRUB",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -552,8 +574,10 @@ let serengetiData = JSON.stringify(
 			"image": "ALOMAC",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -568,8 +592,10 @@ let serengetiData = JSON.stringify(
 			"image": "ALOSEC",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -584,8 +610,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -600,8 +628,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -616,8 +646,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -632,8 +664,10 @@ let serengetiData = JSON.stringify(
 			"image": "BALAEG",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -648,8 +682,10 @@ let serengetiData = JSON.stringify(
 			"image": "BLEACA",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -664,8 +700,10 @@ let serengetiData = JSON.stringify(
 			"image": "BOSAUG",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -680,8 +718,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -696,8 +736,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -776,8 +818,10 @@ let serengetiData = JSON.stringify(
 			"image": "CAPTOM",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -833,8 +877,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -849,8 +895,10 @@ let serengetiData = JSON.stringify(
 			"image": "CHLGAY",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -865,8 +913,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -881,8 +931,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -897,8 +949,10 @@ let serengetiData = JSON.stringify(
 			"image": "CISQUA",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -913,8 +967,10 @@ let serengetiData = JSON.stringify(
 			"image": "CISROT",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -929,8 +985,10 @@ let serengetiData = JSON.stringify(
 			"image": "COMMEAFR",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -945,8 +1003,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -961,8 +1021,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -977,8 +1039,10 @@ let serengetiData = JSON.stringify(
 			"image": "COMMOL",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -993,8 +1057,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1182,8 +1248,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1287,8 +1355,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1303,8 +1373,10 @@ let serengetiData = JSON.stringify(
 			"image": "CROMAC",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1319,8 +1391,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-annual-flower",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "annual",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1335,8 +1409,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1351,8 +1427,10 @@ let serengetiData = JSON.stringify(
 			"image": "CYNDAC",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1367,8 +1445,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1383,8 +1463,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-herb",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1500,8 +1582,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1516,8 +1600,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1532,8 +1618,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1548,8 +1636,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1564,8 +1654,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1580,8 +1672,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1596,8 +1690,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1612,8 +1708,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1628,8 +1726,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1644,8 +1744,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1660,8 +1762,10 @@ let serengetiData = JSON.stringify(
 			"image": "EMICOC",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "annual",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1807,8 +1911,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1823,8 +1929,10 @@ let serengetiData = JSON.stringify(
 			"image": "ERACIL",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1839,8 +1947,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1855,8 +1965,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1871,8 +1983,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -1887,8 +2001,10 @@ let serengetiData = JSON.stringify(
 			"image": "EUPCAN",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "tree",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1903,8 +2019,10 @@ let serengetiData = JSON.stringify(
 			"image": "EUSPAS",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1919,8 +2037,10 @@ let serengetiData = JSON.stringify(
 			"image": "FICGLU",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1935,8 +2055,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -1951,8 +2073,10 @@ let serengetiData = JSON.stringify(
 			"image": "FICTHI",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -2450,8 +2574,10 @@ let serengetiData = JSON.stringify(
 			"image": "GREBIC",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -2466,8 +2592,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -2482,8 +2610,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -2498,8 +2628,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -2514,8 +2646,10 @@ let serengetiData = JSON.stringify(
 			"image": "HELSTE",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -2913,8 +3047,10 @@ let serengetiData = JSON.stringify(
 			"image": "HETCON",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -2929,8 +3065,10 @@ let serengetiData = JSON.stringify(
 			"image": "HIB",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -2945,8 +3083,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-herb",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3032,8 +3172,10 @@ let serengetiData = JSON.stringify(
 			"image": "HOSOPP",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3048,8 +3190,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3064,8 +3208,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3080,8 +3226,10 @@ let serengetiData = JSON.stringify(
 			"image": "HYPFOR",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -3096,8 +3244,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3112,8 +3262,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3128,8 +3280,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-herb",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3144,8 +3298,10 @@ let serengetiData = JSON.stringify(
 			"image": "INDHOC",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "annual",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -3160,8 +3316,10 @@ let serengetiData = JSON.stringify(
 			"image": "IPOOBS",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3176,8 +3334,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3192,8 +3352,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-herb",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3208,8 +3370,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-herb",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3224,8 +3388,10 @@ let serengetiData = JSON.stringify(
 			"image": "KIGAFR",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3329,8 +3495,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3368,8 +3536,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3384,8 +3554,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -3991,8 +4163,10 @@ let serengetiData = JSON.stringify(
 			"image": "MAETRI",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4007,8 +4181,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4023,8 +4199,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-annual-flower",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "annual",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -4039,8 +4217,10 @@ let serengetiData = JSON.stringify(
 			"image": "OLE",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "tree",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4096,8 +4276,10 @@ let serengetiData = JSON.stringify(
 			"image": "PANCOL",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4112,8 +4294,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4259,8 +4443,10 @@ let serengetiData = JSON.stringify(
 			"image": "PANMAX",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4424,8 +4610,10 @@ let serengetiData = JSON.stringify(
 			"image": "PANREP",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4631,8 +4819,10 @@ let serengetiData = JSON.stringify(
 			"image": "PAPCAP",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4647,8 +4837,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4663,8 +4855,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-herb",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4744,8 +4938,10 @@ let serengetiData = JSON.stringify(
 			"image": "PELCAL",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4760,8 +4956,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4776,8 +4974,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4863,8 +5063,10 @@ let serengetiData = JSON.stringify(
 			"image": "PHRMAU",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -4879,8 +5081,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5350,8 +5554,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5366,8 +5572,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-annual-flower",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "annual",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -5500,8 +5708,10 @@ let serengetiData = JSON.stringify(
 			"image": "RHOREV",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5516,8 +5726,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -5532,8 +5744,10 @@ let serengetiData = JSON.stringify(
 			"image": "SCLBIR",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5548,8 +5762,10 @@ let serengetiData = JSON.stringify(
 			"image": "SENDID",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5564,8 +5780,10 @@ let serengetiData = JSON.stringify(
 			"image": "SENEHR",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5580,8 +5798,10 @@ let serengetiData = JSON.stringify(
 			"image": "SENSUF",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5596,8 +5816,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -5612,8 +5834,10 @@ let serengetiData = JSON.stringify(
 			"image": "SETSPH",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -5628,8 +5852,10 @@ let serengetiData = JSON.stringify(
 			"image": "SID",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5644,8 +5870,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5660,8 +5888,10 @@ let serengetiData = JSON.stringify(
 			"image": "SOLINC",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "herb",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5676,8 +5906,10 @@ let serengetiData = JSON.stringify(
 			"image": "SOLNIG",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "annual",
+				"stem": "nonwoody",
+				"age": "annual"
 			},
 			"relations": []
 		},
@@ -5692,8 +5924,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5708,8 +5942,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5724,8 +5960,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5740,8 +5978,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5756,8 +5996,10 @@ let serengetiData = JSON.stringify(
 			"image": "SPOPYR",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5772,8 +6014,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -5788,8 +6032,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -6036,8 +6282,10 @@ let serengetiData = JSON.stringify(
 			"image": "THETRI",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -6093,8 +6341,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-grass",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -6109,8 +6359,10 @@ let serengetiData = JSON.stringify(
 			"image": "icon-shrub",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -6125,8 +6377,10 @@ let serengetiData = JSON.stringify(
 			"image": "TYPCAP",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "graminoid",
+				"stem": "nonwoody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -6141,8 +6395,10 @@ let serengetiData = JSON.stringify(
 			"image": "XIMCAF",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		},
@@ -6157,8 +6413,10 @@ let serengetiData = JSON.stringify(
 			"image": "ZIZ",
 			"color": "#34a853",
 			"type": "plant",
-			"animal": {
-				"food": null
+			"plant": {
+				"size": "shrub",
+				"stem": "woody",
+				"age": "perennial"
 			},
 			"relations": []
 		}

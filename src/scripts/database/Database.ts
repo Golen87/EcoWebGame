@@ -2,14 +2,15 @@ import { serengetiData } from "./serengetiData";
 import { ecowebData } from "./ecowebData";
 import { isPlainObject, uuidv4 } from "../utils";
 import { language } from "../language/LanguageManager";
-import { DatabaseStructure, DataNode, DataNodeAnimal, DataNodeService, DataNodeRelation, DataEvent, DataEventEffect, DataScenario, DataScenarioActor, DataScenarioAction } from "./Interfaces";
-import { NodeType, AnimalFood, AnimalSize, PlantLayer, PlantShade, ServiceCategory, RelationInteraction, ActorVisibility, ActionType, EffectMethod } from "./Enums";
+import { DatabaseStructure, DataNode, DataNodeAnimal, DataNodePlant, DataNodeService, DataNodeRelation, DataEvent, DataEventEffect, DataScenario, DataScenarioActor, DataScenarioAction } from "./Interfaces";
+import { NodeType, AnimalFood, AnimalSize, PlantSize, PlantStem, PlantAge, ServiceCategory, RelationInteraction, ActorVisibility, ActionType, EffectMethod } from "./Enums";
 import { NodeId, EventId, ScenarioId, Point } from "./Types";
 import { DATABASE_VERSION, DATABASE_LOCKED, UNIVERSEUM } from "../constants";
 
 class Database {
 	private nodes: Map<NodeId, DataNode>;
 	private nodeAnimals: Map<NodeId, DataNodeAnimal>;
+	private nodePlants: Map<NodeId, DataNodePlant>;
 	private nodeServices: Map<NodeId, DataNodeService>;
 
 	private nodeRelations: Array<DataNodeRelation>;
@@ -24,6 +25,7 @@ class Database {
 	constructor() {
 		this.nodes = new Map();
 		this.nodeAnimals = new Map();
+		this.nodePlants = new Map();
 		this.nodeServices = new Map();
 
 		this.nodeRelations = new Array();
@@ -147,6 +149,8 @@ class Database {
 	deleteNode(id: NodeId) {
 		this.nodes.delete(id);
 		this.nodeAnimals.delete(id);
+		this.nodePlants.delete(id);
+		this.nodeServices.delete(id);
 		// Delete relations
 	}
 
@@ -188,6 +192,34 @@ class Database {
 	getNodeAnimal(id: NodeId): DataNodeAnimal | undefined {
 		let obj = this.nodeAnimals.get(id);
 		console.assert(obj, "Could not find nodeAnimal with id '" + id + "'");
+		return obj;
+	}
+
+
+	/* Node Plants */
+
+	newNodePlant(id: NodeId): DataNodePlant {
+		let obj: DataNodePlant = {
+			size: PlantSize.Tree,
+			stem: PlantStem.Woody,
+			age: PlantAge.Perennial,
+		};
+		this.addNodePlant(id, obj);
+		return obj;
+	}
+
+	addNodePlant(id: NodeId, obj: DataNodePlant) {
+		console.assert(!this.nodePlants.has(id));
+		this.nodePlants.set(id, obj);
+	}
+
+	deleteNodePlant(id: NodeId) {
+		this.nodePlants.delete(id);
+	}
+
+	getNodePlant(id: NodeId): DataNodePlant | undefined {
+		let obj = this.nodePlants.get(id);
+		console.assert(obj, "Could not find nodePlant with id '" + id + "'");
 		return obj;
 	}
 
@@ -480,19 +512,40 @@ class Database {
 			load(node, nodeData, "type", true);
 
 			// Animal properties
-			if (node.type == NodeType.Animal && nodeData.animal) {
-				let animal = this.newNodeAnimal(node.nodeId);
+			if (node.type == NodeType.Animal) {
+				console.assert(nodeData.animal, "Animal type node missing animal data");
+				if (nodeData.animal) {
+					let animal = this.newNodeAnimal(node.nodeId);
 
-				console.assert(Object.values(AnimalFood).includes(nodeData.animal.food), "Unknown animal food");
-				animal.food = nodeData.animal.food;
+					console.assert(Object.values(AnimalFood).includes(nodeData.animal.food), "Unknown animal food");
+					animal.food = nodeData.animal.food;
+				}
+			}
+
+			// Plant properties
+			if (node.type == NodeType.Plant) {
+				console.assert(nodeData.plant, "Plant type node missing plant data");
+				if (nodeData.plant) {
+					let plant = this.newNodePlant(node.nodeId);
+
+					console.assert(Object.values(PlantSize).includes(nodeData.plant.size), "Unknown plant size");
+					console.assert(Object.values(PlantStem).includes(nodeData.plant.stem), "Unknown plant stem");
+					console.assert(Object.values(PlantAge).includes(nodeData.plant.age), "Unknown plant age");
+					plant.size = nodeData.plant.size;
+					plant.stem = nodeData.plant.stem;
+					plant.age = nodeData.plant.age;
+				}
 			}
 
 			// Service properties
-			if (node.type == NodeType.Service && nodeData.service) {
-				let service = this.newNodeService(node.nodeId);
+			if (node.type == NodeType.Service) {
+				console.assert(nodeData.service, "Service type node missing service data");
+				if (nodeData.service) {
+					let service = this.newNodeService(node.nodeId);
 
-				console.assert(Object.values(ServiceCategory).includes(nodeData.service.category), "Unknown service category");
-				service.category = nodeData.service.category;
+					console.assert(Object.values(ServiceCategory).includes(nodeData.service.category), "Unknown service category");
+					service.category = nodeData.service.category;
+				}
 			}
 		}
 

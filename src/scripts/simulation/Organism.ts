@@ -1,5 +1,5 @@
 import { NodeId } from "../database/Types";
-import { NodeType, AnimalFood, AnimalSize, ServiceCategory, RelationInteraction, ActorVisibility } from "../database/Enums";
+import { NodeType, AnimalFood, AnimalSize, PlantSize, PlantStem, PlantAge, ServiceCategory, RelationInteraction, ActorVisibility } from "../database/Enums";
 import { DataNode, DataScenarioActor, DataNodeRelation } from "../database/Interfaces";
 import { database } from "../database/Database";
 import { BaseEvent } from "./Event";
@@ -225,7 +225,7 @@ export class Animal extends Organism {
 		console.assert(animalData);
 		if (animalData) {
 			this.size = animalData.size;
-			this.food = animalData.food;
+			this.food = animalData.food; // Not set in database
 			this.consumption = animalData.consumption;
 			this.weight = animalData.weight;
 			this.age = animalData.age;
@@ -249,9 +249,21 @@ export class Animal extends Organism {
 
 
 export class Plant extends Organism {
+	public size: PlantSize;
+	public stem: PlantStem;
+	public age: PlantAge;
+
 	// growthrate = vatten x ljus x pollination
 	constructor(node, actor) {
 		super(node, actor);
+
+		let plantData = database.getNodePlant(node.nodeId);
+		console.assert(plantData);
+		if (plantData) {
+			this.size = plantData.size;
+			this.stem = plantData.stem;
+			this.age = plantData.age;
+		}
 
 		// this.populationModifier = 10;
 		this.populationModifier = 1;

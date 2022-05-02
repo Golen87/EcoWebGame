@@ -1,4 +1,4 @@
-import { NodeType, AnimalFood, AnimalSize, PlantLayer, PlantShade, ServiceCategory, RelationInteraction, ActorVisibility, ActionType, EffectMethod } from "./Enums";
+import { NodeType, AnimalFood, AnimalSize, ServiceCategory, RelationInteraction, ActorVisibility, ActionType, EffectMethod } from "./Enums";
 
 export const english = {
 	[NodeType.Animal]:					"Consumer (animal)",
