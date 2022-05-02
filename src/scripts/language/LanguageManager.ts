@@ -69,9 +69,11 @@ class LanguageManager {
 	}
 
 	// Return key-mapped phrase of current selected language
-	get(key: string): string {
+	get(key: string, required: boolean=true): string {
 		let text = this.languageData.get(this.currentLanguage)[key];
-		console.assert(text != null, `Phrase not found in ${this.currentLanguage}: '${key}'`);
+		console.assert(!required || text != null, `Phrase not found in ${this.currentLanguage}: '${key}'`);
+		if (text.includes("\\")) {console.warn(text);}
+		text = text.replace(/\\\\/g, '\\');
 		return text;
 	}
 
