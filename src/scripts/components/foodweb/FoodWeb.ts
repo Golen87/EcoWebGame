@@ -36,7 +36,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 	private infoGroupBg: RoundRectangle;
 	private infoGroupStatus: Phaser.GameObjects.Text;
 	private infoGroupText: Phaser.GameObjects.Text;
-	private infoGroupSelected: number;
+	private infoGroupSelected: string;
 
 	private infoIucnButton: BaseNode;
 	private infoIucnBg: RoundRectangle;
@@ -86,30 +86,48 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		let WH = scene.H - 3*BORDER;
 		let groupPositions = {
 			// Carnivores
-			1:  new Phaser.Math.Vector2(WX+0.95*WW, WY+(1-0.30)*WH),
-			2:  new Phaser.Math.Vector2(WX+0.85*WW, WY+(1-0.70)*WH),
+			"kräldjur": new Phaser.Math.Vector2(WX+0.95*WW, WY+(1-0.30)*WH),
+			"fågel": new Phaser.Math.Vector2(WX+0.85*WW, WY+(1-0.70)*WH),
 
 			// Herbivores
-			3:  new Phaser.Math.Vector2(WX+0.50*WW, WY+(1-0.10)*WH),
-			4:  new Phaser.Math.Vector2(WX+0.55*WW, WY+(1-0.45)*WH),
-			5:  new Phaser.Math.Vector2(WX+0.50*WW, WY+(1-0.70)*WH),
-			6:  new Phaser.Math.Vector2(WX+0.60*WW, WY+(1-0.95)*WH),
+			"däggdjur": new Phaser.Math.Vector2(WX+0.50*WW, WY+(1-0.10)*WH),
+			// 4: new Phaser.Math.Vector2(WX+0.55*WW, WY+(1-0.45)*WH),
+			"ryggradslösa djur": new Phaser.Math.Vector2(WX+0.50*WW, WY+(1-0.70)*WH),
+			// 6: new Phaser.Math.Vector2(WX+0.60*WW, WY+(1-0.95)*WH),
 
 			// Plants
-			7:  new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.05)*WH),
-			8:  new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.10)*WH),
-			9:  new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.30)*WH),
-			10: new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.30)*WH), // 1
-			11: new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.55)*WH),
-			12: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.55)*WH), // 1
-			13: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.80)*WH),
-			14: new Phaser.Math.Vector2(WX+0.25*WW, WY+(1-0.95)*WH), // 2
+			"svamp": new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.05)*WH),
+			"mossa": new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.10)*WH),
+			"lav": new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.30)*WH),
+			"träd": new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.30)*WH),
+			"kärlväxt": new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.55)*WH),
+			// 12: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.55)*WH),
+			// 13: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.80)*WH),
+			// 14: new Phaser.Math.Vector2(WX+0.25*WW, WY+(1-0.95)*WH),
 		};
 		let groupColors = {
-			1: 0xF44336, 2: 0xE91E63, 3: 0x9C27B0, 4: 0x673AB7, 5: 0x3F51B5, 6: 0x2196F3, 7: 0x03A9F4, 8: 0x00BCD4, 9: 0x009688, 10: 0x4CAF50, 11: 0x8BC34A, 12: 0xCDDC39, 13: 0xFFEB3B, 14: 0xFFC107
+			1: 0xF44336, 2: 0xE91E63, 3: 0x9C27B0, 4: 0x673AB7, 5: 0x3F51B5, 6: 0x2196F3, 7: 0x03A9F4, 8: 0x00BCD4, 9: 0x009688, 10: 0x4CAF50, 11: 0x8BC34A, 12: 0xCDDC39, 13: 0xFFEB3B, 14: 0xFFC107,
+			"kräldjur": 0xFFFFFF,
+			"fågel": 0xFFFFFF,
+			"däggdjur": 0xFFFFFF,
+			"kärlväxt": 0xFFFFFF,
+			"ryggradslösa djur": 0xFFFFFF,
+			"svamp": 0xFFFFFF,
+			"mossa": 0xFFFFFF,
+			"lav": 0xFFFFFF,
+			"träd": 0xFFFFFF,
 		};
 		let groupTextColors = {
-			1: "#000000", 2: "#000000", 3: "#FFFFFF", 4: "#FFFFFF", 5: "#FFFFFF", 6: "#000000", 7: "#000000", 8: "#000000", 9: "#000000", 10: "#000000", 11: "#000000", 12: "#000000", 13: "#000000", 14: "#000000"
+			1: "#000000", 2: "#000000", 3: "#FFFFFF", 4: "#FFFFFF", 5: "#FFFFFF", 6: "#000000", 7: "#000000", 8: "#000000", 9: "#000000", 10: "#000000", 11: "#000000", 12: "#000000", 13: "#000000", 14: "#000000",
+			"kräldjur": "#000000",
+			"fågel": "#000000",
+			"däggdjur": "#000000",
+			"kärlväxt": "#000000",
+			"ryggradslösa djur": "#000000",
+			"svamp": "#000000",
+			"mossa": "#000000",
+			"lav": "#000000",
+			"träd": "#000000",
 		};
 		let groupImages = {
 			1: "icon-meat", 2: "icon-meat",
@@ -256,7 +274,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.nodeContainer = this.scene.add.container(0, 0);
 		this.add(this.nodeContainer);
 
-		let scenarioData = database.getScenario("serengeti_all")!;
+		let scenarioData = database.getScenario("sweden_all")!;
 		let scenario = new Scenario(scenarioData);
 
 		for (let species of scenario.species) {
@@ -333,23 +351,93 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.buttons = [];
 
 		let chosen = [
-			// "lycaon_pictus", // Vildhund
-			"loxodonta_africana", // Elefant
-			"panthera_leo", // Lion
-			"equus_quagga", // Zebra
-			"kobus_ellipsiprymnus", // Vattenbock
-			// "connochaetes_taurinus", // Gnu
-			"madoqua_kirkii", // Kirk's dik-dik
-			// "aepyceros_melampus", // Impala
-			// "kigelia_africana", // Korvträd
-			// "solanum_incanum", // Bitteräpple
-			"allophylus_rubifolius", // Allophylus rubifolius
-			"acacia_tortilis", // Acacia
-			"heteropogon_contortus", // Spjutgräs
-			// "emilia_coccinea", // Tofsblomster
-			// "panicum_coloratum", // Panicum coloratum
-			// "themeda_triandra", // Kängrugräs
-			// "digitaria_scalarum", // Fingerhirs
+			// "id_pärluggla",
+			// "id_skogslyktspindel",
+			// "id_garnlav",
+			// "id_vitsippa",
+			// "id_mindre_skogsmus",
+			// "id_större_skogmus",
+			// "id_brun_skogssnigel",
+			// "id_vårtbjörk",
+			// "id_stensopp",
+			// "id_ljung",
+			// "id_jordhästmyra",
+			"id_rådjur",
+			// "id_jordlöpare",
+			// "id_dvärgbägarlav",
+			// "id_fönsterlav",
+			// "id_ringduva",
+			// "id_liljekonvalj",
+			// "id_trattkantarell",
+			// "id_kruståtel",
+			// "id_stor_kvastmossa",
+			// "id_spillkråka",
+			// "id_träjon",
+			// "id_kråkbär",
+			// "id_skogsbalalajkaspindel",
+			// "id_bofink",
+			// "id_husmossa",
+			// "id_blåslav",
+			// "id_vanlig_tallört",
+			// "id_gökärt",
+			// "id_fälthare",
+			// "id_skogshare",
+			// "id_linnea",
+			// "id_vattensalamander",
+			// "id_daggmask",
+			// "id_vårfryle",
+			"id_lo",
+			// "id_mård",
+			// "id_skogskovall",
+			// "id_hermelin",
+			// "id_småvessla",
+			// "id_iller",
+			// "id_harsyra",
+			// "id_skogssork",
+			// "id_talgoxe",
+			"id_gran",
+			// "id_hackspett",
+			// "id_tall",
+			// "id_granbaldakinspindel",
+			// "id_väggmossa",
+			// "id_björnmossa",
+			// "id_guldbagge",
+			// "id_örnbräken",
+			// "id_kammossa",
+			// "id_groda",
+			// "id_kungsfågel",
+			"id_ekorre",
+			// "id_rönn",
+			// "id_näbbmus",
+			// "id_vitmossor",
+			// "id_tjäder",
+			// "id_järpe",
+			// "id_storharkrank",
+			// "id_raggbock",
+			// "id_skogsstjärna",
+			// "id_skogsklöver",
+			// "id_skogsbjörnspindel",
+			// "id_gärdsmyg",
+			// "id_koltrast",
+			// "id_skägglav",
+			// "id_odon",
+			"id_blåbär",
+			// "id_lingon",
+			// "id_skogsviol",
+			"id_rödräv",
+			// "id_husmygga",
+			// "id_knott",
+			// "id_fjädermygga",
+			// "id_kålharkrank",
+			// "id_murgråsugga",
+			// "id_brun_mosaikslända",
+			// "id_sandödla",
+			// "id_skogsödla",
+			// "id_svart_trumpetsvamp",
+			"id_kantarell",
+			// "id_röd_flugsvamp",
+			// "id_gråal",
+			// "id_bladstekel",
 		];
 		let cx = this.scene.CX - 0.14 * this.scene.W;
 		let cy = 0.86 * this.scene.H;
@@ -497,7 +585,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 	initInfoBox() {
 		this.infoMode = "";
-		this.infoGroupSelected = 0;
+		this.infoGroupSelected = "";
 		this.infoIucnSelected = "";
 
 

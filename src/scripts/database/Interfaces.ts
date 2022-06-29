@@ -21,7 +21,7 @@ export interface DataNode {
 	eng?: string; // English name
 	swe?: string; // Swedish name
 	chi?: string; // Chinese name
-	group: number; // Serengeti node group
+	group: string; // Serengeti node group
 	iucn?: string; // Serengeti conversation status
 	image: string;
 	color: string;

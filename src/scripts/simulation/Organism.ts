@@ -2,7 +2,6 @@ import { NodeId } from "../database/Types";
 import { NodeType, AnimalFood, AnimalSize, PlantSize, PlantStem, PlantAge, ServiceCategory, RelationInteraction, ActorVisibility } from "../database/Enums";
 import { DataNode, DataScenarioActor, DataNodeRelation } from "../database/Interfaces";
 import { database } from "../database/Database";
-import { BaseEvent } from "./Event";
 
 export interface SimRelation {
 	prey: Organism;
@@ -14,7 +13,7 @@ export class Organism {
 	// Node data
 	public id: NodeId;
 	public name: string;
-	public group: number;
+	public group: string;
 	public iucn?: string;
 	public color: string;
 	public image: string;
@@ -29,7 +28,6 @@ export class Organism {
 	public fixed: boolean;
 
 	public diet: SimRelation[];
-	public events: BaseEvent[];
 	public populationModifier: number;
 
 	// public enable: any;
@@ -54,7 +52,6 @@ export class Organism {
 		this.fixed = actor.fixed;
 
 		this.diet = [];
-		this.events = [];
 
 		
 		// this.image = node.type == 'plant' ? "placeholder_plant" : node.image;
@@ -81,10 +78,6 @@ export class Organism {
 	// get showGraph() {
 		// return !this.fixed;
 	// }
-
-	addEvent(event: BaseEvent) {
-		this.events.push(event);
-	}
 
 	addToDiet(prey: Organism, relationData: DataNodeRelation) {
 		let relation: SimRelation = {

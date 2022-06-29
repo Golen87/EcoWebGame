@@ -1,8 +1,5 @@
 import { BaseScene } from "./BaseScene";
-// import { images as uniImages, videos as uniVideos } from "../assets/serengetiAssets";
-// import { images as ecoImages, videos as ecoVideos } from "../assets/ecowebAssets";
-import { images, spritesheets, videos } from "../assets/serengetiAssets";
-// import { images, videos } from "../assets/ecowebAssets";
+import { images, spritesheets, videos } from "../assets/swedenAssets";
 import { language } from "../language/LanguageManager";
 import { GrayScalePostFilter } from "../pipelines/GrayScalePostFilter";
 import { BlurPostFilter } from "../pipelines/BlurPostFilter";
@@ -60,12 +57,7 @@ export class PreloadScene extends BaseScene {
 	create() {
 		this.fade(true, 100, 0x000000);
 		this.addEvent(110, () => {
-			if (UNIVERSEUM) {
-				this.scene.start("SerengetiScene");
-			}
-			else {
-				this.scene.start("EcowebScene");
-			}
+			this.scene.start("SwedenScene");
 		});
 	}
 }

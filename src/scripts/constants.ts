@@ -1,4 +1,4 @@
-const VERSION: string = "v1.0.11";
+const VERSION: string = "v1.0.0";
 
 const NODE_SIZE: number = 90;
 // const NODE_SIZE: number = 120;

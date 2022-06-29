@@ -72,8 +72,10 @@ class LanguageManager {
 	get(key: string, required: boolean=true): string {
 		let text = this.languageData.get(this.currentLanguage)[key];
 		console.assert(!required || text != null, `Phrase not found in ${this.currentLanguage}: '${key}'`);
-		if (text.includes("\\")) {console.warn(text);}
-		text = text.replace(/\\\\/g, '\\');
+		if (text) {
+			if (text.includes("\\")) {console.warn(text);}
+			text = text.replace(/\\\\/g, '\\');
+		}
 		return text;
 	}
 

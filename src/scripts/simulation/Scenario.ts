@@ -1,8 +1,7 @@
 import { DataScenario } from "../database/Interfaces";
 import { NodeType } from "../database/Enums";
-import { NodeId, EventId, ScenarioId, Point } from "../database/Types";
+import { NodeId, ScenarioId, Point } from "../database/Types";
 import { Animal, Plant, Fungi, Abiotic, Service } from "./Organism";
-import { BaseEvent } from "./Event";
 import { Organism } from "./Organism";
 import { database } from "../database/Database";
 
@@ -19,7 +18,6 @@ export class Scenario {
 	public sunlight: number;
 	public territory: number;
 
-	public events: BaseEvent[];
 	public species: Organism[];
 	public speciesMap: Map<NodeId, Organism>;
 
@@ -59,7 +57,6 @@ export class Scenario {
 
 		this.initNodes();
 		this.initRelations();
-		this.initEvents();
 		this.initTimeSections();
 	}
 
@@ -92,25 +89,6 @@ export class Scenario {
 				let prey = this.speciesMap.get(relation.preyId);
 				if (prey) {
 					node.addToDiet(prey, relation);
-				}
-			}
-		}
-	}
-
-	private initEvents() {
-		this.events = [];
-
-		for (let action of database.getScenarioActions(this.id)) {
-			let eventData = database.getEvent(action.eventId);
-			if (eventData) {
-				let event = new BaseEvent(eventData, action);
-				this.events.push(event);
-
-				if (eventData.ownerId) {
-					let owner = this.speciesMap.get(eventData.ownerId);
-					if (owner) {
-						owner.addEvent(event);
-					}
 				}
 			}
 		}

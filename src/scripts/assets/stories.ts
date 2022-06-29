@@ -35,8 +35,8 @@ interface Chapter {
 const chapterData: { [key: number]: Chapter } = {
 	0: {
 		number: 0,
-		title: "serengeti_question",
-		descriptions: ["serengeti_desc"],
+		title: "sweden_question",
+		descriptions: ["sweden_desc"],
 		image: ""
 	},
 	1: {
