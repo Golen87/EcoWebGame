@@ -31,6 +31,7 @@ export class Organism {
 	public diet: SimRelation[];
 	public events: BaseEvent[];
 	public populationModifier: number;
+	public polinator: boolean;
 
 	// public enable: any;
 	// public show: any;
@@ -55,8 +56,9 @@ export class Organism {
 
 		this.diet = [];
 		this.events = [];
+		this.polinator = ['antennaria_dioica', 'Apis', 'argyresthia_conjugella', 'bombus', 'brassica_napus_ssp_napus', 'cannabis_sativa', 'capsella_bursa_pastoris', 'carum_carvi', 'centaurea_cyanus', 'cichorium_intybus', 'fagopyrum_esculentum', 'filipendula_ulmaria', 'helianthus_annuus', 'inachis_io', 'lactuca_sativa', 'lopinga_achine', 'lotus_corniculatus', 'maculinea_arion', 'malus_domestica', 'medicago_sativa', 'melilotus_officinalis', 'papaver_rhoeas', 'parasitica', 'phacelia_tanacetifolia', 'plantago_lanceolata', 'primula_veris', 'raphanus_sativus_var_oleiformis', 'rhopalocera', 'salix_caprea', 'sinapis_alba', 'solanum_lycopersicum', 'syrphidae', 'taraxacum', 'thymus_serpyllum', 'trifolium_hybridum', 'trifolium_pratense', 'trifolium_repens', 'trifolium_resupinatum'].includes(this.id);
 
-		
+
 		// this.image = node.type == 'plant' ? "placeholder_plant" : node.image;
 
 		// Simulation

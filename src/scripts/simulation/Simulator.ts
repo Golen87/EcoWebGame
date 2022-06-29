@@ -72,7 +72,12 @@ class Simulator {
 			this.population[i] = 0;
 
 			// this.growthRate[i] = (this.species[i].type == 'animal') ? -0.1 : 1;
+			// this.growthRate[i] = [1.0, -0.1, -0.1][this.species[i].category]
 			this.growthRate[i] = [1.0, -0.1, -0.1][this.species[i].category]
+			// rhopalosiphum_padi
+			// if (this.species[i].id == "avena_sativa") {
+			// 	this.growthRate[i] = -0.1;
+			// }
 			this.extraGrowthRate[i] = 0;
 
 			// Anna
@@ -95,11 +100,12 @@ class Simulator {
 				this.interactionMatrix[i][j] = 0;
 				this.extraInteractionMatrix[i][j] = 0;
 
-				let pref = this.getRelationPref(i, j);
-				if (pref > 0) {
+				let rel = this.getRelationData(i, j);
+				if (rel.preference > 0) {
 					this.relationMap[i].push({
 						index: j,
-						value: pref
+						preference: rel.preference,
+						interaction: rel.interaction
 					});
 				}
 			}
@@ -108,19 +114,19 @@ class Simulator {
 			this.interactionMatrix[i][i] = -1;
 
 			// Sort relations by size
-			this.relationMap[i].sort((a, b) => (a.value < b.value) ? 1 : -1);
+			this.relationMap[i].sort((a, b) => (a.preference < b.preference) ? 1 : -1);
 		}
 
 		this.solve(0, 1);
 	}
 
-	getRelationPref(predIndex: number, preyIndex: number): number {
+	getRelationData(predIndex: number, preyIndex: number): any {
 		for (let relation of this.species[predIndex].diet) {
 			if (relation.prey.id == this.species[preyIndex].id) {
-				return relation.preference;
+				return relation;
 			}
 		}
-		return 0;
+		return {};
 	}
 
 	addOrRemoveSpecies(species: Organism, active: boolean, growthChange: number): void {
@@ -131,9 +137,34 @@ class Simulator {
 			this.population[index] = DEATH_THRESHOLD;
 			// this.extraGrowthRate[index] = (species.type == 'plant') ? -0.5 : 0.0;
 			this.extraGrowthRate[index] = growthChange ?? 0.0;
+
+			// for (let i = this.species.length-1; i > -1; i--) {
+				// this.species[i]
+				// rhopalosiphum_padi
+				// if (species.id == "avena_sativa") {
+					// this.growthRate[i] = -0.1;
+				// }
+			// }
 		}
 		else {
 			this.population[index] = 0;
+		}
+
+		for (let preyIndex = 0; preyIndex < this.species.length; preyIndex++) {
+			if (this.population[preyIndex] > 0 && this.species[preyIndex].isPlant()) { //  && this.species[preyIndex].polinator
+				// this.growthRate[preyIndex] = -0.1;
+				console.log(this.species[preyIndex].id, "is now dead: -0.1");
+
+				for (let predIndex = 0; predIndex < this.species.length; predIndex++) {
+					if (this.population[predIndex] > 0) {
+						const rel = this.getRelationData(predIndex, preyIndex);
+						if (rel.preference > 0) { //  && rel.interaction == 'mutualism'
+							// this.growthRate[preyIndex] += 0.5;
+							console.log(this.species[preyIndex].id, "is now alive!", this.growthRate[preyIndex]);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -185,6 +216,13 @@ class Simulator {
 		for (let i = 0; i < L; i++) {
 			if (true || this.population[i] > 0) {
 
+				for (let j = 0; j < L; j++) {
+					if (this.species[i].category == 0 && this.species[j].category == 0 && i != j) {
+						this.interactionMatrix[i][j] -= 0.1;
+						this.interactionMatrix[j][i] -= 0.1;
+					}
+				}
+
 				// Points to distribute
 				let weights = [1.0, 0.5, 0.25];
 
@@ -196,10 +234,23 @@ class Simulator {
 						continue;
 					}
 
+					// console.log(i, j, this.relationMap[i]);
 					if (this.population[j] > 0) {
 						let value = weights.shift() ?? 0;
-						this.interactionMatrix[i][j] += value;
-						this.interactionMatrix[j][i] -= value;
+
+						// if (rel.interaction == 'mutualism') {
+							// this.interactionMatrix[i][j] += rel.preference;
+							// this.interactionMatrix[j][i] += rel.preference;
+						// }
+						// else {
+						// this.interactionMatrix[i][j] += rel.preference / 100;
+						// this.interactionMatrix[j][i] -= rel.preference / 100;
+						this.interactionMatrix[i][j] += 0.2;
+						this.interactionMatrix[j][i] += 0.2;
+						// }
+						// if (this.species[j].id == "avena_sativa")
+							// this.interactionMatrix[j][i] += value;
+						// else
 					}
 					else if (this.population[j] <= 0) {
 						this.interactionMatrix[i][j] += 1.0;
