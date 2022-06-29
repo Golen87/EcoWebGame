@@ -29,26 +29,26 @@ interface NodeSlot {
 	taken: boolean;
 }
 
-export class SerengetiScene extends BaseScene {
+export class JordbrukScene extends BaseScene {
 	private bg: Phaser.GameObjects.Image;
 	private bgCont: Phaser.GameObjects.Container;
 	private grassBg: Phaser.GameObjects.Image;
 	private sidebarBg: Phaser.GameObjects.Rectangle;
 
-	private titleText: Phaser.GameObjects.Text;
+	// private titleText: Phaser.GameObjects.Text;
 	private hintText: Phaser.GameObjects.Text;
 	private storyText1: Phaser.GameObjects.Text;
 	private storyText2: Phaser.GameObjects.Text;
 	private chapterCont: Phaser.GameObjects.Container;
 	private chapterTabs: Phaser.GameObjects.Container[];
-	private africa: Phaser.GameObjects.Image;
-	private africaIcon: Phaser.GameObjects.Image;
+	private sweden: Phaser.GameObjects.Image;
+	private swedenIcon: Phaser.GameObjects.Image;
 
 	private exploreButton: NextButton;
 	private nextButton: NextButton;
 	private prevButton: NextButton;
 	private storyButton: NextButton;
-	// private africaButton: NextButton;
+	// private swedenButton: NextButton;
 
 	private nodes: Node[];
 	private nodeSlots: NodeSlot[];
@@ -95,7 +95,7 @@ export class SerengetiScene extends BaseScene {
 
 
 	constructor() {
-		super({key: 'SerengetiScene'});
+		super({key: 'JordbrukScene'});
 
 		this.timeStamp = 0;
 		this.currentChapter = 0;
@@ -114,7 +114,7 @@ export class SerengetiScene extends BaseScene {
 
 		this.scene.launch('UIScene');
 
-		simulator.loadScenario(database.getScenario("serengeti_1")!);
+		simulator.loadScenario(database.getScenario("jordbruk_all")!);
 
 		this.input.addPointer(4);
 
@@ -126,8 +126,8 @@ export class SerengetiScene extends BaseScene {
 		// this.minimap.scrollY = 0;
 		// this.minimap.setVisible(false);
 
-		this.bg = this.add.image(this.CX, this.CY, 'bg_serengeti');
-		this.bg.setAlpha(0.3);
+		this.bg = this.add.image(this.CX, this.CY, 'bg_jordbruk');
+		this.bg.setAlpha(0.5);
 		// this.bg.setPostPipeline(BlurPostFilter);
 		this.fitToScreen(this.bg);
 		// this.cameras.main.setPostPipeline(BlurPostFilter);
@@ -173,23 +173,23 @@ export class SerengetiScene extends BaseScene {
 
 
 		// Scenario title
-		this.titleText = this.createText(10, 10, 28, this.weights.bold, "#FCB061", "Serengeti Food Web");
-		this.titleText.setAlpha(0.75);
-		this.titleText.setOrigin(0);
-		language.bind(this.titleText, "serengeti_title");
+		// this.titleText = this.createText(10, 10, 28, this.weights.bold, "#FCB061");
+		// this.titleText.setAlpha(0.75);
+		// this.titleText.setOrigin(0);
+		// language.bind(this.titleText, "attraction_title");
 
 		// TODO: Move to component (and add popup on click)
-		this.africa = this.add.image(0 + this.titleText.width/2+20, 75, 'map-africa');
-		this.africa.setOrigin(0.5, 0);
-		this.africa.setAlpha(0.35);
-		this.africa.setTint(0xFCB061);
-		this.africa.setScale(200 / this.africa.height);
+		this.sweden = this.add.image(170, 55, 'map-sweden');
+		this.sweden.setOrigin(0.6, 0);
+		this.sweden.setAlpha(0.5);
+		this.sweden.setTint(0xFCB061);
+		this.sweden.setScale(250 / this.sweden.height);
 
-		this.africaIcon = this.add.image(this.africa.x+38, this.africa.y+112, "icons", iconsMap["icon-location"]);
-		this.africaIcon.setOrigin(0.5, 1);
-		// this.africaIcon.setAlpha(0.25);
-		this.africaIcon.setTint(0xFCB061);
-		this.africaIcon.setScale(0.5);
+		this.swedenIcon = this.add.image(this.sweden.x-44, this.sweden.y+202, "icons", iconsMap["icon-location"]);
+		this.swedenIcon.setOrigin(0.5, 1);
+		// this.swedenIcon.setAlpha(0.25);
+		this.swedenIcon.setTint(0xFCB061);
+		this.swedenIcon.setScale(0.5);
 
 
 		// Instructions text
@@ -255,12 +255,12 @@ export class SerengetiScene extends BaseScene {
 			}
 		}, this);
 
-		this.africa.setInteractive({ useHandCursor: true })
+		this.sweden.setInteractive({ useHandCursor: true })
 			.on('pointerup', () => {
 				// this.events.emit("openStory", chapterData[0]);
 				this.openStory(chapterData[0]);
 			}, this);
-		this.africa.input.hitArea.setTo(-100, -30, this.africa.width+2*30+40, this.africa.height+2*30);
+		this.sweden.input.hitArea.setTo(-100, -30, this.sweden.width+2*30+40, this.sweden.height+2*30);
 
 
 		// Sliders
@@ -592,7 +592,7 @@ export class SerengetiScene extends BaseScene {
 		this.nextButton.update(time, delta);
 		this.prevButton.update(time, delta);
 		this.storyButton.update(time, delta);
-		// this.africaButton.update(time, delta);
+		// this.swedenButton.update(time, delta);
 		this.temperatureSlider.update(time, delta);
 
 		// this.storyButton.setAlpha(1 - (this.scene.get('UIScene') as any).storyWindow.alpha);
@@ -759,17 +759,17 @@ export class SerengetiScene extends BaseScene {
 
 
 		this.bgCont.setVisible(this.mode != "attraction");
-		this.titleText.setVisible(this.mode != "attraction");
+		// this.titleText.setVisible(this.mode != "attraction");
 		this.chapterCont.setVisible(this.mode != "attraction");
 		this.foodWeb.setVisible(this.mode != "story");
-		this.africa.setVisible(this.mode == "story");
-		this.africaIcon.setVisible(this.mode == "story");
+		this.sweden.setVisible(this.mode == "story");
+		this.swedenIcon.setVisible(this.mode == "story");
 		this.infoBox.setVisible(this.mode == "story");
 		this.exploreButton.setVisible(this.mode == "network");
 		this.nextButton.setVisible(this.mode == "story");
 		this.prevButton.setVisible(this.mode == "story");
 		this.storyButton.setVisible(this.mode == "story");
-		// this.africaButton.setVisible(this.mode == "story");
+		// this.swedenButton.setVisible(this.mode == "story");
 		this.particleCont.setVisible(this.mode == "story");
 
 		this.graph.setVisible(this.mode == "story");

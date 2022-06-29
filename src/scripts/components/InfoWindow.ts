@@ -118,7 +118,7 @@ export class InfoWindow extends Phaser.GameObjects.Container {
 		let qrBg = new RoundRectangle(scene, qx-qw/2, qy+qw/2, qw, qw, 4, 0xFFFFFF);
 		this.box.add(qrBg);
 
-		let qrImage = scene.add.image(qx, qy, "qr-code");
+		let qrImage = scene.add.image(qx, qy, "lutra_logo");
 		qrImage.setScale(qw / qrImage.width);
 		qrImage.setOrigin(1, 0);
 		this.box.add(qrImage);

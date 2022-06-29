@@ -14,6 +14,7 @@ interface Relation {
 	pred: FoodWebNode;
 	prey: FoodWebNode;
 	line: Phaser.Curves.Line;
+	preference: number;
 }
 
 export class FoodWeb extends Phaser.GameObjects.Container {
@@ -79,47 +80,47 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.scene = scene;
 		scene.add.existing(this);
 
-		let BORDER = 200;
-		let WX = BORDER;
-		let WY = BORDER;
-		let WW = scene.W - 2*BORDER;
-		let WH = scene.H - 3*BORDER;
-		let groupPositions = {
+		const BORDER = 200;
+		const WX = BORDER;
+		const WY = BORDER;
+		const WW = scene.W - 2*BORDER;
+		const WH = scene.H - 3*BORDER;
+		const groupPositions = {
 			// Carnivores
-			1:  new Phaser.Math.Vector2(WX+0.95*WW, WY+(1-0.30)*WH),
-			2:  new Phaser.Math.Vector2(WX+0.85*WW, WY+(1-0.70)*WH),
+			6:  new Phaser.Math.Vector2(WX+0.88*WW, WY+(1-0.99)*WH),
+			5:  new Phaser.Math.Vector2(WX+0.93*WW, WY+(1-0.60)*WH),
+			4:  new Phaser.Math.Vector2(WX+0.89*WW, WY+(1-0.15)*WH),
+
+			// Omnivores
+			2:  new Phaser.Math.Vector2(WX+0.7*WW, WY+(1-0.70)*WH),
+			3:  new Phaser.Math.Vector2(WX+0.63*WW, WY+(1-0.20)*WH),
 
 			// Herbivores
-			3:  new Phaser.Math.Vector2(WX+0.50*WW, WY+(1-0.10)*WH),
-			4:  new Phaser.Math.Vector2(WX+0.55*WW, WY+(1-0.45)*WH),
-			5:  new Phaser.Math.Vector2(WX+0.50*WW, WY+(1-0.70)*WH),
-			6:  new Phaser.Math.Vector2(WX+0.60*WW, WY+(1-0.95)*WH),
+			1:  new Phaser.Math.Vector2(WX+0.40*WW, WY+(1-0.80)*WH),
+			8:  new Phaser.Math.Vector2(WX+0.43*WW, WY+(1-0.35)*WH),
+			7:  new Phaser.Math.Vector2(WX+0.37*WW, WY+(1-0.10)*WH),
 
 			// Plants
-			7:  new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.05)*WH),
-			8:  new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.10)*WH),
-			9:  new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.30)*WH),
-			10: new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.30)*WH), // 1
-			11: new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.55)*WH),
-			12: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.55)*WH), // 1
-			13: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.80)*WH),
-			14: new Phaser.Math.Vector2(WX+0.25*WW, WY+(1-0.95)*WH), // 2
+			11: new Phaser.Math.Vector2(WX+0.20*WW, WY+(1-0.99)*WH),
+			9:  new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.70)*WH),
+			12: new Phaser.Math.Vector2(WX+0.02*WW, WY+(1-0.30)*WH),
+			10: new Phaser.Math.Vector2(WX+0.10*WW, WY+(1-0.00)*WH),
 		};
-		let groupColors = {
-			1: 0xF44336, 2: 0xE91E63, 3: 0x9C27B0, 4: 0x673AB7, 5: 0x3F51B5, 6: 0x2196F3, 7: 0x03A9F4, 8: 0x00BCD4, 9: 0x009688, 10: 0x4CAF50, 11: 0x8BC34A, 12: 0xCDDC39, 13: 0xFFEB3B, 14: 0xFFC107
+		const groupColors = {
+			1: 0x376129, 2: 0xf3d040, 3: 0xffe88c, 4: 0xbd515a, 5: 0x903d62, 6: 0x633662, 7: 0xa2bf35, 8: 0x678e22, 9: 0x94e092, 10: 0x5abd8b, 11: 0x20897c, 12: 0x22636b
 		};
-		let groupTextColors = {
-			1: "#000000", 2: "#000000", 3: "#FFFFFF", 4: "#FFFFFF", 5: "#FFFFFF", 6: "#000000", 7: "#000000", 8: "#000000", 9: "#000000", 10: "#000000", 11: "#000000", 12: "#000000", 13: "#000000", 14: "#000000"
+		const groupTextColors = {
+			1: "#000000", 2: "#000000", 3: "#000000", 4: "#FFFFFF", 5: "#FFFFFF", 6: "#000000", 7: "#000000", 8: "#000000", 9: "#000000", 10: "#000000", 11: "#000000", 12: "#000000", 13: "#000000", 14: "#000000"
 		};
-		let groupImages = {
+		const groupImages = {
 			1: "icon-meat", 2: "icon-meat",
 			3: "icon-leaf", 4: "icon-leaf", 5: "icon-leaf", 6: "icon-leaf",
 			7: "icon-plant-soil", 8: "icon-plant-soil", 9: "icon-plant-soil", 10: "icon-plant-soil", 11: "icon-plant-soil", 12: "icon-plant-soil", 13: "icon-plant-soil", 14: "icon-plant-soil"
 		};
-		let iucnColors = {
+		const iucnColors = {
 			"null": 0x9E9E9E, CR: 0xe40521, EN: 0xeb6209, VU: 0xe29b00, NT: 0x007060, LC: 0x006d8a, NE: 0x555555
 		};
-		let iucnTextColors = {
+		const iucnTextColors = {
 			"null": "#FFFFFF", CR: "#000000", EN: "#000000", VU: "#000000", NT: "#FFFFFF", LC: "#FFFFFF", NE: "#FFFFFF"
 		};
 
@@ -129,8 +130,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 			centering: 0.04, // Pull on average position towards center
 			gravity: 50, // Pull towards center
-			linkDistance: 150, // Distance to be maintained between nodes
-			linkStrength: 0.04, // How firmly the link distance is maintained
+			linkDistance: 300, // Distance to be maintained between nodes
+			linkStrength: 0.03, // How firmly the link distance is maintained
 			charge: -50, // How much nodes repel each other
 			friction: 0.5, // Velocity multiplier each step
 			groupStrength: 10, // Pull towards group positions
@@ -166,8 +167,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 
 	update(time, delta) {
-		this.config.gravity = 50 - 20 * this.config.mode;
-		this.config.charge = -50 - 70 * this.config.mode;
+		this.config.gravity = 50 - 30 * this.config.mode;
+		this.config.charge = -50 - 140 * this.config.mode;
 
 		if (this.config.attractionMode) {
 			this.config.gravity *= 1 + 3 * Phaser.Math.Easing.Quadratic.InOut(0.5 + 0.5 * Math.cos(time/8000));
@@ -256,7 +257,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.nodeContainer = this.scene.add.container(0, 0);
 		this.add(this.nodeContainer);
 
-		let scenarioData = database.getScenario("serengeti_all")!;
+		let scenarioData = database.getScenario("jordbruk_all")!;
 		let scenario = new Scenario(scenarioData);
 
 		for (let species of scenario.species) {
@@ -308,14 +309,14 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		for (const pred of this.nodes) {
 			for (const prey of this.nodes) {
 				let relation = database.getNodeRelation(pred.species.id, prey.species.id);
-				if (relation) {
-					this.addRelation(pred, prey);
+				if (relation && relation.preference > 20) {
+					this.addRelation(pred, prey, relation.preference/100);
 				}
 			}
 		}
 	}
 
-	addRelation(pred: FoodWebNode, prey: FoodWebNode) {
+	addRelation(pred: FoodWebNode, prey: FoodWebNode, preference: number) {
 		pred.neighbours.push(prey);
 		prey.neighbours.push(pred);
 
@@ -325,7 +326,8 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			line: new Phaser.Curves.Line(
 				new Phaser.Math.Vector2(pred),
 				new Phaser.Math.Vector2(prey)
-			)
+			),
+			preference: preference
 		});
 	}
 
@@ -333,25 +335,74 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.buttons = [];
 
 		let chosen = [
-			// "lycaon_pictus", // Vildhund
-			"loxodonta_africana", // Elefant
-			"panthera_leo", // Lion
-			"equus_quagga", // Zebra
-			"kobus_ellipsiprymnus", // Vattenbock
-			// "connochaetes_taurinus", // Gnu
-			"madoqua_kirkii", // Kirk's dik-dik
-			// "aepyceros_melampus", // Impala
-			// "kigelia_africana", // Korvträd
-			// "solanum_incanum", // Bitteräpple
-			"allophylus_rubifolius", // Allophylus rubifolius
-			"acacia_tortilis", // Acacia
-			"heteropogon_contortus", // Spjutgräs
-			// "emilia_coccinea", // Tofsblomster
-			// "panicum_coloratum", // Panicum coloratum
-			// "themeda_triandra", // Kängrugräs
-			// "digitaria_scalarum", // Fingerhirs
+			"coronella_austriac", // Hasselsnok
+			"bos_taurus", // Nötkreatur
+			// "plecotus_auritus", // Brunlångöra
+			// "phasianus_colchicus", // Fasan
+			// "upupa_epops", // Härfågel
+			"hirundo_rustica", // Ladusvala
+			// "perdix_perdix", // Rapphöna
+			// "lanius_collurio", // Törnskata
+			// "syrphidae", // Blomfluga
+			// "carabidae", // Jordlöpare
+			// "parasitica", // Parasitsteklar
+			// "deroceras_reticulatum", // Åkersnigel
+			"microtus_agrestis", // Åkersork
+			// "apoidea", // Bi
+			// "lepidoptera", // Fjäril
+			// "lopinga_achine", // Dårgräsfjäril
+			"bombus", // Humla
+			// "inachis_io", // Påfågelöga
+			"maculinea_arion", // Svartfläckig blåvinge
+			// "rhopalosiphum_padi", // Havrebladlus
+			// "hydrellia_griseola", // Havrebladfluga
+			// "phyllotreta_vittula", // Kornjordloppa
+			// "agromyzidae", // Minerarflugor
+			// "meligethes_aeneus", // Rapsbagge
+			// "argyresthia_conjugella", // Rönnbärsmal
+			// "ovis_aries", // Tamfår
+			// "trifolium_hybridum", // Alsikeklöver
+			// "thymus_serpyllum", // Backtimjan
+			// "centaurea_cyanus", // Blåklint
+			// "fagopyrum_esculentum", // Bovete
+			// "cichorium_intybus", // Cikoria
+			// "quercus_robur", // Ek
+			// "lolium_perenne", // Engelskt rajgräs
+			// "medicago_sativa", // Foderlusern
+			// "cannabis_sativa", // Fröhampa
+			// "picea_abies", // Gran
+			// "primula_veris", // Gullviva
+			// "melilotus_officinalis", // Gul sötväppling
+			// "corylus_avellana", // Hassel
+			"malus_domestica", // Äppelträd
+			// "phacelia_tanacetifolia", // Honungsört
+			// "antennaria_dioica", // Kattfot
+			// "hordeum_vulgare", // Korn
+			// "carum_carvi", // Kummin
+			// "lotus_corniculatus", // Käringtand
+			// "capsella_bursa_pastoris", // Lomme
+			"avena_sativa", // Havre
+			"taraxacum", // Maskros
+			// "carex_montana", // Lundstarr
+			// "raphanus_sativus_var_oleiformis", // Oljerättika
+			// "trifolium_resupinatum", // Perserklöver
+			// "brassica_napus_ssp_napus", // Raps
+			// "trifolium_pratense", // Rödklöver
+			// "festuca_rubra", // Rödsvingel
+			// "lactuca_sativa", // Sallat
+			// "gymnospermae", // Barrsly
+			// "angiospermae", // Lövsly
+			// "helianthus_annuus", // Solros
+			// "plantago_lanceolata", // Svartkämpar
+			// "salix_caprea", // Sälg
+			// "phleum_pratense", // Timotej
+			// "solanum_lycopersicum", // Tomat
+			// "trifolium_repens", // Vitklöver
+			// "sinapis_alba", // Vitsenap
+			// "filipendula_ulmaria", // Älggräs
+			// "festuca_pratensis", // Ängssvingel
 		];
-		let cx = this.scene.CX - 0.14 * this.scene.W;
+		let cx = this.scene.CX - 0.16 * this.scene.W;
 		let cy = 0.86 * this.scene.H;
 		let size = 66;
 
@@ -360,7 +411,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			let id = chosen[i];
 			for (const node of this.nodes) {
 				if (id == node.species.id) {
-					let x = cx + 1.4 * size * (i - (chosen.length-1)/2);
+					let x = cx - 1.4 * size * (i - (chosen.length-1)/2);
 
 					let obj = new FoodWebButton(this.scene, x, cy, size, node.species.image);
 					this.add(obj);
@@ -377,14 +428,6 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 				}
 			}
 		}
-
-		// Instruction text
-		// let sbH = 0.22 * this.scene.H;
-		// let sbY = this.scene.H - 0.5*sbH;
-		// this.instructionText = this.scene.createText(cx, sbY - 0.85*90, 20, this.scene.weights.regular, "#FFF", "Instruction text");
-		// this.instructionText.setOrigin(0.5);
-		// this.add(this.instructionText);
-		// language.bind(this.instructionText, "instruction_0");
 
 
 		// Mode slider
@@ -623,7 +666,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.infoHint = this.scene.createText(x, y, 22, this.scene.weights.regular, "#FFF", "Instruction text");
 		this.infoHint.setOrigin(0.5);
 		this.add(this.infoHint);
-		language.bind(this.infoHint, "instruction_0");
+		language.bind(this.infoHint, "network_instruction");
 		this.infoHint.setWordWrapWidth(w-2*p);
 
 		this.infoBox.bringToTop(this.infoImage);
@@ -795,35 +838,36 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 		this.separatorGraphics.setBlendMode(Phaser.BlendModes.ADD);
 		this.separatorContainer.add(this.separatorGraphics);
 
-		let BORDER = 200;
-		let leftX = 0.44 * this.scene.W;
-		let rightX = 0.72 * this.scene.W;
-		let topY = 0.1 * this.scene.H;
-		let bottomY = 0.72 * this.scene.H;
-		let dist = (rightX - leftX) / 2;
+		const BORDER = 200;
+		const sepX1 = 0.33 * this.scene.W;
+		const sepX2 = 0.55 * this.scene.W;
+		const sepX3 = 0.76 * this.scene.W;
+		const topY = 0.1 * this.scene.H;
+		const bottomY = 0.72 * this.scene.H;
 
-		// this.separatorGraphics.lineStyle(1, 0xFFFFFF, 0.5);
-		// this.separatorGraphics.lineBetween(rightX, topY, rightX, bottomY);
-		// this.separatorGraphics.lineBetween(leftX, topY, leftX, bottomY);
 		this.separatorGraphics.lineStyle(1.5, 0xFFFFFF, 0.5);
-		let n = 40;
+		const n = 40;
 		for (let i = 0; i < n; i++) {
-			let d = (bottomY - topY) / (n - 0.5);
-			let y = topY + i * d;
-			this.separatorGraphics.lineBetween(rightX, y, rightX, y+d/2);
-			this.separatorGraphics.lineBetween(leftX, y, leftX, y+d/2);
+			const d = (bottomY - topY) / (n - 0.5);
+			const y = topY + i * d;
+			this.separatorGraphics.lineBetween(sepX1, y, sepX1, y+d/2);
+			this.separatorGraphics.lineBetween(sepX2, y, sepX2, y+d/2);
+			this.separatorGraphics.lineBetween(sepX3, y, sepX3, y+d/2);
 		}
 
-		let textCarni = this.scene.createText(rightX + 0.75*dist,	topY, 30, this.scene.weights.bold, "#FFF", ".");
-		let textHerbi = this.scene.createText(leftX + dist,			topY, 30, this.scene.weights.bold, "#FFF", ".");
-		let textPlant = this.scene.createText(leftX - 0.75*dist,	topY, 30, this.scene.weights.bold, "#FFF", ".");
+		const textCarni = this.scene.createText(sepX3+0.75*(sepX3-(sepX2+sepX3)/2), topY, 30, this.scene.weights.bold, "#FFF", ".");
+		const textOmni  = this.scene.createText((sepX2+sepX3)/2, topY, 30, this.scene.weights.bold, "#FFF", ".");
+		const textHerbi = this.scene.createText((sepX1+sepX2)/2, topY, 30, this.scene.weights.bold, "#FFF", ".");
+		const textPlant = this.scene.createText(sepX1+0.75*(sepX1-(sepX1+sepX2)/2), topY, 30, this.scene.weights.bold, "#FFF", ".");
 		textCarni.setOrigin(0.5, 1.2).setShadow(0, 0, "#FFF", 15).setPadding(30);
+		textOmni.setOrigin(0.5, 1.2).setShadow(0, 0, "#FFF", 15).setPadding(30);
 		textHerbi.setOrigin(0.5, 1.2).setShadow(0, 0, "#FFF", 15).setPadding(30);
 		textPlant.setOrigin(0.5, 1.2).setShadow(0, 0, "#FFF", 15).setPadding(30);
 		language.bind(textCarni, "node_carnivores");
+		language.bind(textOmni, "node_omnivores");
 		language.bind(textHerbi, "node_herbivores");
 		language.bind(textPlant, "node_plants");
-		this.separatorContainer.add([textCarni, textHerbi, textPlant]);
+		this.separatorContainer.add([textCarni, textOmni, textHerbi, textPlant]);
 	}
 
 
@@ -904,7 +948,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 
 				// if (l2 < 1) l2 = 1;
 
-				let rr = Math.pow(node1.size/2 + node2.size/2, 1.0);
+				let rr = Math.pow(node1.size/2 + node2.size/2, 1.06);
 				node1.velocity.x += dx / l2 * this.config.charge / 40 * rr;
 				node1.velocity.y += dy / l2 * this.config.charge / 40 * rr;
 				node2.velocity.x -= dx / l2 * this.config.charge / 40 * rr;
@@ -962,7 +1006,7 @@ export class FoodWeb extends Phaser.GameObjects.Container {
 			// let strokeWidth = selected > 0 ? 2.5 : 1.5;
 			// let strokeColor = selected > 0 ? 0xFFFFFF : 0xFFFFFF;
 			// let strokeOpacity = selected > 0 ? 0.9 : 0.1 * visibility;
-			let strokeWidth = 1.5 + 1.0 * selected;
+			let strokeWidth = (1.5 + 1.0 * selected) * relation.preference;
 			let strokeColor = 0xFFFFFF;
 			let strokeOpacity = 0.1 * visibility + 0.8 * selected;
 

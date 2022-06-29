@@ -51,7 +51,7 @@ export class FoodWebNode extends BaseNode {
 
 		let tier = (species.isPlant() ? 1 : (species.isHerbivore() ? 2 : 3));
 		this.hasImage = !species.image.startsWith('icon');
-		this.size = 24 + 12 * tier - (this.hasImage ? 0 : 4);
+		this.size = 45 + 9 * tier - (this.hasImage ? 0 : 4);
 		// this.size = 2*(20 + 12 * tier);
 
 		// Colored background circle

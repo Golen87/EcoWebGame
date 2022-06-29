@@ -1,7 +1,6 @@
 import "phaser";
 import { PreloadScene } from "./scripts/scenes/PreloadScene";
-import { SerengetiScene } from "./scripts/scenes/SerengetiScene";
-import { EcowebScene } from "./scripts/scenes/EcowebScene";
+import { JordbrukScene } from "./scripts/scenes/JordbrukScene";
 import { UIScene } from "./scripts/scenes/UIScene";
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -17,8 +16,7 @@ const config: Phaser.Types.Core.GameConfig = {
 	},
 	scene: [
 		PreloadScene,
-		SerengetiScene,
-		EcowebScene,
+		JordbrukScene,
 		UIScene
 	],
 	plugins: {

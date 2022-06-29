@@ -139,7 +139,7 @@ export class StoryWindow extends Phaser.GameObjects.Container {
 		afrText.setOrigin(0.5);
 		afrText.setAngle(-90);
 		this.tabAfrica.add(afrText);
-		language.bind(afrText, "serengeti_question");
+		language.bind(afrText, "map_title");
 
 
 
